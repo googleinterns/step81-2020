@@ -5,7 +5,7 @@ Generate maven project https://cloud.google.com/appengine/docs/standard/java/usi
 
 Add example from: https://github.com/gsuitedevs/hangouts-chat-samples/tree/master/java/basic-async-bot
 
-* Remember to add your own service account*
+* Remember to add your own GCP service account key --> Make a folder under src/main called "resources" then add your key to the folder as a file called "service-acct.json"
 
 ## Maven
 ### Running locally
