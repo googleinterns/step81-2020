@@ -10,17 +10,6 @@
 .history
 .svn/
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
@@ -33,7 +22,7 @@
 /build/
 
 # Web related
-lib/generated_plugin_registrant.dart
+*/lib/generated_plugin_registrant.dart
 
 # Symbolication related
 app.*.symbols
@@ -169,4 +158,12 @@ doc/api/
 *.js_
 *.js.deps
 *.js.map
+
+# Firebase Hosting
+.firebaserc
+.firebase/*
+firebase-debug.log
+
+
+
 
