@@ -1,0 +1,18 @@
+{
+  "macroName": "Weekly Game Night Poll",
+  "description": "A recurring poll bot that allows the team to vote on which game to play",
+  "creatorId": "tonyshen@google.com",
+  "trigger":
+    {
+      "type": "command",
+      "command": "make game poll"
+    },
+  "action":
+    {
+      "type": "poll",
+      "question": "What game should we play tomorrow ? ",
+      "choices": ["Saboteur", "Pubg", "Code name"],
+      "userCanAddOptions": true,
+      "userCanVoteMuiltiple": false
+    }
+}

@@ -1,0 +1,19 @@
+{
+  "macroName": "Weekly Game Night Poll",
+  "description": "A recurring poll bot that allows the team to vote on which game to play",
+  "creatorId": "tonyshen@google.com",
+  "trigger":
+    {
+      "type": "time",
+      "time": "2012-04-23T18:25:43.511Z",
+      "stride": 1,
+      "unit": "day"
+    },
+  "action":
+    {
+      "type": "resource",
+      "operation": "copy",
+      "fileType": "document",
+      "templateUrl": "https://docs.google.com/document/d/1-U_JDf3YBi5o8TmJ_jJbUd044cQib2Rp4rQuG4EuYD0/edit"
+    }
+}
