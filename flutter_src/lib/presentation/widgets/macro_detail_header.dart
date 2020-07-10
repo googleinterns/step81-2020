@@ -24,16 +24,12 @@ class MacroDetailHeader extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
                     macroModel.macroName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.headline4,
                   ),
                 ),
                 Text(
                   macroModel.description,
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                  ),
+                  style: Theme.of(context).textTheme.subtitle1,
                 ),
               ],
             ),

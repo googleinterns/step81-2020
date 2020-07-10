@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class macro_template_button extends StatelessWidget {
-  const macro_template_button({Key key, this.templateName}) : super(key: key);
+  const macro_template_button({Key key, this.templateName, this.imagePath})
+      : super(key: key);
 
   final String templateName;
+  final String imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -16,24 +18,22 @@ class macro_template_button extends StatelessWidget {
             width: 200,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/mindful.jpg"),
+                image: AssetImage(imagePath),
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Container(
-              margin: EdgeInsets.fromLTRB(15, 15, 0, 0),
+              margin: EdgeInsets.only(left: 15, top: 15),
               child: Text(
-                "Mindfulness",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600),
+                templateName,
+                style: Theme.of(context).textTheme.subtitle1.copyWith(
+                    backgroundColor: Theme.of(context).colorScheme.background),
               ),
             ),
           ),
         ),
-        SizedBox(width: 50),
+        SizedBox(width: 30),
       ],
     );
   }

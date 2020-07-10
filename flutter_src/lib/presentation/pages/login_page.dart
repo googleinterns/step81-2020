@@ -17,7 +17,6 @@ class LoginPageBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.white,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -25,21 +24,14 @@ class LoginPageBody extends StatelessWidget {
             children: <Widget>[
               Text(
                 "Macrobase",
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
+                style: Theme.of(context).textTheme.headline4,
               ),
               Text(
                 "Automate the boring stuff.",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.green,
-                ),
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               Image(
-                image: AssetImage("automate_task.png"),
+                image: AssetImage("clip-problem-solving.png"),
                 height: 400,
               ),
               SizedBox(height: 30),

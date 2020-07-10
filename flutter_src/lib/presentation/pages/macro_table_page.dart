@@ -30,10 +30,7 @@ class _MacroTableState extends State<MacroTable> {
             ),
             Text(
               "It looks empty here... Create your first macro on the left panel!",
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.green,
-              ),
+              style: Theme.of(context).textTheme.subtitle1,
             )
           ],
         ),

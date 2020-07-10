@@ -64,7 +64,10 @@ class _WizardFormState extends State<WizardForm> {
 
   FormBlocStep _infoStep(WizardFormBloc wizardFormBloc) {
     return FormBlocStep(
-      title: Text('Basic Info'),
+      title: Text(
+        'Basic Info',
+        style: Theme.of(context).textTheme.headline4,
+      ),
       content: Column(
         children: <Widget>[
           TextFieldBlocBuilder(
@@ -89,7 +92,10 @@ class _WizardFormState extends State<WizardForm> {
 
   FormBlocStep _actionStep(WizardFormBloc wizardFormBloc) {
     return FormBlocStep(
-      title: Text('Actions'),
+      title: Text(
+        'Actions',
+        style: Theme.of(context).textTheme.headline4,
+      ),
       content: Column(
         children: <Widget>[
           Row(
@@ -122,7 +128,10 @@ class _WizardFormState extends State<WizardForm> {
 
   FormBlocStep _triggerStep(WizardFormBloc wizardFormBloc) {
     return FormBlocStep(
-      title: Text('Trigger'),
+      title: Text(
+        'Trigger',
+        style: Theme.of(context).textTheme.headline4,
+      ),
       content: Column(
         children: <Widget>[
           Row(
@@ -140,10 +149,8 @@ class _WizardFormState extends State<WizardForm> {
                   ),
                   Text(
                     "Command Based",
-                    style: TextStyle(
-                      fontSize: 15,
-                    ),
-                  )
+                    style: Theme.of(context).textTheme.caption,
+                  ),
                 ]),
               ),
             ],
