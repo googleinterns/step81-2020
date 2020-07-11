@@ -3,8 +3,8 @@ import 'package:meta/meta.dart';
 
 abstract class ActionModel extends Action {
   ActionModel({
-    @required String type,
-  }) : super(type);
+    @required String actionType,
+  }) : super(actionType);
 
   static fromJson(Map<String, dynamic> json) {
     if (json['type'] == Action.POLL_ACTION) {

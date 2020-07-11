@@ -1,10 +1,10 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:macrobaseapp/logic/state/macro_bloc_validator.dart';
 import 'package:macrobaseapp/logic/usecases/macro_firestore/firestore_macro_operation.dart';
 import 'package:macrobaseapp/model/adapters/action_model.dart';
 import 'package:macrobaseapp/model/adapters/macro_model.dart';
 import 'package:macrobaseapp/model/adapters/trigger_model.dart';
 import 'package:macrobaseapp/model/entities/action.dart' as Model;
-import 'package:macrobaseapp/model/entities/macro.dart';
 import 'package:macrobaseapp/model/entities/trigger.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 
@@ -15,18 +15,9 @@ class WizardFormBloc extends FormBloc<String, String> {
     validators: [
       FieldBlocValidators.required,
     ],
-    asyncValidators: [asyncValidator],
+    asyncValidators: [CustomBlocValidator.nameValidator],
     name: 'Macro Name',
   );
-  static Future<String> asyncValidator(String name) async {
-    //Avoid too many Firestore calls
-    await Future.delayed(Duration(milliseconds: 200));
-    List<Macro> list = await queryMacro(name);
-    if (list.length > 0)
-      return "Sorry, this macro name already exist";
-    else
-      return null;
-  }
 
   final description = TextFieldBloc(
     validators: [
@@ -42,12 +33,15 @@ class WizardFormBloc extends FormBloc<String, String> {
     items: [Model.Action.SHEET_ACTION, Model.Action.POLL_ACTION],
   );
 
-  final sheetAppendAction = TextFieldBloc(
+  final actionSheetUrl = TextFieldBloc(
     name: "Sheet URL",
     validators: [
       FieldBlocValidators.required,
+      CustomBlocValidator.sheetUrlValidator,
     ],
   );
+
+  final actionSheetColumn = ListFieldBloc<TextFieldBloc>();
 
   final triggerType = SelectFieldBloc(
     name: 'Trigger Type',
@@ -57,7 +51,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     items: [Trigger.COMMAND_BASED, Trigger.TIME_BASED],
   );
 
-  final commandTrigger = TextFieldBloc(
+  final triggerCommand = TextFieldBloc(
     name: 'command',
     validators: [
       FieldBlocValidators.required,
@@ -71,11 +65,11 @@ class WizardFormBloc extends FormBloc<String, String> {
     );
     addFieldBlocs(
       step: 1,
-      fieldBlocs: [sheetAppendAction],
+      fieldBlocs: [actionSheetUrl, actionSheetColumn],
     );
     addFieldBlocs(
       step: 2,
-      fieldBlocs: [commandTrigger],
+      fieldBlocs: [triggerCommand],
     );
   }
 
@@ -96,7 +90,7 @@ class WizardFormBloc extends FormBloc<String, String> {
         default:
           {
             action = new SheetAppendActionModel(
-              sheetUrl: sheetAppendAction.value,
+              sheetUrl: actionSheetUrl.value,
               columnValue: ["1", "2", "3"],
             );
           }
@@ -106,7 +100,7 @@ class WizardFormBloc extends FormBloc<String, String> {
       switch (triggerType.value) {
         default:
           {
-            trigger = new CommandTriggerModel(command: commandTrigger.value);
+            trigger = new CommandTriggerModel(command: triggerCommand.value);
           }
           break;
       }

@@ -3,10 +3,12 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:macrobaseapp/logic/state/macro_bloc.dart';
+import 'package:macrobaseapp/logic/state/macro_bloc_template.dart';
 import 'package:macrobaseapp/model/entities/action.dart' as entity;
 import 'package:macrobaseapp/model/entities/trigger.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 import 'package:macrobaseapp/presentation/navigation/main_navigator.dart';
+import 'package:macrobaseapp/presentation/widgets/macro_template_button.dart';
 import 'package:provider/provider.dart';
 
 class WizardForm extends StatefulWidget {
@@ -65,11 +67,35 @@ class _WizardFormState extends State<WizardForm> {
   FormBlocStep _infoStep(WizardFormBloc wizardFormBloc) {
     return FormBlocStep(
       title: Text(
-        'Basic Info',
+        'Choose a Template',
         style: Theme.of(context).textTheme.headline4,
       ),
       content: Column(
         children: <Widget>[
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 20.0),
+            height: 200.0,
+            child: ListView(
+              // This next line does the trick.
+              scrollDirection: Axis.horizontal,
+              children: <Widget>[
+                macro_template_button(
+                  onPressed: () {
+                    FormBlocTemplate.setTemplate(FormBlocTemplate.DAILY_CHECK_IN, wizardFormBloc);
+                  },
+                  templateName: FormBlocTemplate.DAILY_CHECK_IN,
+                  imagePath: "abstract-success.png",
+                ),
+                macro_template_button(
+                  onPressed: () {
+                    FormBlocTemplate.setTemplate(FormBlocTemplate.FROM_SCRATCH, wizardFormBloc);
+                  },
+                  templateName: FormBlocTemplate.FROM_SCRATCH,
+                  imagePath: "having-job.png",
+                ),
+              ],
+            ),
+          ),
           TextFieldBlocBuilder(
             textFieldBloc: wizardFormBloc.macroName,
             suffixButton: SuffixButton.asyncValidating,
@@ -115,11 +141,38 @@ class _WizardFormState extends State<WizardForm> {
             ],
           ),
           TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.sheetAppendAction,
+            textFieldBloc: wizardFormBloc.actionSheetUrl,
             decoration: InputDecoration(
               labelText: 'The URL for sheet',
               prefixIcon: Icon(Icons.book),
             ),
+          ),
+          RaisedButton(
+            onPressed: () {
+              wizardFormBloc.actionSheetColumn.addFieldBloc(TextFieldBloc());
+            },
+            child: Text("Add Column",
+              style: Theme.of(context).textTheme.button,
+            )
+          ),
+          BlocBuilder<ListFieldBloc<TextFieldBloc>,
+              ListFieldBlocState<TextFieldBloc>>(
+            bloc: wizardFormBloc.actionSheetColumn,
+            builder: (context, state) {
+              if (state.fieldBlocs.isNotEmpty) {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: state.fieldBlocs.length,
+                  itemBuilder: (context, i) {
+                    return TextFieldBlocBuilder(
+                      textFieldBloc: state.fieldBlocs[i],
+                    );
+                  },
+                );
+              }
+              return Container();
+            },
           ),
         ],
       ),
@@ -156,7 +209,7 @@ class _WizardFormState extends State<WizardForm> {
             ],
           ),
           TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.commandTrigger,
+            textFieldBloc: wizardFormBloc.triggerCommand,
             decoration: InputDecoration(
               labelText: 'Command to trigger the macro',
               prefixIcon: Icon(Icons.insert_comment),

@@ -2,17 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class macro_template_button extends StatelessWidget {
-  const macro_template_button({Key key, this.templateName, this.imagePath})
+  const macro_template_button({Key key, this.templateName, this.imagePath, this.onPressed})
       : super(key: key);
 
   final String templateName;
   final String imagePath;
+  final Function onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         CupertinoButton(
+          onPressed: onPressed,
           child: Container(
             height: 200,
             width: 200,
