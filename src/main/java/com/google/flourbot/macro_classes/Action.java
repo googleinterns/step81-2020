@@ -1,8 +1,8 @@
-package com.google.flourbot.datastorage;
+package com.google.flourbot.macro_classes;
 
 public class Action {
 
-    public String[] columnValue;
+    public String[] columnValue; 
     public String sheetAction;
     public String sheetUrl;
     public String actionType;

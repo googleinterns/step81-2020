@@ -1,4 +1,4 @@
-package com.google.flourbot.datastorage;
+package com.google.flourbot.macro_classes;
 
 public class Trigger {
     
