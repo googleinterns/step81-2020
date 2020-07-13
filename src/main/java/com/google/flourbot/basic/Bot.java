@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.chat.bot.basic.async;
+package com.google.flourbot.basic;
 
 // [START async-bot]
 import com.fasterxml.jackson.databind.JsonNode;
