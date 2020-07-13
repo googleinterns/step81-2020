@@ -31,9 +31,6 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.common.collect.ImmutableMap;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class FirebaseDataStorage implements DataStorage {
     private Firestore db;
