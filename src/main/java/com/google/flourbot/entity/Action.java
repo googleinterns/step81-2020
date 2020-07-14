@@ -1,4 +1,4 @@
-package com.google.flourbot.macro_classes;
+package com.google.flourbot.entity;
 
 public class Action {
 

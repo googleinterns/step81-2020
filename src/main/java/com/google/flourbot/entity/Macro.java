@@ -1,4 +1,4 @@
-package com.google.flourbot.macro_classes;
+package com.google.flourbot.entity;
 
 public class Macro {
     public String creatorId;
@@ -7,7 +7,7 @@ public class Macro {
     public Trigger macroTrigger;
     public Action macroAction;
     
-    public Macro (String creatorId, String macroName, String docId, Trigger macroTrigger, Action macroAction) {
+    public Macro (String creatorId, String macroName, String docId, Object macroTrigger, Object macroAction) {
         this.creatorId = creatorId;
         this.macroName = macroName;
         this.docId = docId;
