@@ -15,7 +15,7 @@ public class Macro {
         this.macroAction = macroAction;
     }
 
-    public String creatorId () {
+    public String getCreatorId () {
         return creatorId;
     }
 
