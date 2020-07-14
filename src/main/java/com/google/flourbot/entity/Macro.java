@@ -1,11 +1,11 @@
 package com.google.flourbot.entity;
 
 public class Macro {
-    public String creatorId;
-    public String macroName;
-    public String docId;
-    public Trigger macroTrigger;
-    public Action macroAction;
+    private String creatorId;
+    private String macroName;
+    private String docId;
+    private Trigger macroTrigger;
+    private Action macroAction;
     
     public Macro (String creatorId, String macroName, String docId, Object macroTrigger, Object macroAction) {
         this.creatorId = creatorId;
