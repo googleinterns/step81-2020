@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.google.flourbot.datastorage;
+package com.firebaseserver.app;
 
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.firestore.DocumentReference;
 
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 
@@ -40,14 +40,29 @@ public class FirebaseDataStorage implements DataStorage {
             this.db = initializeFirebase();
         }
         catch (FileNotFoundException e) {
-            System.out.println("Service key not found.");
+            new IllegalStateException(e); 
         }
-        catch (Exception e) {
-            System.out.println("Firebase not initialized.");
+        catch (IOException e) {
+            new IllegalStateException(e);
         }
     }
  
-    private Firestore initializeFirebase() throws Exception {
+
+
+    public QueryDocumentSnapshot getDocument (String userEmail, String message) throws Exception {
+        String macroName = getMacroName(message);
+        
+        // Create a query to find a macro named macroName belonging to userEmail
+        Query query = db.collection("macros").whereEqualTo("creatorId", userEmail).whereEqualTo("macroName", macroName);
+        // Retrieve  query results asynchronously using query.get()
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        // Get the document representing the queried macro in firebase
+        QueryDocumentSnapshot document = querySnapshot.get().getDocuments().get(0);
+        return document;
+    }
+
+    private Firestore initializeFirebase () throws FileNotFoundException, IOException {
         FileInputStream serviceAccount;     
         serviceAccount = new FileInputStream("key.json");
             FirestoreOptions firestoreOptions =
@@ -59,14 +74,8 @@ public class FirebaseDataStorage implements DataStorage {
             return db;
     }
 
-    public Macro getMacro (String userEmail, String macroName) throws Exception {
-        // Create a query to find a macro named macroName belonging to userEmail
-        Query query = db.collection("macros").whereEqualTo("creatorId", userEmail).whereEqualTo("macroName", macroName);
-        // Retrieve  query results asynchronously using query.get()
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
-
-        // Get the document representing the queried macro in firebase
-        QueryDocumentSnapshot document = querySnapshot.get().getDocuments().get(0);
-        return new Macro(userEmail, macroName, document.getId());
+    private String getMacroName (String message) {
+        return message.split(" ", 0);
     }
+
 }
