@@ -75,7 +75,8 @@ public class FirebaseDataStorage implements DataStorage {
     }
 
     private String getMacroName (String message) {
-        return message.split(" ", 0);
+        String[] words = message.split(" ");
+        return words[0];
     }
 
 }
