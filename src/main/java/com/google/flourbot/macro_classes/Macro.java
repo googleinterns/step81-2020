@@ -7,22 +7,12 @@ public class Macro {
     public Trigger macroTrigger;
     public Action macroAction;
     
-    public Macro (String creatorId, String macroName, String docId) {
+    public Macro (String creatorId, String macroName, String docId, Trigger macroTrigger, Action macroAction) {
         this.creatorId = creatorId;
         this.macroName = macroName;
         this.docId = docId;
-    }
-
-    public void setCreatorId (String creatorId) {
-        this.creatorId = creatorId;
-    }
-
-    public void setMacroName (String macroName) {
-        this.macroName = macroName;
-    }
-
-    public void setDocId (String docId) {
-        this.docId = docId;
+        this.macroTrigger = macroTrigger;
+        this.macroAction = macroAction;
     }
 
     public String creatorId () {
@@ -35,13 +25,5 @@ public class Macro {
 
     public String getDocId () {
         return docId;
-    }
-
-    public void createMacroAction (String[] columnValue, String sheetAction, String sheetUrl, String actionType) {
-        macroAction = new Action(columnValue, sheetAction, sheetUrl, actionType);
-    }
-
-    public void createMacroTrigger (String triggerCommand, String triggerType) {
-        macroTrigger = new Trigger (triggerCommand, triggerType);
     }
 }
