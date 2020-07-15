@@ -8,8 +8,8 @@ public final class Trigger {
     private final String triggerType;  
 
     public Trigger (Map<String, Object> document) {
-        this.triggerCommand = document["command"];
-        this.triggerType = document["type"];
+        this.triggerCommand = (String) document.get("command");
+        this.triggerType = (String) document.get("type");
     }
 
 }

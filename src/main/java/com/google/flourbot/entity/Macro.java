@@ -1,6 +1,7 @@
 package com.google.flourbot.entity;
 
 import java.util.Map;
+import java.lang.Object;
 
 public final class Macro {
     private final String creatorId;
@@ -9,10 +10,10 @@ public final class Macro {
     private final Action macroAction;
     
     public Macro (Map<String, Object> document) {
-        this.creatorId = document["creatorId"];
-        this.macroName = document["macroName"];
-        this.macroTrigger = new Trigger(document["trigger"]);
-        this.macroAction = new Action(document["action"]);
+        this.creatorId = (String) document.get("creatorId");
+        this.macroName = (String) document.get("macroName");
+        this.macroTrigger = new Trigger((Map<String, Object>) document.get("trigger"));
+        this.macroAction = new Action((Map<String, Object>) document.get("action"));
     }
 
     public Action getAction() {
@@ -25,9 +26,5 @@ public final class Macro {
 
     public String getMacroName () {
         return macroName;
-    }
-
-    public String getDocId () {
-        return docId;
     }
 }

@@ -10,10 +10,10 @@ public final class Action {
     private final String actionType;
 
     public Action (Map<String, Object> document) {
-        this.columnValue = document["columnValue"];
-        this.sheetAction = document["sheetAction"];
-        this.sheetUrl = document["sheetUrl"];
-        this.actionType = document["type"];
+        this.columnValue = (String[]) document.get("columnValue");
+        this.sheetAction = (String) document.get("sheetAction");
+        this.sheetUrl = (String) document.get("sheetUrl");
+        this.actionType = (String) document.get("type");
     }
 
     public String[] getColumnValue() {

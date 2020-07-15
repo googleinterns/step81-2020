@@ -1,26 +1,38 @@
+package com.google.flourbot.executor;
+
+import com.google.flourbot.datastorage.FirebaseDataStorage;
+import com.google.flourbot.entity.Macro;
+import com.google.flourbot.entity.Trigger;
+import com.google.flourbot.entity.Action;
+
+import java.util.Map;
+import java.lang.Exception;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+
 // The Logic class of the server
 public class Executor {
 
     private final String userEmail;
-    private final DataStorage dataStorage;
+    private final FirebaseDataStorage dataStorage;
     
-    public Executor(String userEmail, DataStorage dataStorage) {
+    public Executor(String userEmail, FirebaseDataStorage dataStorage) throws Exception {
         this.userEmail = userEmail;
         this.dataStorage = dataStorage;
     }
 
 
-    public String execute(String payload) {
+    public String execute(String payload) throws Exception {
         
         String macroName = payload.split(" ")[0];
-        Map<String, Object> document = dataStorage.getDocument(userEmail, macroName); 
+        QueryDocumentSnapshot document = dataStorage.getDocument(userEmail, macroName); 
 
         if (document == null) {
-            throw Exception("Bot is not found");      
-        } else {
-            Macro macro = new Macro(document);
-        }
-
+            throw new Exception("Bot is not found");      
+        } 
+        
+        Map<String, Object> map = document.getData();
+        Macro macro = new Macro(map);
+        
         String actionType = macro.getAction().getSheetAction();
         switch (actionType) {
             case ("Sheet Action"):
@@ -28,7 +40,7 @@ public class Executor {
 
                 break;
             default: 
-                throw Exception("Unknown action type");
+                throw new Exception("Unknown action type");
         }
 
         return "Sucessfully executed";        
