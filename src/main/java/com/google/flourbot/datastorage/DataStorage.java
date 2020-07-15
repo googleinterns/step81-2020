@@ -1,4 +1,4 @@
-package com.firebaseserver.app;
+package com.google.flourbot.datastorage;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 
