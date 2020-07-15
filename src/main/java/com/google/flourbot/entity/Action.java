@@ -2,7 +2,7 @@ package com.google.flourbot.entity;
 
 import java.util.Map;
 
-public class Action {
+public final class Action {
 
     private final String[] columnValue; 
     private final String sheetAction;

@@ -1,7 +1,7 @@
-package com.firebaseserver.app;
+package com.google.flourbot.datastorage;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 
 public interface DataStorage {
-    QueryDocumentSnapshot getDocument (String userEmail, String message) throws Exception; 
+    QueryDocumentSnapshot getDocument (String userEmail, String macroName) throws Exception; 
 }
