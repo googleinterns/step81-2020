@@ -37,9 +37,7 @@ public class FirebaseDataStorage implements DataStorage {
  
 
 
-    public QueryDocumentSnapshot getDocument (String userEmail, String message) throws Exception {
-        String macroName = getMacroName(message);
-        
+    public QueryDocumentSnapshot getDocument (String userEmail, String macroName) throws Exception {
         // Create a query to find a macro named macroName belonging to userEmail
         Query query = db.collection("macros").whereEqualTo("creatorId", userEmail).whereEqualTo("macroName", macroName);
         // Retrieve  query results asynchronously using query.get()
@@ -61,10 +59,4 @@ public class FirebaseDataStorage implements DataStorage {
             Firestore db = firestoreOptions.getService();
             return db;
     }
-
-    private String getMacroName (String message) {
-        String[] words = message.split(" ");
-        return words[0];
-    }
-
 }
