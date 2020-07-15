@@ -16,4 +16,19 @@ public final class Action {
         this.actionType = document["type"];
     }
 
+    public String[] getColumnValue() {
+        return columnValue;
+    }
+
+    public String getSheetAction() {
+        return sheetAction;
+    }
+
+    public String getSheetUrl() {
+        return sheetUrl;
+    }
+
+    public String getActionType() {
+        return actionType;
+    }
 }

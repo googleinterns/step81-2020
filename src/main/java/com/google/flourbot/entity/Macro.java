@@ -15,6 +15,10 @@ public final class Macro {
         this.macroAction = new Action(document["action"]);
     }
 
+    public Action getAction() {
+        return macroAction;
+    }
+
     public String getCreatorId () {
         return creatorId;
     }

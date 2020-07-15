@@ -13,27 +13,25 @@ public class Executor {
     public String execute(String payload) {
         
         String macroName = payload.split(" ")[0];
-        Map<String, Object> document = dataStorage.getDocument(userEmail, macroName);
+        Map<String, Object> document = dataStorage.getDocument(userEmail, macroName); 
 
-        if (document != null) {
-
+        if (document == null) {
+            throw Exception("Bot is not found");      
         } else {
-
+            Macro macro = new Macro(document);
         }
-        
-        if (Json) {
-            switch (Json["Action"]["type"]) {
-                case ("Sheet Action") {
-                    String sheetURL = ...
-                    String content = ...
 
-                    GoogleAPI.append(sheetURL, content);
+        String actionType = macro.getAction().getSheetAction();
+        switch (actionType) {
+            case ("Sheet Action"):
+                //Document writer stuff
 
-                    return SUCCESS MESSAGE;
-                }                    
-            }
-        } else {
-            throw BotNotFoundException()
+                break;
+            default: 
+                throw Exception("Unknown action type");
         }
+
+        return "Sucessfully executed";        
     }
+
 } 
