@@ -10,7 +10,9 @@ Add example from: https://github.com/gsuitedevs/hangouts-chat-samples/tree/maste
 ## Maven
 ### Running locally
 
-    mvn appengine:run
+    mvn clean package appengine:run
+    
+    // If you get something similar to web.xml not found in target/../.., restart the VM :(
 
 ### Deploying
 
