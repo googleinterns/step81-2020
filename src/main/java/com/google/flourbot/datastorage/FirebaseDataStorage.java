@@ -14,7 +14,9 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.common.collect.ImmutableMap;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class FirebaseDataStorage implements DataStorage {
     private Firestore db;
