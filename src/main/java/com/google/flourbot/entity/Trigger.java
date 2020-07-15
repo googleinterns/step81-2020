@@ -1,13 +1,15 @@
 package com.google.flourbot.entity;
 
+import java.util.Map;
+
 public class Trigger {
     
-    public String triggerCommand;
-    public String triggerType;  
+    private final String triggerCommand;
+    private final String triggerType;  
 
-    public Trigger (String triggerCommand, String triggerType) {
-        this.triggerCommand = triggerCommand;
-        this.triggerType = triggerType;
+    public Trigger (Map<String, Object> document) {
+        this.triggerCommand = document["command"];
+        this.triggerType = document["type"];
     }
 
 }

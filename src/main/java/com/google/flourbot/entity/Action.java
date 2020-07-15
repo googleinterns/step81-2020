@@ -1,17 +1,19 @@
 package com.google.flourbot.entity;
 
+import java.util.Map;
+
 public class Action {
 
-    public String[] columnValue; 
-    public String sheetAction;
-    public String sheetUrl;
-    public String actionType;
+    private final String[] columnValue; 
+    private final String sheetAction;
+    private final String sheetUrl;
+    private final String actionType;
 
-    public Action (String[] columnValue, String sheetAction, String sheetUrl, String actionType) {
-        this.columnValue = columnValue;
-        this.sheetAction = sheetAction;
-        this.sheetUrl = sheetUrl;
-        this.actionType = actionType;
+    public Action (Map<String, Object> document) {
+        this.columnValue = document["columnValue"];
+        this.sheetAction = document["sheetAction"];
+        this.sheetUrl = document["sheetUrl"];
+        this.actionType = document["type"];
     }
 
 }

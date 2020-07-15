@@ -1,18 +1,18 @@
 package com.google.flourbot.entity;
 
+import java.util.Map;
+
 public final class Macro {
     private final String creatorId;
     private final String macroName;
-    private final String docId;
     private final Trigger macroTrigger;
     private final Action macroAction;
     
-    public Macro (String creatorId, String macroName, String docId, Object macroTrigger, Object macroAction) {
-        this.creatorId = creatorId;
-        this.macroName = macroName;
-        this.docId = docId;
-        this.macroTrigger = macroTrigger;
-        this.macroAction = macroAction;
+    public Macro (Map<String, Object> document) {
+        this.creatorId = document["creatorId"];
+        this.macroName = document["macroName"];
+        this.macroTrigger = new Trigger(document["trigger"]);
+        this.macroAction = new Action(document["action"]);
     }
 
     public String getCreatorId () {
