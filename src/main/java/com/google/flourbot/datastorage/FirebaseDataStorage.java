@@ -14,10 +14,14 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.common.collect.ImmutableMap;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class FirebaseDataStorage implements DataStorage {
     private Firestore db;
+    private static final String projectId = "stepladder-2020";
+    private static final String serviceAccountFilePath = "key.json";
 
     public FirebaseDataStorage () {
         try {
@@ -48,10 +52,10 @@ public class FirebaseDataStorage implements DataStorage {
 
     private Firestore initializeFirebase () throws FileNotFoundException, IOException {
         FileInputStream serviceAccount;     
-        serviceAccount = new FileInputStream("key.json");
+        serviceAccount = new FileInputStream(serviceAccountFilePath);
             FirestoreOptions firestoreOptions =
             FirestoreOptions.getDefaultInstance().toBuilder()
-                .setProjectId("stepladder-2020")
+                .setProjectId(projectId)
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build();
             Firestore db = firestoreOptions.getService();
