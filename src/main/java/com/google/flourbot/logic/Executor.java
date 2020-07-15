@@ -24,14 +24,6 @@ public class Executor {
     public String execute(String payload) throws Exception {
         
         String macroName = payload.split(" ")[0];
-        QueryDocumentSnapshot document = dataStorage.getDocument(userEmail, macroName); 
-
-        if (document == null) {
-            throw new Exception("Bot is not found");      
-        } 
-        
-        Map<String, Object> map = document.getData();
-        Macro macro = new Macro(map);
         
         String actionType = macro.getAction().getSheetAction();
         switch (actionType) {
