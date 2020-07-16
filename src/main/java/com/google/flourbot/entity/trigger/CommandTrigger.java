@@ -9,8 +9,8 @@ public final class CommandTrigger extends Trigger {
     private final TriggerType triggerType = Trigger.COMMAND_TRIGGER;
     private final String triggerCommand; 
 
-    public CommandTrigger(Map<String, Object> document) {
-        this.triggerCommand = (String) document.get("command");
+    public Trigger (String triggerCommand) {
+        this.triggerCommand = triggerCommand;
     }
 
     public TriggerType getTiggerType() {

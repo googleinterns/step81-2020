@@ -12,10 +12,10 @@ public final class SheetAppendAction extends Action {
     private final String sheetAction;
     private final String sheetUrl;
 
-    public SheetAppendAction (Map<String, Object> document) {
-        this.columnValue = (String[]) document.get("columnValue");
-        this.sheetAction = (String) document.get("sheetAction");
-        this.sheetUrl = (String) document.get("sheetUrl");
+    public Action (String[] columnValue, String sheetAction, String sheetUrl) {
+        this.columnValue = columnValue;
+        this.sheetAction = sheetAction;
+        this.sheetUrl = sheetUrl;
     }
 
     public String[] getColumnValue() {

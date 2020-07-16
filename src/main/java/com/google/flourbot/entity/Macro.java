@@ -12,11 +12,11 @@ public final class Macro {
     private final Trigger macroTrigger;
     private final Action macroAction;
     
-    public Macro (Map<String, Object> document) {
-        this.creatorId = (String) document.get("creatorId");
-        this.macroName = (String) document.get("macroName");
-        this.macroTrigger = new Trigger((Map<String, Object>) document.get("trigger"));
-        this.macroAction = new Action((Map<String, Object>) document.get("action"));
+    public Macro (String creatorId, String macroName, Trigger macroTrigger, Action macroAction) {
+        this.creatorId = creatorId;
+        this.macroName = macroName;
+        this.macroTrigger = macroTrigger;
+        this.macroAction = macroAction;
     }
 
     public Action getAction() {
