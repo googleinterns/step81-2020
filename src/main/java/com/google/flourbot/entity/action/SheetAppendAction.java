@@ -1,19 +1,21 @@
-package com.google.flourbot.entity;
+package com.google.flourbot.entity.action;
 
 import java.util.Map;
+import com.google.flourbot.entity.action.Action;
 
-public final class Action {
+
+public final class SheetAppendAction extends Action {
+
+    private final ActionType actionType = Action.SHEET_APPEND;
 
     private final String[] columnValue; 
     private final String sheetAction;
     private final String sheetUrl;
-    private final String actionType;
 
-    public Action (Map<String, Object> document) {
+    public SheetAppendAction (Map<String, Object> document) {
         this.columnValue = (String[]) document.get("columnValue");
         this.sheetAction = (String) document.get("sheetAction");
         this.sheetUrl = (String) document.get("sheetUrl");
-        this.actionType = (String) document.get("type");
     }
 
     public String[] getColumnValue() {
@@ -28,7 +30,7 @@ public final class Action {
         return sheetUrl;
     }
 
-    public String getActionType() {
+    public ActionType getActionType() {
         return actionType;
     }
 }

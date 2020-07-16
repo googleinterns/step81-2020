@@ -1,6 +1,11 @@
 package com.google.flourbot.entity;
 
-public class EntityModule extends EntityInterface {
+import com.google.flourbot.entity.EntityInterface;
+import com.google.flourbot.datastorage.FirebaseDataStorage;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import java.util.Map;
+
+public class EntityModule implements EntityInterface {
     
     private static EntityModule instance = null;
     private final FirebaseDataStorage datastorage;
