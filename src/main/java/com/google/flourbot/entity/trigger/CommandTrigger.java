@@ -6,10 +6,10 @@ import com.google.flourbot.entity.trigger.Trigger;
 
 public final class CommandTrigger extends Trigger {
     
-    private final TriggerType triggerType = Trigger.COMMAND_TRIGGER;
+    private final Trigger.TriggerType triggerType = Trigger.TriggerType.COMMAND_TRIGGER;
     private final String triggerCommand; 
 
-    public Trigger (String triggerCommand) {
+    public CommandTrigger (String triggerCommand) {
         this.triggerCommand = triggerCommand;
     }
 

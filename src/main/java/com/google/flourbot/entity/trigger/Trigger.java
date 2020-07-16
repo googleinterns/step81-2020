@@ -4,6 +4,6 @@ import java.util.Map;
 
 public abstract class Trigger {
     public enum TriggerType { COMMAND_TRIGGER }
-    public TriggerType getTiggerType();
+    public abstract TriggerType getTiggerType();
 }
 
