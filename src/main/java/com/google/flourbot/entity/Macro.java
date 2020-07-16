@@ -1,8 +1,5 @@
 package com.google.flourbot.entity;
 
-import java.util.Map;
-import java.lang.Object;
-
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.trigger.Trigger;
 

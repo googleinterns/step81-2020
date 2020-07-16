@@ -58,7 +58,7 @@ public class FirebaseDataStorage implements DataStorage {
         }
     }
 
-    private Firestore initializeFirebase () throws FileNotFoundException, IOException {
+    private Firestore initializeFirebase () throws IOException {
         FileInputStream serviceAccount;     
         serviceAccount = new FileInputStream(serviceAccountFilePath);
             FirestoreOptions firestoreOptions =

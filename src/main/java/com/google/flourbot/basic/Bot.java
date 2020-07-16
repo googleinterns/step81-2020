@@ -156,7 +156,7 @@ public class Bot {
         // make a new sheet and tell the user the ID and URL
         Spreadsheet requestBody = new Spreadsheet()
                       .setProperties(new SpreadsheetProperties()
-                        .setTitle("TEST 123"));;
+                        .setTitle("TEST 123"));
         Sheets.Spreadsheets.Create request = sheetsService.spreadsheets().create(requestBody);
         Spreadsheet response = request.execute();
         replyText = "ID: " + response.getSpreadsheetId() + "URL: " + response.getSpreadsheetUrl();

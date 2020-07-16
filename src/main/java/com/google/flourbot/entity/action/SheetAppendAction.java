@@ -1,9 +1,5 @@
 package com.google.flourbot.entity.action;
 
-import java.util.Map;
-import com.google.flourbot.entity.action.Action;
-
-
 public final class SheetAppendAction extends Action {
 
     private final ActionType actionType = ActionType.SHEET_APPEND;
