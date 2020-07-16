@@ -6,7 +6,7 @@ import com.google.flourbot.entity.action.Action;
 
 public final class SheetAppendAction extends Action {
 
-    private final Action.ActionType actionType = Action.ActionType.SHEET_APPEND;
+    private final ActionType actionType = ActionType.SHEET_APPEND;
 
     private final String[] columnValue; 
     private final String sheetAction;
