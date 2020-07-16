@@ -12,12 +12,12 @@ import java.lang.InterruptedException;
 import java.util.concurrent.ExecutionException;
 
 // The Logic class of the server
-public class Executor {
+public class MacroExecutionModuleImplementation {
 
     private final EntityModuleImplementation entityModuleImplementation;
     //TODO: Add GoogleSheetHandler here when ready.
 
-    public Executor(EntityModuleImplementation entityModuleImplementation) throws Exception {
+    public MacroExecutionModuleImplementation(EntityModuleImplementation entityModuleImplementation) throws Exception {
         this.entityModuleImplementation = EntityModuleImplementation.getInstance();
     }
 
