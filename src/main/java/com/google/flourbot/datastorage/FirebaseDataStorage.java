@@ -14,9 +14,12 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.common.collect.ImmutableMap;
 
+import java.util.Optional;
+
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.lang.InterruptedException;
 
 public class FirebaseDataStorage implements DataStorage {
     private Firestore db;
@@ -37,15 +40,27 @@ public class FirebaseDataStorage implements DataStorage {
  
 
 
-    public QueryDocumentSnapshot getDocument (String userEmail, String macroName) throws Exception {
-        // Create a query to find a macro named macroName belonging to userEmail
-        Query query = db.collection("macros").whereEqualTo("creatorId", userEmail).whereEqualTo("macroName", macroName);
-        // Retrieve  query results asynchronously using query.get()
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+    public Optional<QueryDocumentSnapshot> getDocument (String userEmail, String macroName) {
 
-        // Get the document representing the queried macro in firebase
-        QueryDocumentSnapshot document = querySnapshot.get().getDocuments().get(0);
-        return document;
+        try {
+            // Create a query to find a macro named macroName belonging to userEmail
+            Query query = db.collection("macros").whereEqualTo("creatorId", userEmail).whereEqualTo("macroName", macroName);
+            // Retrieve  query results asynchronously using query.get()
+            ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+            // Get the document representing the queried macro in firebase
+            QueryDocumentSnapshot document = querySnapshot.get().getDocuments().get(0);
+
+            // Use Optional.Empty() to indicate no macro is found.  
+            if (document.exists()) {
+                return Optional.of(document);
+            } else {
+                return Optional.empty();
+            }
+
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     private Firestore initializeFirebase () throws FileNotFoundException, IOException {

@@ -3,13 +3,15 @@ package com.google.flourbot.entity;
 import com.google.flourbot.entity.EntityInterface;
 import com.google.flourbot.datastorage.FirebaseDataStorage;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
+import java.util.Optional;
+import java.util.Map;
+import java.lang.Exception;
+
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.SheetAppendAction;
 import com.google.flourbot.entity.trigger.Trigger;
 import com.google.flourbot.entity.trigger.CommandTrigger;
-import java.util.Map;
 
-import java.lang.Exception;
 
 public class EntityModule implements EntityInterface {
     
@@ -20,44 +22,56 @@ public class EntityModule implements EntityInterface {
         this.datastorage = new FirebaseDataStorage();
     }
 
-    public Macro getMacro(String userEmail, String macroName) throws Exception {
-        QueryDocumentSnapshot document = this.datastorage.getDocument(userEmail, macroName); 
-        //TODO 
-        //Handle Java "Optional<QueryDocumentSnapshot>" once getDocument function is modified" 
+    public Optional<Macro> getMacro(String userEmail, String macroName) {
+        Optional<QueryDocumentSnapshot> optionalDocument = datastorage.getDocument(userEmail, macroName); 
+
+        if (!optionalDocument.isPresent()) {
+            // Handle the case if an empty document is returned.
+            return Optional.empty();
+        } 
+       
+        // Retrieve value from optional if it's not empty 
+        QueryDocumentSnapshot document = optionalDocument.get();
 
         Map<String, Object> macroMap = document.getData();
+
         Map<String, Object> triggerMap = (Map<String, Object>) macroMap.get("trigger");
         Map<String, Object> actionMap = (Map<String, Object>) macroMap.get("action");
 
-        String creatorId = (String) macroMap.get("creatorId");
-        Trigger trigger = getTrigger(triggerMap);
-        Action action = getAction(actionMap);
+        Optional<Trigger> optionalTrigger = getTrigger(triggerMap);
+        Optional<Action> optionalAction = getAction(actionMap);
 
+        if (!optionalTrigger.isPresent() || !optionalAction.isPresent()) {
+            return Optional.empty();
+        } 
+
+        Trigger trigger = optionalTrigger.get();
+        Action action = optionalAction.get();
+
+        String creatorId = (String) macroMap.get("creatorId");
         Macro macro = new Macro(creatorId, macroName, trigger, action);
 
-        return macro;
+        return Optional.of(macro);
     }
 
-    private Trigger getTrigger(Map<String, Object> triggerMap) throws Exception {
-
-        Trigger trigger;        
+    private Optional<Trigger> getTrigger(Map<String, Object> triggerMap) {
+        
         String triggerType = (String) triggerMap.get("type");
 
         switch(triggerType) {
             case ("Command Trigger"): 
                 String command = (String) triggerMap.get("command");
-                trigger = new CommandTrigger(command);
-                break;
-            default:
-                throw new Exception("No Trigger Type found");
-        }
+                Trigger trigger = new CommandTrigger(command);
 
-        return trigger;
+                return Optional.of(trigger);
+
+            default:
+                return Optional.empty();
+        }
     }
 
-    private Action getAction(Map<String, Object> actionMap) throws Exception {
+    private Optional<Action> getAction(Map<String, Object> actionMap) {
         
-        Action action;
         String actionType = (String) actionMap.get("type");
 
         switch(actionType) {
@@ -65,14 +79,13 @@ public class EntityModule implements EntityInterface {
                 String[] columnValue = (String[]) actionMap.get("columnValue");
                 String sheetAction = (String) actionMap.get("sheetAction");
                 String sheetUrl = (String) actionMap.get("sheetUrl");
+                Action action = new SheetAppendAction(columnValue, sheetAction, sheetUrl);
 
-                action = new SheetAppendAction(columnValue, sheetAction, sheetUrl);
-                break;
+                return Optional.of(action);
+
             default:
-                throw new Exception("No Action Type found");
+                return Optional.empty();
         }
-
-        return action;
     }
 
 
