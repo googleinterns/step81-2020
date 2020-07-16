@@ -12,6 +12,9 @@ import java.lang.Exception;
 import java.util.Optional;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 
+import java.lang.InterruptedException;
+import java.util.concurrent.ExecutionException;
+
 // The Logic class of the server
 public class Executor {
 
@@ -22,7 +25,7 @@ public class Executor {
         this.entityModule = EntityModule.getInstance();
     }
 
-    public String execute(String userEmail, String message) throws IllegalStateException {
+    public String execute(String userEmail, String message) throws IllegalStateException, InterruptedException, ExecutionException {
         
         String macroName = message.split(" ")[0];
 

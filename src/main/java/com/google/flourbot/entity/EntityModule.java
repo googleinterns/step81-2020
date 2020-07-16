@@ -12,6 +12,8 @@ import com.google.flourbot.entity.action.SheetAppendAction;
 import com.google.flourbot.entity.trigger.Trigger;
 import com.google.flourbot.entity.trigger.CommandTrigger;
 
+import java.lang.InterruptedException;
+import java.util.concurrent.ExecutionException;
 
 public class EntityModule implements EntityInterface {
     
@@ -22,7 +24,7 @@ public class EntityModule implements EntityInterface {
         this.datastorage = new FirebaseDataStorage();
     }
 
-    public Optional<Macro> getMacro(String userEmail, String macroName) {
+    public Optional<Macro> getMacro(String userEmail, String macroName) throws InterruptedException, ExecutionException {
         Optional<QueryDocumentSnapshot> optionalDocument = datastorage.getDocument(userEmail, macroName); 
 
         if (!optionalDocument.isPresent()) {

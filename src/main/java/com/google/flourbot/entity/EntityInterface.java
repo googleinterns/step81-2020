@@ -4,6 +4,9 @@ import java.lang.Exception;
 import java.util.Optional;
 import com.google.flourbot.datastorage.FirebaseDataStorage;
 
+import java.lang.InterruptedException;
+import java.util.concurrent.ExecutionException;
+
 public interface EntityInterface {
-    public Optional<Macro> getMacro(String userEmail, String macroName) throws Exception;
+    public Optional<Macro> getMacro(String userEmail, String macroName) throws InterruptedException, ExecutionException;
 }
