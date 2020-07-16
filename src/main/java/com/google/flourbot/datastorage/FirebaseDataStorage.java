@@ -14,9 +14,13 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.common.collect.ImmutableMap;
 
+import java.util.Optional;
+
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.lang.InterruptedException;
+import java.util.concurrent.ExecutionException;
 
 public class FirebaseDataStorage implements DataStorage {
     private Firestore db;
@@ -37,7 +41,7 @@ public class FirebaseDataStorage implements DataStorage {
  
 
 
-    public QueryDocumentSnapshot getDocument (String userEmail, String macroName) throws Exception {
+    public Optional<QueryDocumentSnapshot> getDocument (String userEmail, String macroName) throws InterruptedException, ExecutionException {
         // Create a query to find a macro named macroName belonging to userEmail
         Query query = db.collection("macros").whereEqualTo("creatorId", userEmail).whereEqualTo("macroName", macroName);
         // Retrieve  query results asynchronously using query.get()
@@ -45,7 +49,13 @@ public class FirebaseDataStorage implements DataStorage {
 
         // Get the document representing the queried macro in firebase
         QueryDocumentSnapshot document = querySnapshot.get().getDocuments().get(0);
-        return document;
+
+        // Use Optional.Empty() to indicate no macro is found.  
+        if (document.exists()) {
+            return Optional.of(document);
+        } else {
+            return Optional.empty();
+        }
     }
 
     private Firestore initializeFirebase () throws FileNotFoundException, IOException {
