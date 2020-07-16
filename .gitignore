@@ -1,2 +1,7 @@
 /src/main/resources/
 target/
+
+# Covers JetBrains IDEs: IntelliJ
+.idea
+*.iml
+*.ipr
