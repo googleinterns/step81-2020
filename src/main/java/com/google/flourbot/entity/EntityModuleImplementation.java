@@ -1,5 +1,6 @@
 package com.google.flourbot.entity;
 
+import com.google.flourbot.datastorage.DataStorage;
 import com.google.flourbot.datastorage.FirebaseDataStorage;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import java.util.Optional;
@@ -16,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 public class EntityModuleImplementation implements EntityModule {
     
     private static EntityModuleImplementation instance = null;
-    private final FirebaseDataStorage datastorage;
+    private final DataStorage datastorage;
 
     private EntityModuleImplementation() {
         this.datastorage = new FirebaseDataStorage();
