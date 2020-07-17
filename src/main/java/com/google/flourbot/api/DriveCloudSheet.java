@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class DriveCloudSheet implements CloudSheet {
+public class DriveCloudSheet implements CloudSheet {
   Sheets sheetsService;
   String spreadsheetId;
 

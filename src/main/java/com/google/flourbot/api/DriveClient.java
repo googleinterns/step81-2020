@@ -31,7 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-class DriveClient implements CloudDocClient {
+public class DriveClient implements CloudDocClient {
 
   static final String SPREADSHEET_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 
