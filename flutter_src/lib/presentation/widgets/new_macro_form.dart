@@ -8,6 +8,7 @@ import 'package:macrobaseapp/model/entities/action.dart' as entity;
 import 'package:macrobaseapp/model/entities/trigger.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 import 'package:macrobaseapp/presentation/navigation/main_navigator.dart';
+import 'package:macrobaseapp/presentation/widgets/drop_down_menu.dart';
 import 'package:macrobaseapp/presentation/widgets/macro_template_button.dart';
 import 'package:provider/provider.dart';
 
@@ -81,14 +82,16 @@ class _WizardFormState extends State<WizardForm> {
               children: <Widget>[
                 macro_template_button(
                   onPressed: () {
-                    FormBlocTemplate.setTemplate(FormBlocTemplate.DAILY_CHECK_IN, wizardFormBloc);
+                    FormBlocTemplate.setTemplate(
+                        FormBlocTemplate.DAILY_CHECK_IN, wizardFormBloc);
                   },
                   templateName: FormBlocTemplate.DAILY_CHECK_IN,
                   imagePath: "abstract-success.png",
                 ),
                 macro_template_button(
                   onPressed: () {
-                    FormBlocTemplate.setTemplate(FormBlocTemplate.FROM_SCRATCH, wizardFormBloc);
+                    FormBlocTemplate.setTemplate(
+                        FormBlocTemplate.FROM_SCRATCH, wizardFormBloc);
                   },
                   templateName: FormBlocTemplate.FROM_SCRATCH,
                   imagePath: "having-job.png",
@@ -147,13 +150,22 @@ class _WizardFormState extends State<WizardForm> {
               prefixIcon: Icon(Icons.book),
             ),
           ),
-          RaisedButton(
-            onPressed: () {
-              wizardFormBloc.actionSheetColumn.addFieldBloc(TextFieldBloc());
-            },
-            child: Text("Add Column",
-              style: Theme.of(context).textTheme.button,
-            )
+          Row(
+            children: [
+              Text(
+                "Specify Column Values: ",
+                style: Theme.of(context).textTheme.headline4,
+              ),
+              SizedBox(width: 50),
+              RaisedButton(
+                  onPressed: () {
+                    wizardFormBloc.actionSheetColumn.addFieldBloc(TextFieldBloc());
+                  },
+                  child: Text(
+                    "Add Column",
+                    style: Theme.of(context).textTheme.button,
+                  )),
+            ],
           ),
           BlocBuilder<ListFieldBloc<TextFieldBloc>,
               ListFieldBlocState<TextFieldBloc>>(
@@ -165,8 +177,15 @@ class _WizardFormState extends State<WizardForm> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: state.fieldBlocs.length,
                   itemBuilder: (context, i) {
-                    return TextFieldBlocBuilder(
-                      textFieldBloc: state.fieldBlocs[i],
+                    return Row(
+                      children: [
+                        MyStatefulWidget(),
+                        Flexible(
+                          child: TextFieldBlocBuilder(
+                            textFieldBloc: state.fieldBlocs[i],
+                          ),
+                        ),
+                      ],
                     );
                   },
                 );
