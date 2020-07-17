@@ -1,36 +1,41 @@
 package com.google.flourbot.execution;
 
+import com.google.flourbot.datastorage.DataStorage;
+import com.google.flourbot.datastorage.FirebaseDataStorage;
+import com.google.flourbot.entity.EntityModule;
 import com.google.flourbot.entity.EntityModuleImplementation;
 import com.google.flourbot.entity.Macro;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.ActionType;
 
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 // The Logic class of the server
 public class MacroExecutionModuleImplementation {
 
-  private final EntityModuleImplementation entityModuleImplementation;
-  // TODO: Add GoogleSheetHandler here when ready.
+  private final EntityModule entityModule;
 
-  public MacroExecutionModuleImplementation(EntityModuleImplementation entityModuleImplementation)
-      throws Exception {
-    this.entityModuleImplementation = EntityModuleImplementation.getInstance();
+  private MacroExecutionModuleImplementation(EntityModule entityModule) {
+    this.entityModule = entityModule;
   }
 
-  public String execute(String userEmail, String message)
-      throws IllegalStateException, InterruptedException, ExecutionException {
+  public static MacroExecutionModuleImplementation initalizeServer() {
+    DataStorage dataStorage = new FirebaseDataStorage();
+    EntityModule entityModule = new EntityModuleImplementation(dataStorage);
+
+    return new MacroExecutionModuleImplementation(entityModule);
+  }
+
+  public String execute(String userEmail, String message) {
 
     String macroName = message.split(" ")[0];
 
-    Optional<Macro> optionalMacro = entityModuleImplementation.getMacro(userEmail, macroName);
+    Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
-      throw new IllegalStateException("No macro named: " + macroName + " found!");
+      return "No macro of name: " + macroName + " found";
     }
 
-    Macro macro = optionalMacro.get();
-    Action action = macro.getAction();
+    Action action = optionalMacro.get().getAction();
     ActionType actionType = action.getActionType();
 
     switch (actionType) {

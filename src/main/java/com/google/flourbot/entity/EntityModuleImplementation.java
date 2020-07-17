@@ -2,7 +2,6 @@ package com.google.flourbot.entity;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.flourbot.datastorage.DataStorage;
-import com.google.flourbot.datastorage.FirebaseDataStorage;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.SheetAppendAction;
 import com.google.flourbot.entity.trigger.CommandTrigger;
@@ -10,19 +9,16 @@ import com.google.flourbot.entity.trigger.Trigger;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 public class EntityModuleImplementation implements EntityModule {
 
-  private static EntityModuleImplementation instance = null;
   private final DataStorage datastorage;
 
-  private EntityModuleImplementation() {
-    this.datastorage = new FirebaseDataStorage();
+  public EntityModuleImplementation(DataStorage dataStorage) {
+    this.datastorage = dataStorage;
   }
 
-  public Optional<Macro> getMacro(String userEmail, String macroName)
-      throws InterruptedException, ExecutionException {
+  public Optional<Macro> getMacro(String userEmail, String macroName) {
     Optional<QueryDocumentSnapshot> optionalDocument =
         datastorage.getDocument(userEmail, macroName);
 
@@ -89,11 +85,4 @@ public class EntityModuleImplementation implements EntityModule {
     }
   }
 
-  // Singleton Support
-  public static EntityModuleImplementation getInstance() {
-    if (instance == null) {
-      instance = new EntityModuleImplementation();
-    }
-    return instance;
-  }
 }
