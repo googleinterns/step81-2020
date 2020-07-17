@@ -13,8 +13,6 @@ import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.ActionType;
 import com.google.flourbot.entity.action.SheetAppendAction;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -25,16 +23,19 @@ import java.util.Optional;
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
 
   private final EntityModule entityModule;
+  private final DriveClient driveClient;
 
-  private MacroExecutionModuleImplementation(EntityModule entityModule) {
+  private MacroExecutionModuleImplementation(EntityModule entityModule, DriveClient driveClient) {
     this.entityModule = entityModule;
+    this.driveClient = driveClient;
   }
 
   public static MacroExecutionModuleImplementation initializeServer() {
     DataStorage dataStorage = new FirebaseDataStorage();
     EntityModule entityModule = new EntityModuleImplementation(dataStorage);
+    DriveClient driveClient = new DriveClient();
 
-    return new MacroExecutionModuleImplementation(entityModule);
+    return new MacroExecutionModuleImplementation(entityModule, driveClient);
   }
 
   public String execute(String userEmail, String message) {
@@ -65,9 +66,9 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         // Append values to first free bottom row of sheet
         SheetAppendAction a = (SheetAppendAction) optionalMacro.get().getAction();
         String documentId = a.getSheetId();
-        DriveClient cdc = new DriveClient();
-        CloudSheet cs = cdc.getCloudSheet(documentId);
-        cs.appendRow(values);
+
+        CloudSheet cloudSheet = driveClient.getCloudSheet(documentId);
+        cloudSheet.appendRow(values);
         break;
       default:
         throw new IllegalStateException(
