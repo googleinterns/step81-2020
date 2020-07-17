@@ -112,7 +112,7 @@ public class Bot {
     values.add(event.at("/message/sender/displayName").asText());
     values.add(event.at("/message/text").asText());
 
-    String documentId = "1199pOyaWIa67VpvJsKQ7NvxebyyznhAquxYYV9moZkc";
+    String documentId = "";
     DriveClient cdc = new DriveClient();
     CloudSheet cs = cdc.getCloudSheet(documentId);
     cs.appendRow(values);
