@@ -14,11 +14,10 @@ import java.util.concurrent.ExecutionException;
 
 public class EntityModuleImplementation implements EntityModule {
 
-  private static EntityModuleImplementation instance = null;
   private final DataStorage datastorage;
 
-  private EntityModuleImplementation() {
-    this.datastorage = new FirebaseDataStorage();
+  public EntityModuleImplementation(DataStorage dataStorage) {
+    this.datastorage = dataStorage;
   }
 
   public Optional<Macro> getMacro(String userEmail, String macroName)
@@ -89,11 +88,4 @@ public class EntityModuleImplementation implements EntityModule {
     }
   }
 
-  // Singleton Support
-  public static EntityModuleImplementation getInstance() {
-    if (instance == null) {
-      instance = new EntityModuleImplementation();
-    }
-    return instance;
-  }
 }
