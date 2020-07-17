@@ -1,20 +1,15 @@
 package com.google.flourbot.entity.trigger;
 
-import java.util.Map;
-
-import com.google.flourbot.entity.trigger.Trigger;
-
 public final class CommandTrigger extends Trigger {
-    
-    private final TriggerType triggerType = TriggerType.COMMAND_TRIGGER;
-    private final String triggerCommand; 
 
-    public CommandTrigger (String triggerCommand) {
-        this.triggerCommand = triggerCommand;
-    }
+  private final TriggerType triggerType = TriggerType.COMMAND_TRIGGER;
+  private final String triggerCommand;
 
-    public TriggerType getTiggerType() {
-        return this.triggerType;
-    }
+  public CommandTrigger(String triggerCommand) {
+    this.triggerCommand = triggerCommand;
+  }
 
+  public TriggerType getTiggerType() {
+    return this.triggerType;
+  }
 }
