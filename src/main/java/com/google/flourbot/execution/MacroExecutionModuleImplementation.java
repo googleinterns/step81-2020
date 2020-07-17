@@ -34,7 +34,7 @@ public class MacroExecutionModuleImplementation {
 
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
-      throw new IllegalStateException("No macro named: " + macroName + " found!");
+      return "No macro of name: " + macroName + " found";
     }
 
     Action action = optionalMacro.get().getAction();
