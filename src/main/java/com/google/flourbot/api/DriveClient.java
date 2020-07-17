@@ -1,10 +1,7 @@
-package com.google.flourbot.basic;
+package com.google.flourbot.api;
 
-// [START async-bot]
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -33,33 +30,34 @@ import java.util.logging.Logger;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-interface DriveDoc {
-  public void createService();
-  public void append();
-  public String createNew();
-}
+public class DriveClient implements CloudDocClient {
 
-class MySheet implements DriveDoc {
+  static final String SPREADSHEET_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 
-  public void createService() {}
+  public CloudSheet getCloudSheet(String documentId) throws IOException, GeneralSecurityException {
+    DriveCloudSheet cs = new DriveCloudSheet(documentId, this.createService());
+    return cs;
+  }
 
-  public void append() {}
-  
-  // May not use this method
-  public String createNew() {
-    // make a new sheet and tell the user the ID and URL
-    Spreadsheet requestBody = new Spreadsheet()
-                  .setProperties(new SpreadsheetProperties()
-                    .setTitle("TEST"));;
-    Sheets.Spreadsheets.Create request = sheetsService.spreadsheets().create(requestBody);
-    Spreadsheet response = request.execute();
+  private Sheets createService() throws IOException, GeneralSecurityException {
+    
+    // Set up credentials
+    JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+    NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+    GoogleCredentials credentials = GoogleCredentials.fromStream(
+            DriveClient.class.getResourceAsStream("/service-acct.json")
+    ).createScoped(SPREADSHEET_SCOPE);
+    HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
 
-    return response.getSpreadsheetId();
+    // Create sheetService
+    Sheets sheetsService = new Sheets.Builder(
+            httpTransport,
+            jsonFactory,
+            requestInitializer)
+          .setApplicationName("bot-sheets")
+          .build();
+
+    return sheetsService;
   }
 }
