@@ -38,15 +38,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.logging.Logger;
+
+import java.util.Arrays;
+import java.util.List;
 
 @SpringBootApplication
 @RestController
 public class Bot {
   static final String CHAT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
   static final String SPREADSHEET_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
-
-  ArrayList<String> SCOPES = new ArrayList<String>();
 
   private static final Logger logger = Logger.getLogger(Bot.class.getName());
 
@@ -55,18 +55,13 @@ public class Bot {
   }
 
   /**
-   * Handles a GET request to the /bot endpoint.
-   *
-   * @param event Event from chat.
-   * @return Message
-   */
+    * Handles a GET request to the /bot endpoint.
+    *
+    * @param event Event from chat.
+    * @return Message
+    */
   @PostMapping("/")
   public void onEvent(@RequestBody JsonNode event) throws IOException, GeneralSecurityException {
-
-    // TODO: Initialize these into ArrayList
-    SCOPES.add(CHAT_SCOPE);
-    SCOPES.add(SPREADSHEET_SCOPE);
-
     String replyText = "";
     switch (event.at("/type").asText()) {
       case "ADDED_TO_SPACE":
@@ -81,6 +76,10 @@ public class Bot {
         break;
       case "MESSAGE":
         String message = event.at("/message/text").asText();
+
+        // TODO: call execution module
+        String userEmail = event.at("/message/sender/email").asText();
+
         replyText = String.format("Your message: %s", message);
         break;
       case "REMOVED_FROM_SPACE":
@@ -93,47 +92,66 @@ public class Bot {
     }
 
     // [START async-response]
+    
+    // Scopes
+    ArrayList<String> scopes = new ArrayList<String>();
+    SCOPES.add(CHAT_SCOPE);
+    SCOPES.add(SPREADSHEET_SCOPE);
 
+    // Set up credentials etc
     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-    HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-
-    GoogleCredentials credentials =
-        GoogleCredentials.fromStream(Bot.class.getResourceAsStream("/service-acct.json"))
-            .createScoped(SCOPES);
+    NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+    GoogleCredentials credentials = GoogleCredentials.fromStream(
+            Bot.class.getResourceAsStream("/service-acct.json")
+    ).createScoped(scopes);
     HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
-    HangoutsChat chatService =
-        new HangoutsChat.Builder(httpTransport, jsonFactory, requestInitializer)
-            .setApplicationName("basic-async-bot-java")
-            .build();
 
-    // NEXT TASK:
-    // Now that we have sheetsService working, create a spreadsheet in my own drive, save the ID
-    // into a string
-    // Then, find out how to have the bot request access to edit the sheet (probably going to take
-    // the longest time to figure out)
-    // Look into:
-    // https://googleapis.dev/java/google-api-client/latest/com/google/api/client/googleapis/auth/oauth2/GoogleAuthorizationCodeFlow.html
-    // And more importantly:
-    // https://developers.google.com/api-client-library/java/google-api-java-client/oauth2
-    // once that works, figure out how to write (append) to the sheet
-    // After that, just build out the logic of reading and writing
 
-    // TODO: see if I can use the same GoogleNetHTTPtransport
+    // Create chat service
+    HangoutsChat chatService = new HangoutsChat.Builder(
+            GoogleNetHttpTransport.newTrustedTransport(),
+            jsonFactory,
+            requestInitializer)
+          .setApplicationName("bot-chat")
+          .build();
 
-    // Create sheetsservice
-    Sheets sheetsService =
-        new Sheets.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(), jsonFactory, requestInitializer)
-            .setApplicationName("Google-SheetsSample/0.1")
-            .build();
 
-    // make a new sheet and tell the user the ID and URL
-    Spreadsheet requestBody =
-        new Spreadsheet().setProperties(new SpreadsheetProperties().setTitle("TEST 123"));
-    Sheets.Spreadsheets.Create request = sheetsService.spreadsheets().create(requestBody);
-    Spreadsheet response = request.execute();
-    replyText = "ID: " + response.getSpreadsheetId() + "URL: " + response.getSpreadsheetUrl();
+    // Create sheetService
+    Sheets sheetsService = new Sheets.Builder(
+            httpTransport,
+            jsonFactory,
+            requestInitializer)
+          .setApplicationName("bot-sheets")
+          .build();
+    
 
+    // Generate request to append to sheet
+    // TODO: if cannot access file, have some error handling logic
+    // TODO: move this logic into an interface
+    String spreadsheetId = "";
+    String range = "Sheet1!A1:D1";
+    String valueInputOption = "USER_ENTERED";
+    String insertDataOption = "INSERT_ROWS";
+
+    ValueRange requestBody = new ValueRange();
+
+    String[] array = {"A", "B", "C", "D"};
+    List<List<Object>> v = Arrays.asList(
+      Arrays.asList(array)
+    );
+
+    requestBody.setValues(v);
+
+    Sheets.Spreadsheets.Values.Append request =
+      sheetsService.spreadsheets().values().append(spreadsheetId, range, requestBody);
+    request.setValueInputOption(valueInputOption);
+    request.setInsertDataOption(insertDataOption);
+    
+    AppendValuesResponse response = request.execute();
+
+    replyText = "ID: " + response.getSpreadsheetId();
+
+    // Generate and send request to post in chat room
     String spaceName = event.at("/space/name").asText();
     Message reply = new Message().setText(replyText);
     // If replying to a message, set thread name to keep conversation together
@@ -144,7 +162,6 @@ public class Bot {
     }
 
     chatService.spaces().messages().create(spaceName, reply).execute();
-
     // [END async-response]
   }
 }
