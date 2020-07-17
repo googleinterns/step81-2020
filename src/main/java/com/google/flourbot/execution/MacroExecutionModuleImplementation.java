@@ -8,7 +8,6 @@ import com.google.flourbot.entity.Macro;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.ActionType;
 
-import javax.crypto.Mac;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -38,8 +37,7 @@ public class MacroExecutionModuleImplementation {
       throw new IllegalStateException("No macro named: " + macroName + " found!");
     }
 
-    Macro macro = optionalMacro.get();
-    Action action = macro.getAction();
+    Action action = optionalMacro.get().getAction();
     ActionType actionType = action.getActionType();
 
     switch (actionType) {
