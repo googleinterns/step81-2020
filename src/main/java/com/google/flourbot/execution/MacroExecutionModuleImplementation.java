@@ -15,11 +15,17 @@ import java.util.concurrent.ExecutionException;
 // The Logic class of the server
 public class MacroExecutionModuleImplementation {
 
+  private final EntityModule entityModule;
+
+  private MacroExecutionModuleImplementation(EntityModule entityModule) {
+    this.entityModule = entityModule;
+  }
+
   public static MacroExecutionModuleImplementation initalizeServer() {
     DataStorage dataStorage = new FirebaseDataStorage();
     EntityModule entityModule = new EntityModuleImplementation(dataStorage);
 
-    return new MacroExecutionModuleImplementation();
+    return new MacroExecutionModuleImplementation(entityModule);
   }
 
   public String execute(String userEmail, String message)
@@ -27,7 +33,7 @@ public class MacroExecutionModuleImplementation {
 
     String macroName = message.split(" ")[0];
 
-    Optional<Macro> optionalMacro = entityModuleImplementation.getMacro(userEmail, macroName);
+    Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
       throw new IllegalStateException("No macro named: " + macroName + " found!");
     }
