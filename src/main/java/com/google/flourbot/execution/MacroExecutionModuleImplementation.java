@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 // The Logic class of the server
-public class MacroExecutionModuleImplementation {
+public class MacroExecutionModuleImplementation implements MacroExecutionModule {
 
   private final EntityModule entityModule;
 
@@ -37,7 +37,7 @@ public class MacroExecutionModuleImplementation {
     return new MacroExecutionModuleImplementation(entityModule);
   }
 
-  public String execute(String userEmail, String message) throws IOException, GeneralSecurityException {
+  public String execute(String userEmail, String message) {
 
     String macroName = message.split(" ")[0];
 

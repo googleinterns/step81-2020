@@ -35,29 +35,34 @@ public class DriveClient implements CloudDocClient {
 
   static final String SPREADSHEET_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 
-  public CloudSheet getCloudSheet(String documentId) throws IOException, GeneralSecurityException {
-    DriveCloudSheet cs = new DriveCloudSheet(documentId, this.createService());
-    return cs;
+  public CloudSheet getCloudSheet(String documentId) {
+      DriveCloudSheet cs = new DriveCloudSheet(documentId, this.createService());
+      return cs;
   }
 
-  private Sheets createService() throws IOException, GeneralSecurityException {
-    
-    // Set up credentials
-    JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-    NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-    GoogleCredentials credentials = GoogleCredentials.fromStream(
-            DriveClient.class.getResourceAsStream("/service-acct.json")
-    ).createScoped(SPREADSHEET_SCOPE);
-    HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
+  private Sheets createService() {
+    try {
+      // Set up credentials
+      JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+      NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+      GoogleCredentials credentials = GoogleCredentials.fromStream(
+              DriveClient.class.getResourceAsStream("/service-acct.json")
+      ).createScoped(SPREADSHEET_SCOPE);
+      HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
 
-    // Create sheetService
-    Sheets sheetsService = new Sheets.Builder(
-            httpTransport,
-            jsonFactory,
-            requestInitializer)
-          .setApplicationName("bot-sheets")
-          .build();
+      // Create sheetService
+      Sheets sheetsService = new Sheets.Builder(
+              httpTransport,
+              jsonFactory,
+              requestInitializer)
+              .setApplicationName("bot-sheets")
+              .build();
 
-    return sheetsService;
+      return sheetsService;
+    } catch (GeneralSecurityException e) {
+      throw new IllegalStateException(e);
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
   }
 }

@@ -21,7 +21,7 @@ public class DriveCloudSheet implements CloudSheet {
   }
 
   // TODO: replace hardcoded range with calculated range (so far values must be length 3)
-  public void appendRow(List<String> values) throws IOException, GeneralSecurityException {
+  public void appendRow(List<String> values) {
     
     // Generate request to append to sheet
     String range = "Sheet1!A1:C1";
@@ -37,24 +37,34 @@ public class DriveCloudSheet implements CloudSheet {
     
     requestBody.setValues(v);
 
-    Sheets.Spreadsheets.Values.Append request =
-      this.sheetsService.spreadsheets().values().append(this.spreadsheetId, range, requestBody);
-    request.setValueInputOption(valueInputOption);
-    request.setInsertDataOption(insertDataOption);
-    
-    AppendValuesResponse response = request.execute();
+    try {
+      Sheets.Spreadsheets.Values.Append request =
+              this.sheetsService.spreadsheets().values().append(this.spreadsheetId, range, requestBody);
+      request.setValueInputOption(valueInputOption);
+      request.setInsertDataOption(insertDataOption);
+
+      AppendValuesResponse response = request.execute();
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+
   }
   
   // May not use this method
-  public String createNew() throws IOException, GeneralSecurityException {
+  public String createNew() {
 
-    // make a new sheet and tell the user the ID and URL
-    Spreadsheet requestBody = new Spreadsheet()
-                  .setProperties(new SpreadsheetProperties()
-                    .setTitle("TEST"));;
-    Sheets.Spreadsheets.Create request = this.sheetsService.spreadsheets().create(requestBody);
-    Spreadsheet response = request.execute();
+    try {
+      // make a new sheet and tell the user the ID and URL
+      Spreadsheet requestBody = new Spreadsheet()
+                    .setProperties(new SpreadsheetProperties()
+                      .setTitle("TEST"));;
+      Sheets.Spreadsheets.Create request = this.sheetsService.spreadsheets().create(requestBody);
+      Spreadsheet response = request.execute();
 
-    return response.getSpreadsheetId();
+      return response.getSpreadsheetId();
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
   }
+
 }

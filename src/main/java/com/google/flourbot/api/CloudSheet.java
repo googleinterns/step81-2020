@@ -7,5 +7,5 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface CloudSheet {
-  public void appendRow(List<String> values) throws IOException, GeneralSecurityException;
+  public void appendRow(List<String> values);
 }
