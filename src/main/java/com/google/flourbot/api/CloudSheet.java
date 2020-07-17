@@ -6,6 +6,6 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 
-interface CloudSheet {
+public interface CloudSheet {
   public void appendRow(List<String> values) throws IOException, GeneralSecurityException;
 }

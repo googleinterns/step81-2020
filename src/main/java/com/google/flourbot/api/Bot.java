@@ -1,8 +1,7 @@
-/**
- */
 package com.google.flourbot.api;
 
-// [START async-bot]
+import com.google.flourbot.execution.MacroExecutionModuleImplementation;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.auth.oauth2.Credential;
@@ -70,12 +69,10 @@ public class Bot {
         }
         break;
       case "MESSAGE":
+        String email = event.at("/message/sender/email").asText();
         String message = event.at("/message/text").asText();
-
-        // TODO: call execution module
-        String userEmail = event.at("/message/sender/email").asText();
-
-        replyText = String.format("Your message: %s", message);
+        MacroExecutionModuleImplementation exec = MacroExecutionModuleImplementation.initializeServer();
+        replyText = exec.execute(email, message);
         break;
       case "REMOVED_FROM_SPACE":
         String name = event.at("/space/name").asText();
@@ -104,21 +101,6 @@ public class Bot {
           .setApplicationName("bot-chat")
           .build();
 
-    
-
-    // Make it work without execution module for now
-    ArrayList<String> values = new ArrayList<String>();
-    values.add("Today");
-    values.add(event.at("/message/sender/displayName").asText());
-    values.add(event.at("/message/text").asText());
-
-    String documentId = "";
-    DriveClient cdc = new DriveClient();
-    CloudSheet cs = cdc.getCloudSheet(documentId);
-    cs.appendRow(values);
-
-    // replyText = "ID: " + response.getSpreadsheetId();
-
     // Generate and send request to post in chat room
     String spaceName = event.at("/space/name").asText();
     Message reply = new Message().setText(replyText);
@@ -133,5 +115,3 @@ public class Bot {
     // [END async-response]
   }
 }
-
-// [END async-bot]
