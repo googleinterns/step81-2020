@@ -9,7 +9,6 @@ import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.ActionType;
 
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 // The Logic class of the server
 public class MacroExecutionModuleImplementation {
@@ -27,8 +26,7 @@ public class MacroExecutionModuleImplementation {
     return new MacroExecutionModuleImplementation(entityModule);
   }
 
-  public String execute(String userEmail, String message)
-      throws IllegalStateException, InterruptedException, ExecutionException {
+  public String execute(String userEmail, String message) {
 
     String macroName = message.split(" ")[0];
 
