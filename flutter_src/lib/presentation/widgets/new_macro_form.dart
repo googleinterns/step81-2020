@@ -154,10 +154,11 @@ class _WizardFormState extends State<WizardForm> {
             children: [
               Text(
                 "Specify Column Values: ",
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.headline6,
               ),
               SizedBox(width: 50),
               RaisedButton(
+                  color: Theme.of(context).colorScheme.secondary,
                   onPressed: () {
                     wizardFormBloc.actionSheetColumn.addFieldBloc(TextFieldBloc());
                   },
@@ -179,7 +180,10 @@ class _WizardFormState extends State<WizardForm> {
                   itemBuilder: (context, i) {
                     return Row(
                       children: [
-                        MyStatefulWidget(),
+                        MyStatefulWidget(
+                          options: entity.AppendAction.VALUE_LIST,
+                          bloc: state.fieldBlocs[i],
+                        ),
                         Flexible(
                           child: TextFieldBlocBuilder(
                             textFieldBloc: state.fieldBlocs[i],

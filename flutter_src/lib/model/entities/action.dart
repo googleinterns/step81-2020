@@ -31,7 +31,8 @@ class SheetAction extends Action {
 }
 
 class AppendAction extends SheetAction {
-  
+  static const List<String> VALUE_LIST = ["TIME", "EMAIL", "Variable"];
+
   final List<String> columnValue;
 
   AppendAction(
