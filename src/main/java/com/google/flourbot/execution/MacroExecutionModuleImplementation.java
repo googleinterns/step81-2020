@@ -24,17 +24,22 @@ import java.util.Optional;
 // The Logic class of the server
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
 
+  private MacroExecutionModuleImplementation instance = null;
   private final EntityModule entityModule;
 
   private MacroExecutionModuleImplementation(EntityModule entityModule) {
     this.entityModule = entityModule;
   }
 
-  public static MacroExecutionModuleImplementation initializeServer() {
-    DataStorage dataStorage = new FirebaseDataStorage();
-    EntityModule entityModule = new EntityModuleImplementation(dataStorage);
+  public static MacroExecutionModuleImplementation getMacroExecutionModule() {
+    if (instance == null) {
+      DataStorage dataStorage = new FirebaseDataStorage();
+      EntityModule entityModule = new EntityModuleImplementation(dataStorage);
 
-    return new MacroExecutionModuleImplementation(entityModule);
+      return new MacroExecutionModuleImplementation(entityModule);
+    } else {
+      return instance;
+    }
   }
 
   public String execute(String userEmail, String message) throws IOException, GeneralSecurityException {
