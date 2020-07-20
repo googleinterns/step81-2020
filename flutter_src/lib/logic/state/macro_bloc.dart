@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:macrobaseapp/logic/state/macro_bloc_validator.dart';
 import 'package:macrobaseapp/logic/usecases/macro_firestore/firestore_macro_operation.dart';
@@ -91,7 +93,7 @@ class WizardFormBloc extends FormBloc<String, String> {
           {
             action = new SheetAppendActionModel(
               sheetUrl: actionSheetUrl.value,
-              columnValue: ["1", "2", "3"],
+              columnValue: actionSheetColumn.value.map((bloc) => bloc.value).toList(),
             );
           }
           break;
@@ -115,7 +117,11 @@ class WizardFormBloc extends FormBloc<String, String> {
 
       uploadMacro(macro.toJson());
 
-      emitSuccess();
+      emitSuccess(
+        successResponse: JsonEncoder.withIndent('  ').convert(
+          macro.toJson(),
+        ),
+      );
     }
   }
 }
