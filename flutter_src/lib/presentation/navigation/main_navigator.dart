@@ -48,12 +48,11 @@ class _MainNavigatorState extends State<MainNavigator> {
             title: Text("Macrobase Platform"),
           ),
           drawer: Drawer(
-            child: ListView(
+            child: Column(
               children: <Widget>[
-                Container(
-                  child: DrawerHeader(
-                    child: CircleAvatar(),
-                  ),
+                ClipOval(
+                  child: Image.network(user.photoUrl,
+                      fit: BoxFit.fill, width: 150, height: 150),
                 ),
                 Container(
                   child: new Column(children: <Widget>[
