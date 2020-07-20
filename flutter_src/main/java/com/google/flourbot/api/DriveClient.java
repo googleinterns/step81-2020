@@ -46,7 +46,7 @@ public class DriveClient implements CloudDocClient {
       JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
       NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
       GoogleCredentials credentials = GoogleCredentials.fromStream(
-              DriveClient.class.getResourceAsStream("/stepladder-2020.json")
+              DriveClient.class.getResourceAsStream("/service-acct.json")
       ).createScoped(SPREADSHEET_SCOPE);
       HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
 

@@ -58,26 +58,26 @@ public class Bot {
   public void onEvent(@RequestBody JsonNode event) throws IOException, GeneralSecurityException {
     String replyText = "";
     switch (event.at("/type").asText()) {
-      case "ADDED_TO_SPACE":
-        String spaceType = event.at("/space/type").asText();
-        if ("ROOM".equals(spaceType)) {
-          String displayName = event.at("/space/displayName").asText();
-          replyText = String.format("Thanks for adding me to %s", displayName);
-        } else {
-          String displayName = event.at("/user/displayName").asText();
-          replyText = String.format("Thanks for adding me to a DM, %s!", displayName);
-        }
-        break;
-      case "MESSAGE":
-        String email = event.at("/message/sender/email").asText();
-        String message = event.at("/message/text").asText();
-        MacroExecutionModuleImplementation exec = MacroExecutionModuleImplementation.initializeServer();
-        replyText = exec.execute(email, message);
-        break;
-      case "REMOVED_FROM_SPACE":
-        String name = event.at("/space/name").asText();
-        logger.info(String.format("Bot removed from %s", name));
-        break;
+    //   case "ADDED_TO_SPACE":
+    //     String spaceType = event.at("/space/type").asText();
+    //     if ("ROOM".equals(spaceType)) {
+    //       String displayName = event.at("/space/displayName").asText();
+    //       replyText = String.format("Thanks for adding me to %s", displayName);
+    //     } else {
+    //       String displayName = event.at("/user/displayName").asText();
+    //       replyText = String.format("Thanks for adding me to a DM, %s!", displayName);
+    //     }
+    //     break;
+    //   case "MESSAGE":
+    //     String email = event.at("/message/sender/email").asText();
+    //     String message = event.at("/message/text").asText();
+    //     MacroExecutionModuleImplementation exec = MacroExecutionModuleImplementation.initializeServer();
+    //     replyText = exec.execute(email, message);
+    //     break;
+    //   case "REMOVED_FROM_SPACE":
+    //     String name = event.at("/space/name").asText();
+    //     logger.info(String.format("Bot removed from %s", name));
+    //     break;
       default:
         replyText = "Cannot determine event type";
         break;
@@ -89,7 +89,7 @@ public class Bot {
     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
     NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     GoogleCredentials credentials = GoogleCredentials.fromStream(
-            Bot.class.getResourceAsStream("/stepladder-2020.json")
+            Bot.class.getResourceAsStream("src/main/java/com/google/flourbot/stepladder-2020.json")
     ).createScoped(CHAT_SCOPE);
     HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
 

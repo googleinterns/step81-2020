@@ -18,7 +18,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 // The Logic class of the server
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
@@ -32,20 +31,11 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
   }
 
   public static MacroExecutionModuleImplementation initializeServer() {
+    DataStorage dataStorage = new FirebaseDataStorage();
+    EntityModule entityModule = new EntityModuleImplementation(dataStorage);
+    DriveClient driveClient = new DriveClient();
 
-    try {
-        DataStorage dataStorage = new FirebaseDataStorage();
-        EntityModule entityModule = new EntityModuleImplementation(dataStorage);
-        DriveClient driveClient = new DriveClient();
-
-        return new MacroExecutionModuleImplementation(entityModule, driveClient);
-
-    } catch (Exception e) {
-        Logger logger = Logger.getLogger(MacroExecutionModuleImplementation.class.getName());
-        logger.severe("Initalizer Mistake");
-        throw new IllegalStateException(e);
-    }
-    
+    return new MacroExecutionModuleImplementation(entityModule, driveClient);
   }
 
   public String execute(String userEmail, String message) {
