@@ -39,7 +39,7 @@ public class MacroExecutionModuleImplementation {
 
   public String execute(String userEmail, String message) throws IOException, GeneralSecurityException {
 
-    String macroName = message.split(" ")[0];
+    String macroName = message.split(" ")[1];
 
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
