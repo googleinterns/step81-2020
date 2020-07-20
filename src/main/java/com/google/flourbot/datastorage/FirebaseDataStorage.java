@@ -19,9 +19,9 @@ public class FirebaseDataStorage implements DataStorage {
     try {
       this.db = initializeFirebase();
     } catch (FileNotFoundException e) {
-      new IllegalStateException(e);
+      throw new IllegalStateException(e);
     } catch (IOException e) {
-      new IllegalStateException(e);
+      throw new IllegalStateException(e);
     }
   }
 
