@@ -148,6 +148,12 @@ class _WizardFormState extends State<WizardForm> {
             decoration: InputDecoration(
               labelText: 'The URL for sheet',
               prefixIcon: Icon(Icons.book),
+              suffixIcon: InkWell(
+                  borderRadius: BorderRadius.circular(25),
+                  child: Icon(Icons.help),
+                  onTap: () {
+                    // TODO
+                  }),
             ),
           ),
           Row(
@@ -156,11 +162,12 @@ class _WizardFormState extends State<WizardForm> {
                 "Specify Column Values: ",
                 style: Theme.of(context).textTheme.headline6,
               ),
-              SizedBox(width: 50),
+              SizedBox(width: 25),
               RaisedButton(
                   color: Theme.of(context).colorScheme.secondary,
                   onPressed: () {
-                    wizardFormBloc.actionSheetColumn.addFieldBloc(TextFieldBloc());
+                    wizardFormBloc.actionSheetColumn
+                        .addFieldBloc(TextFieldBloc());
                   },
                   child: Text(
                     "Add Column",
@@ -180,6 +187,13 @@ class _WizardFormState extends State<WizardForm> {
                   itemBuilder: (context, i) {
                     return Row(
                       children: [
+                        Container(
+                          width: 150,
+                          child: Text(
+                            "Column #" + i.toString() + " is  ",
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                        ),
                         MyStatefulWidget(
                           options: entity.AppendAction.VALUE_LIST,
                           bloc: state.fieldBlocs[i],
@@ -187,6 +201,16 @@ class _WizardFormState extends State<WizardForm> {
                         Flexible(
                           child: TextFieldBlocBuilder(
                             textFieldBloc: state.fieldBlocs[i],
+                            decoration: InputDecoration(
+                              suffixIcon: InkWell(
+                                  borderRadius: BorderRadius.circular(25),
+                                  child: Icon(Icons.delete),
+                                  onTap: () {
+                                    setState(() {
+                                      state.fieldBlocs.removeAt(i);
+                                    });
+                                  }),
+                            ),
                           ),
                         ),
                       ],

@@ -14,7 +14,7 @@ class FormBlocTemplate {
           formBloc.description.updateValue("Daily Check-in Bot records your teams' daily updates in a Google sheet");
 
           formBloc.actionType.updateValue(Action.SHEET_ACTION);
-          formBloc.actionSheetUrl.updateValue("COPY IN YOUR GOOGLE SHEET URL HERE");
+          formBloc.actionSheetUrl.updateValue("https://docs.google.com/spreadsheets/d/1xF3bB3-rpE5CelBm8TKZ9Qy_D0OSHXNc3YQxcfSvUfc/edit#gid=0");
         }
         break;
       case PASS_THE_BATON:
@@ -23,7 +23,7 @@ class FormBlocTemplate {
           formBloc.description.updateValue("Pass-the-Baton Bot randomly orders your team for daily-standup.");
 
           formBloc.actionType.updateValue(Action.SHEET_ACTION);
-          formBloc.actionSheetUrl.updateValue("COPY IN YOUR GOOGLE SHEET URL HERE");
+          formBloc.actionSheetUrl.updateValue("https://docs.google.com/spreadsheets/d/1xF3bB3-rpE5CelBm8TKZ9Qy_D0OSHXNc3YQxcfSvUfc/edit#gid=0");
         }
         break;
       case FROM_SCRATCH:
