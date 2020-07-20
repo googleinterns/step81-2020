@@ -38,7 +38,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
   }
 
   public String execute(String userEmail, String message) throws IOException, GeneralSecurityException {
-
+    // Get the first word after @MacroBot from the chat message (this is the name of the macro)
     String macroName = message.split(" ")[1];
 
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
