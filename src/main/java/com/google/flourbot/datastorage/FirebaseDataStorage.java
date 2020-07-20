@@ -4,6 +4,11 @@ import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.*;
 
+import com.google.firebase.cloud.FirestoreClient;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,6 +32,7 @@ public class FirebaseDataStorage implements DataStorage {
 
   public Optional<QueryDocumentSnapshot> getDocument(String userEmail, String macroName) {
     // Create a query to find a macro named macroName belonging to userEmail
+
     Query query =
         db.collection("macros")
             .whereEqualTo("creatorId", userEmail)
@@ -50,14 +56,18 @@ public class FirebaseDataStorage implements DataStorage {
   }
 
   private Firestore initializeFirebase() throws IOException {
-    FileInputStream serviceAccount;
-    serviceAccount = new FileInputStream(serviceAccountFilePath);
-    FirestoreOptions firestoreOptions =
-        FirestoreOptions.getDefaultInstance().toBuilder()
+
+    GoogleCredentials credentials = GoogleCredentials.fromStream(
+            FirebaseDataStorage.class.getResourceAsStream("/key.json")
+    );
+
+    FirebaseOptions options = new FirebaseOptions.Builder()
             .setProjectId(projectId)
-            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+            .setCredentials(credentials)
             .build();
-    Firestore db = firestoreOptions.getService();
-    return db;
+
+    FirebaseApp.initializeApp(options);
+    Firestore dbFirestore = FirestoreClient.getFirestore();
+    return dbFirestore;
   }
 }
