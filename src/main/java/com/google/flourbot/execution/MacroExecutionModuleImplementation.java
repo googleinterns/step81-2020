@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 // The Logic class of the server
-public class MacroExecutionModuleImplementation {
+public class MacroExecutionModuleImplementation implements MacroExecutionModule {
 
   private final EntityModule entityModule;
 
