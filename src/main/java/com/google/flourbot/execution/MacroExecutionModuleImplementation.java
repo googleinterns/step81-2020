@@ -50,7 +50,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
   public String execute(String userEmail, String message) {
 
-    String macroName = message.split(" ")[0];
+    String macroName = message.split(" ")[1];
 
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
