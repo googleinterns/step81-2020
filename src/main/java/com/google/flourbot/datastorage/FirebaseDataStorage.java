@@ -3,6 +3,7 @@ package com.google.flourbot.datastorage;
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.*;
+import com.google.auth.appengine.AppEngineCredentials;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -50,12 +51,13 @@ public class FirebaseDataStorage implements DataStorage {
   }
 
   private Firestore initializeFirebase() throws IOException {
-    FileInputStream serviceAccount;
-    serviceAccount = new FileInputStream(serviceAccountFilePath);
+    GoogleCredentials credentials = GoogleCredentials.fromStream(
+        FirebaseDataStorage.class.getResourceAsStream("/stepladder-2020.json")
+    );
     FirestoreOptions firestoreOptions =
         FirestoreOptions.getDefaultInstance().toBuilder()
             .setProjectId(projectId)
-            .setCredentials(GoogleCredentials.fromStream(this.getClass().getClassLoader().getResourceAsStream(serviceAccountFilePath)))
+            .setCredentials(credentials)
             .build();
     Firestore db = firestoreOptions.getService();
     return db;

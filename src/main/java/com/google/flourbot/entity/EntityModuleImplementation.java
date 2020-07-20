@@ -2,6 +2,7 @@ package com.google.flourbot.entity;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.flourbot.datastorage.DataStorage;
+import com.google.flourbot.datastorage.FirebaseDataStorage;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.SheetAppendAction;
 import com.google.flourbot.entity.trigger.CommandTrigger;
@@ -12,9 +13,9 @@ import java.util.Optional;
 
 public class EntityModuleImplementation implements EntityModule {
 
-  private final DataStorage datastorage;
+  private final  FirebaseDataStorage datastorage;
 
-  public EntityModuleImplementation(DataStorage dataStorage) {
+  public EntityModuleImplementation( FirebaseDataStorage dataStorage) {
     this.datastorage = dataStorage;
   }
 

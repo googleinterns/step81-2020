@@ -71,8 +71,14 @@ public class Bot {
       case "MESSAGE":
         String email = event.at("/message/sender/email").asText();
         String message = event.at("/message/text").asText();
-        MacroExecutionModuleImplementation exec = MacroExecutionModuleImplementation.initializeServer();
-        replyText = exec.execute(email, message);
+        replyText = email + message;
+        try {
+            MacroExecutionModuleImplementation exec = MacroExecutionModuleImplementation.initializeServer();
+            replyText = exec.execute(email, message);
+        } catch (Exception e) {
+            Logger logger = Logger.getLogger(Bot.class.getName());
+            logger.severe(e.toString());
+        }
         break;
       case "REMOVED_FROM_SPACE":
         String name = event.at("/space/name").asText();

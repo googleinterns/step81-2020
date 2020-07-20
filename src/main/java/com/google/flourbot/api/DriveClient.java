@@ -31,6 +31,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import com.google.auth.appengine.AppEngineCredentials;
+
 public class DriveClient implements CloudDocClient {
 
   static final String SPREADSHEET_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
@@ -46,7 +48,7 @@ public class DriveClient implements CloudDocClient {
       JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
       NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
       GoogleCredentials credentials = GoogleCredentials.fromStream(
-              DriveClient.class.getResourceAsStream("/stepladder-2020.json")
+            DriveClient.class.getResourceAsStream("/stepladder-2020.json")
       ).createScoped(SPREADSHEET_SCOPE);
       HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
 

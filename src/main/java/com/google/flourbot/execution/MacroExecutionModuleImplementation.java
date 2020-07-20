@@ -34,7 +34,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
   public static MacroExecutionModuleImplementation initializeServer() {
 
     try {
-        DataStorage dataStorage = new FirebaseDataStorage();
+        FirebaseDataStorage dataStorage = new FirebaseDataStorage();
         EntityModule entityModule = new EntityModuleImplementation(dataStorage);
         DriveClient driveClient = new DriveClient();
 
