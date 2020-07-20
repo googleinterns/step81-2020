@@ -50,7 +50,6 @@ public class Bot {
   public static void main(String[] args) {
     exec = MacroExecutionModuleImplementation.initializeServer();
     SpringApplication.run(Bot.class, args);
-    
   }
 
   /**
