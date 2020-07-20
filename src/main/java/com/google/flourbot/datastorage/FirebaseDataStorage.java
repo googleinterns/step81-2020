@@ -32,7 +32,6 @@ public class FirebaseDataStorage implements DataStorage {
 
   public Optional<QueryDocumentSnapshot> getDocument(String userEmail, String macroName) {
     // Create a query to find a macro named macroName belonging to userEmail
-
     Query query =
         db.collection("macros")
             .whereEqualTo("creatorId", userEmail)
