@@ -57,13 +57,13 @@ public class FirebaseDataStorage implements DataStorage {
 
   private Firestore initializeFirebase() throws IOException {
 
-    GoogleCredentials cred = GoogleCredentials.fromStream(
+    GoogleCredentials credentials = GoogleCredentials.fromStream(
             FirebaseDataStorage.class.getResourceAsStream("/key.json")
     );
 
     FirebaseOptions options = new FirebaseOptions.Builder()
             .setProjectId(projectId)
-            .setCredentials(cred)
+            .setCredentials(credentials)
             .build();
 
     FirebaseApp.initializeApp(options);

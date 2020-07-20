@@ -64,11 +64,7 @@ public class MacroExecutionModuleImplementation {
 
         // Append values to first free bottom row of sheet
         SheetAppendAction a = (SheetAppendAction) optionalMacro.get().getAction();
-        
-        
         String documentId = a.getSheetId();
-        //String documentId = "1xF3bB3-rpE5CelBm8TKZ9Qy_D0OSHXNc3YQxcfSvUfc";
-
         DriveClient cdc = new DriveClient();
         CloudSheet cs = cdc.getCloudSheet(documentId);
         cs.appendRow(values);
