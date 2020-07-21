@@ -27,7 +27,18 @@ public class FirebaseDataStorage implements DataStorage {
 
   public FirebaseDataStorage() {
     try {
-      this.db = initializeFirebase();
+      GoogleCredentials credentials = GoogleCredentials.fromStream(
+            FirebaseDataStorage.class.getResourceAsStream(SERVICE_ACCOUNT)
+      );
+
+      FirebaseOptions options = new FirebaseOptions.Builder()
+            .setProjectId(PROJECT_ID)
+            .setCredentials(credentials)
+            .build();
+
+      FirebaseApp.initializeApp(options);
+      this.db =  FirestoreClient.getFirestore();
+
     } catch (FileNotFoundException e) {
       throw new IllegalStateException(e);
     } catch (IOException e) {
@@ -54,20 +65,5 @@ public class FirebaseDataStorage implements DataStorage {
     } catch (ExecutionException e) {
       throw new IllegalStateException(e);
     }
-  }
-
-  private Firestore initializeFirebase() throws IOException {
-
-    GoogleCredentials credentials = GoogleCredentials.fromStream(
-            FirebaseDataStorage.class.getResourceAsStream(SERVICE_ACCOUNT)
-    );
-
-    FirebaseOptions options = new FirebaseOptions.Builder()
-            .setProjectId(PROJECT_ID)
-            .setCredentials(credentials)
-            .build();
-
-    FirebaseApp.initializeApp(options);
-    return FirestoreClient.getFirestore();
   }
 }
