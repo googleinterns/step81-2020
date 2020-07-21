@@ -7,7 +7,7 @@ class Action extends Equatable {
 
   final String type;
 
-  Action(@required this.type);
+  Action(this.type);
 
   @override
   List<Object> get props => [type];
@@ -37,8 +37,8 @@ class AppendAction extends SheetAction {
   final List<String> columnValue;
 
   AppendAction(
-    @required sheetUrl,
-    @required this.columnValue,
+    sheetUrl,
+    this.columnValue,
   ) : super(sheetUrl: sheetUrl, sheetAction: SheetAction.APPEND_ACTION);
 
   @override

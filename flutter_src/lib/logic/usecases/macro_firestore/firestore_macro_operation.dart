@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:macrobaseapp/logic/state/macro_notifier.dart';
 import 'package:macrobaseapp/model/adapters/macro_model.dart';

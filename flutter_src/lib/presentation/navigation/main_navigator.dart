@@ -1,7 +1,9 @@
-// Adapted from: https://medium.com/flutter-community/flutter-implementing-google-sign-in-71888bca24ed
+// Adapted from: https://medium.com/flutter-community/flutter-implementing-google-sign-in-71888bca24edimport 'package:macrobaseapp/presentation/navigation/side_drawer_widget.dart';import 'package:macrobaseapp/presentation/navigation/setting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:macrobaseapp/logic/usecases/login/firebase_auth.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
+import 'package:macrobaseapp/presentation/pages/setting_page.dart';
+import 'package:macrobaseapp/presentation/widgets/side_drawer_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../pages/macro_table_page.dart';
@@ -18,107 +20,44 @@ class _MainNavigatorState extends State<MainNavigator> {
     final user = Provider.of<User>(context);
 
     return DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.exit_to_app),
-                onPressed: () {
-                  context.read<FirebaseAuthService>().signOut();
-                },
-              )
-            ],
-            bottom: TabBar(
-              tabs: [
-                Tab(
-                  icon: Icon(Icons.add),
-                  text: 'New Macro',
-                ),
-                Tab(
-                  icon: Icon(Icons.view_list),
-                  text: 'Macro Instances',
-                ),
-                Tab(
-                  icon: Icon(Icons.settings),
-                  text: 'Setting',
-                ),
-              ],
-            ),
-            title: Text("Macrobase Platform"),
-          ),
-          drawer: Drawer(
-            child: Column(
-              children: <Widget>[
-                ClipOval(
-                  child: Image.network(user.photoUrl,
-                      fit: BoxFit.fill, width: 150, height: 150),
-                ),
-                Container(
-                  child: new Column(children: <Widget>[
-                    Text("${user.displayName}"),
-                    Text("${user.email}"),
-                  ]),
-                )
-              ],
-            ),
-          ),
-          body: TabBarView(
-            children: [
-              MyCustomForm(),
-              MacroTable(),
-              Center(
-                child: Column(
-                  children: [
-                    Text(
-                      "headline4",
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
-                    Text(
-                      "caption",
-                      style: Theme.of(context).textTheme.caption,
-                    ),
-                    Text(
-                      "headline5",
-                      style: Theme.of(context).textTheme.headline5,
-                    ),
-                    Text(
-                      "subtitle1",
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                    Text(
-                      "overline",
-                      style: Theme.of(context).textTheme.overline,
-                    ),
-                    Text(
-                      "bodyText1",
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                    Text(
-                      "subtitle2",
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                    Text(
-                      "bodyText2",
-                      style: Theme.of(context).textTheme.bodyText2,
-                    ),
-                    Text(
-                      "headline6",
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    Text(
-                      "button",
-                      style: Theme.of(context).textTheme.button,
-                    ),
-                  ],
-                ),
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.exit_to_app),
+              onPressed: () {
+                context.read<FirebaseAuthService>().signOut();
+              },
+            )
+          ],
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                icon: Icon(Icons.add),
+                text: 'New Macro',
+              ),
+              Tab(
+                icon: Icon(Icons.view_list),
+                text: 'Macro Instances',
+              ),
+              Tab(
+                icon: Icon(Icons.settings),
+                text: 'Setting',
               ),
             ],
           ),
-          floatingActionButton: FloatingActionButton(
-              tooltip: 'Add', // used by assistive technologies
-              child: Icon(Icons.add),
-              onPressed: null),
-        ));
+          title: Text("Macrobase Platform"),
+        ),
+        drawer: SideDrawerWidget(user: user),
+        body: TabBarView(
+          children: [
+            NewMacroPage(),
+            MacroTable(),
+            SettingPage(),
+          ],
+        ),
+      ),
+    );
   }
 }

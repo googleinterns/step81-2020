@@ -20,7 +20,12 @@ class MacroDetail extends StatelessWidget {
         title: Text(macroModel.macroName),
       ),
       body: Column(
-        children: [MacroDetailHeader(macroModel: macroModel)],
+        children: [
+          MacroDetailHeader(macroModel: macroModel),
+          Flexible(
+            child: Text(json),
+          ),
+        ],
       ),
     );
   }

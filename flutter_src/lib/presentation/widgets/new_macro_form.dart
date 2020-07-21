@@ -7,17 +7,16 @@ import 'package:macrobaseapp/logic/state/macro_bloc_template.dart';
 import 'package:macrobaseapp/model/entities/action.dart' as entity;
 import 'package:macrobaseapp/model/entities/trigger.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
-import 'package:macrobaseapp/presentation/navigation/main_navigator.dart';
 import 'package:macrobaseapp/presentation/widgets/drop_down_menu.dart';
-import 'package:macrobaseapp/presentation/widgets/macro_template_button.dart';
+import 'package:macrobaseapp/presentation/widgets/button/macro_template_button.dart';
 import 'package:provider/provider.dart';
 
-class WizardForm extends StatefulWidget {
+class NewMacroForm extends StatefulWidget {
   @override
-  _WizardFormState createState() => _WizardFormState();
+  _NewMacroFormState createState() => _NewMacroFormState();
 }
 
-class _WizardFormState extends State<WizardForm> {
+class _NewMacroFormState extends State<NewMacroForm> {
   var _type = StepperType.vertical;
 
   @override
@@ -82,7 +81,7 @@ class _WizardFormState extends State<WizardForm> {
               // This next line does the trick.
               scrollDirection: Axis.horizontal,
               children: <Widget>[
-                macro_template_button(
+                MacroTemplateButton(
                   onPressed: () {
                     FormBlocTemplate.setTemplate(
                         FormBlocTemplate.DAILY_CHECK_IN, wizardFormBloc);
@@ -90,7 +89,7 @@ class _WizardFormState extends State<WizardForm> {
                   templateName: FormBlocTemplate.DAILY_CHECK_IN,
                   imagePath: "abstract-success.png",
                 ),
-                macro_template_button(
+                MacroTemplateButton(
                   onPressed: () {
                     FormBlocTemplate.setTemplate(
                         FormBlocTemplate.FROM_SCRATCH, wizardFormBloc);
@@ -148,28 +147,21 @@ class _WizardFormState extends State<WizardForm> {
           Row(
             children: [
               Icon(Icons.add_box),
-    Flexible( child:
-              Text(
-                  "1. Create an empty Google sheet."
-              ))
+              Flexible(child: Text("1. Create an empty Google sheet."))
             ],
           ),
           Row(
             children: [
               Icon(Icons.add_box),
-    Flexible( child:
-              Text(
-                  "2. Add remindmebot@stepladder-2020.iam.gserviceaccount.com as an Editor"
-              ))
+              Flexible(
+                  child: Text(
+                      "2. Add remindmebot@stepladder-2020.iam.gserviceaccount.com as an Editor"))
             ],
           ),
           Row(
             children: [
               Icon(Icons.add_box),
-    Flexible( child:
-              Text(
-                  "3. Copy in the Sheet URL!"
-              ))
+              Flexible(child: Text("3. Copy in the Sheet URL!"))
             ],
           ),
           TextFieldBlocBuilder(
@@ -223,7 +215,7 @@ class _WizardFormState extends State<WizardForm> {
                             style: Theme.of(context).textTheme.headline6,
                           ),
                         ),
-                        MyStatefulWidget(
+                        DropDownForm(
                           options: entity.AppendAction.VALUE_LIST,
                           bloc: state.fieldBlocs[i],
                         ),

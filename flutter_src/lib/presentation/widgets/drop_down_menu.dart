@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 
-class MyStatefulWidget extends StatefulWidget {
-  MyStatefulWidget({Key key, @required this.options, @required this.bloc})
+class DropDownForm extends StatefulWidget {
+  DropDownForm({Key key, @required this.options, @required this.bloc})
       : super(key: key);
 
   final List<String> options;
   final TextFieldBloc bloc;
 
   @override
-  _MyStatefulWidgetState createState() =>
-      _MyStatefulWidgetState(options, bloc);
+  _DropDownFormState createState() =>
+      _DropDownFormState(options, bloc);
 }
 
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+class _DropDownFormState extends State<DropDownForm> {
   List<String> options;
   TextFieldBloc bloc;
   String dropdownValue;
 
-  _MyStatefulWidgetState(this.options, this.bloc) {
+  _DropDownFormState(this.options, this.bloc) {
     dropdownValue = options[0];
   }
 
@@ -30,8 +30,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         isExpanded: true,
         value: dropdownValue,
         icon: Icon(Icons.arrow_downward),
-//        iconSize: 24,
-//        elevation: 16,
         style: Theme.of(context).textTheme.subtitle1,
         underline: Container(
           height: 2,

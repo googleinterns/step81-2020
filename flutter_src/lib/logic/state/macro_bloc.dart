@@ -13,7 +13,7 @@ import 'package:macrobaseapp/model/entities/user.dart';
 class WizardFormBloc extends FormBloc<String, String> {
   final User user;
 
-  final macroName = TextFieldBloc(
+  TextFieldBloc macroName = TextFieldBloc(
     validators: [
       FieldBlocValidators.required,
     ],
@@ -21,13 +21,13 @@ class WizardFormBloc extends FormBloc<String, String> {
     name: 'Macro Name',
   );
 
-  final description = TextFieldBloc(
+  TextFieldBloc description = TextFieldBloc(
     validators: [
       FieldBlocValidators.required,
     ],
   );
 
-  final actionType = SelectFieldBloc(
+  SelectFieldBloc actionType = SelectFieldBloc(
     name: 'Action Type',
     validators: [
       FieldBlocValidators.required,
@@ -35,7 +35,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     items: [Model.Action.SHEET_ACTION, Model.Action.POLL_ACTION],
   );
 
-  final actionSheetUrl = TextFieldBloc(
+  TextFieldBloc actionSheetUrl = TextFieldBloc(
     name: "Sheet URL",
     validators: [
       FieldBlocValidators.required,
@@ -43,9 +43,9 @@ class WizardFormBloc extends FormBloc<String, String> {
     ],
   );
 
-  final actionSheetColumn = ListFieldBloc<TextFieldBloc>();
+  ListFieldBloc<TextFieldBloc> actionSheetColumn = ListFieldBloc<TextFieldBloc>();
 
-  final triggerType = SelectFieldBloc(
+  SelectFieldBloc triggerType = SelectFieldBloc(
     name: 'Trigger Type',
     validators: [
       FieldBlocValidators.required,
@@ -53,7 +53,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     items: [Trigger.COMMAND_BASED, Trigger.TIME_BASED],
   );
 
-  final triggerCommand = TextFieldBloc(
+  TextFieldBloc triggerCommand = TextFieldBloc(
     name: 'command',
     validators: [
       FieldBlocValidators.required,
@@ -78,16 +78,14 @@ class WizardFormBloc extends FormBloc<String, String> {
   @override
   void onSubmitting() async {
     if (state.currentStep == 0) {
-      await Future.delayed(Duration(milliseconds: 500));
       emitSuccess();
+
     } else if (state.currentStep == 1) {
       List<String> variables = actionSheetColumn.value.map((bloc) => "{" + bloc.value + "}" ).toList();
       String prefill = variables.join(" ");
       triggerCommand.updateValue(prefill);
       emitSuccess();
     } else if (state.currentStep == 2) {
-      await Future.delayed(Duration(milliseconds: 500));
-
       dynamic trigger;
       dynamic action;
 
@@ -118,6 +116,12 @@ class WizardFormBloc extends FormBloc<String, String> {
         action: action,
       );
 
+      List<dynamic> blocs = [macroName, description, actionType, actionSheetUrl, triggerType, triggerCommand];
+      blocs += actionSheetColumn.value.toList();
+      blocs.forEach((bloc) {
+        bloc.close();
+      });
+
       uploadMacro(macro.toJson());
 
       emitSuccess(
@@ -128,28 +132,4 @@ class WizardFormBloc extends FormBloc<String, String> {
     }
   }
 }
-
-//    //Expand hidden fields of trigger
-//    triggerTypeBloc.field.onValueChanges(onData: (_, current) async* {
-//      removeFieldBlocs(
-//        fieldBlocs: [commandTriggerFieldBloc.field, timeTriggerFieldBloc.field],
-//      );
-//      if (current.value == Trigger.COMMAND_BASED) {
-//        addFieldBlocs(fieldBlocs: [commandTriggerFieldBloc.field]);
-//      } else if (current.value == Trigger.TIME_BASED) {
-//        addFieldBlocs(fieldBlocs: [timeTriggerFieldBloc.field]);
-//      }
-//    });
-//
-//    actionTypeBloc.field.onValueChanges(onData: (_, current) async* {
-//      removeFieldBlocs(
-//        fieldBlocs: [pollActionFieldBloc.field, sheetUrlBloc.field],
-//      );
-//      if (current.value == Action.POLL_ACTION) {
-//        addFieldBlocs(fieldBlocs: [pollActionFieldBloc.field]);
-//      } else if (current.value == Action.SHEET_ACTION) {
-//        addFieldBlocs(fieldBlocs: [sheetUrlBloc.field]);
-//      }
-//    });
-//  }
 
