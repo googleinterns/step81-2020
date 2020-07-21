@@ -17,8 +17,8 @@ import java.util.concurrent.ExecutionException;
 
 public class FirebaseDataStorage implements DataStorage {
   private Firestore db;
-  private static final String projectId = "stepladder-2020";
-  private static final String serviceAccountFilePath = "key.json";
+  private static final String PROJECT_ID = "stepladder-2020";
+  private static final String SERVICE_ACCOUNT = "/key.json";
 
   public FirebaseDataStorage() {
     try {
@@ -31,7 +31,7 @@ public class FirebaseDataStorage implements DataStorage {
   }
 
   public Optional<QueryDocumentSnapshot> getDocument(String userEmail, String macroName) {
-      
+
     // Create a query to find a macro named macroName belonging to userEmail
     Query query =
         db.collection("macros")
@@ -58,11 +58,11 @@ public class FirebaseDataStorage implements DataStorage {
   private Firestore initializeFirebase() throws IOException {
 
     GoogleCredentials credentials = GoogleCredentials.fromStream(
-            FirebaseDataStorage.class.getResourceAsStream("/key.json")
+            FirebaseDataStorage.class.getResourceAsStream(SERVICE_ACCOUNT)
     );
 
     FirebaseOptions options = new FirebaseOptions.Builder()
-            .setProjectId(projectId)
+            .setProjectId(PROJECT_ID)
             .setCredentials(credentials)
             .build();
 
