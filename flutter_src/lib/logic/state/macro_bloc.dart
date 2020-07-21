@@ -81,6 +81,9 @@ class WizardFormBloc extends FormBloc<String, String> {
       await Future.delayed(Duration(milliseconds: 500));
       emitSuccess();
     } else if (state.currentStep == 1) {
+      List<String> variables = actionSheetColumn.value.map((bloc) => "{" + bloc.value + "}" ).toList();
+      String prefill = variables.join(" ");
+      triggerCommand.updateValue(prefill);
       emitSuccess();
     } else if (state.currentStep == 2) {
       await Future.delayed(Duration(milliseconds: 500));

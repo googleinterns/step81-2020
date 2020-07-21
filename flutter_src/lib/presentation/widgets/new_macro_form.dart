@@ -145,6 +145,30 @@ class _WizardFormState extends State<WizardForm> {
               ),
             ],
           ),
+          Row(
+            children: [
+              Icon(Icons.add_box),
+              Text(
+                  "1. Create an empty Google sheet."
+              )
+            ],
+          ),
+          Row(
+            children: [
+              Icon(Icons.add_box),
+              Text(
+                  "2. Add remindmebot@stepladder-2020.iam.gserviceaccount.com as an Editor"
+              )
+            ],
+          ),
+          Row(
+            children: [
+              Icon(Icons.add_box),
+              Text(
+                  "3. Copy in the Sheet URL!"
+              )
+            ],
+          ),
           TextFieldBlocBuilder(
             textFieldBloc: wizardFormBloc.actionSheetUrl,
             decoration: InputDecoration(
