@@ -83,8 +83,7 @@ public class Bot {
         logger.info(String.format("Bot removed from %s", name));
         break;
       default:
-        replyText = "Cannot determine event type";
-        break;
+        throw new IllegalArgumentException();
     }
 
     // [START async-response]
