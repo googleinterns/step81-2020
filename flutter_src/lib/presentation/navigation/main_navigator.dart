@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:macrobaseapp/logic/usecases/login/firebase_auth.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 import 'package:macrobaseapp/presentation/pages/setting_page.dart';
-import 'package:macrobaseapp/presentation/widgets/side_drawer_widget.dart';
+import 'package:macrobaseapp/presentation/widgets/component/side_drawer_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../pages/macro_table_page.dart';

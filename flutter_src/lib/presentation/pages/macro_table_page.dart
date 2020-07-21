@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:macrobaseapp/presentation/widgets/no_macro_illustration.dart';
-import 'package:macrobaseapp/presentation/widgets/macro_table_entry.dart';
+import 'package:macrobaseapp/presentation/widgets/misc/no_macro_illustration.dart';
+import 'package:macrobaseapp/presentation/widgets/component/macro_table_entry.dart';
 import 'package:macrobaseapp/logic/state/macro_notifier.dart';
 import 'package:macrobaseapp/logic/usecases/macro_firestore/firestore_macro_operation.dart';
 import 'package:macrobaseapp/model/entities/user.dart';

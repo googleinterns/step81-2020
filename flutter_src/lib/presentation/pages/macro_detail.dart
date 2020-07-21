@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:macrobaseapp/presentation/widgets/macro_detail_header.dart';
+import 'package:macrobaseapp/presentation/widgets/component/macro_detail_header.dart';
 
 import 'package:flutter/material.dart';
 import 'package:macrobaseapp/logic/state/macro_notifier.dart';

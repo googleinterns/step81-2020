@@ -30,6 +30,7 @@ class SheetAction extends Action {
   List<Object> get props => super.props..addAll([sheetUrl, sheetAction]);
 }
 
+
 class AppendAction extends SheetAction {
   // TODO: ENUM
   static const List<String> VALUE_LIST = ["EMPTY", "TIME", "EMAIL", "Variable"];
@@ -44,6 +45,7 @@ class AppendAction extends SheetAction {
   @override
   List<Object> get props => super.props..addAll([columnValue]);
 }
+
 
 // Defines a Poll action configuration
 class PollAction extends Action {

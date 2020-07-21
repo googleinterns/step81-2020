@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:macrobaseapp/presentation/widgets/new_macro_form.dart';
+import 'package:macrobaseapp/presentation/widgets/form/new_macro_form.dart';
 
 // Define a custom Form widget.
 class NewMacroPage extends StatefulWidget {

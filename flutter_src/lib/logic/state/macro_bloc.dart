@@ -75,15 +75,18 @@ class WizardFormBloc extends FormBloc<String, String> {
     );
   }
 
+  void preFillCommand() {
+    List<String> variables = actionSheetColumn.value.map((bloc) => "{" + bloc.value + "}" ).toList();
+    String prefill = variables.join(" ");
+    triggerCommand.updateValue(prefill);
+  }
+
   @override
   void onSubmitting() async {
     if (state.currentStep == 0) {
       emitSuccess();
-
     } else if (state.currentStep == 1) {
-      List<String> variables = actionSheetColumn.value.map((bloc) => "{" + bloc.value + "}" ).toList();
-      String prefill = variables.join(" ");
-      triggerCommand.updateValue(prefill);
+      preFillCommand();
       emitSuccess();
     } else if (state.currentStep == 2) {
       dynamic trigger;
@@ -116,8 +119,7 @@ class WizardFormBloc extends FormBloc<String, String> {
         action: action,
       );
 
-      List<dynamic> blocs = [macroName, description, actionType, actionSheetUrl, triggerType, triggerCommand];
-      blocs += actionSheetColumn.value.toList();
+      List<dynamic> blocs = [macroName, description, actionType, actionSheetUrl, triggerType, triggerCommand] + actionSheetColumn.value.toList();
       blocs.forEach((bloc) {
         bloc.close();
       });

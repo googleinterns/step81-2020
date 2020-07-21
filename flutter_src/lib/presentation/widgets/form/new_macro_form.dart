@@ -1,4 +1,6 @@
 import 'dart:html';
+import 'package:macrobaseapp/presentation/widgets/button/normal_button.dart';
+import 'package:macrobaseapp/presentation/widgets/form/hint_row.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
@@ -7,7 +9,7 @@ import 'package:macrobaseapp/logic/state/macro_bloc_template.dart';
 import 'package:macrobaseapp/model/entities/action.dart' as entity;
 import 'package:macrobaseapp/model/entities/trigger.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
-import 'package:macrobaseapp/presentation/widgets/drop_down_menu.dart';
+import 'package:macrobaseapp/presentation/widgets/form/drop_down_menu.dart';
 import 'package:macrobaseapp/presentation/widgets/button/macro_template_button.dart';
 import 'package:provider/provider.dart';
 
@@ -144,26 +146,11 @@ class _NewMacroFormState extends State<NewMacroForm> {
               ),
             ],
           ),
-          Row(
-            children: [
-              Icon(Icons.add_box),
-              Flexible(child: Text("1. Create an empty Google sheet."))
-            ],
-          ),
-          Row(
-            children: [
-              Icon(Icons.add_box),
-              Flexible(
-                  child: Text(
-                      "2. Add remindmebot@stepladder-2020.iam.gserviceaccount.com as an Editor"))
-            ],
-          ),
-          Row(
-            children: [
-              Icon(Icons.add_box),
-              Flexible(child: Text("3. Copy in the Sheet URL!"))
-            ],
-          ),
+          HintRow(hint: "1. Create an empty Google sheet."),
+          HintRow(
+              hint:
+                  "2. Add remindmebot@stepladder-2020.iam.gserviceaccount.com as an Editor"),
+          HintRow(hint: "3. Copy in the Sheet URL!"),
           TextFieldBlocBuilder(
             textFieldBloc: wizardFormBloc.actionSheetUrl,
             decoration: InputDecoration(
@@ -184,16 +171,14 @@ class _NewMacroFormState extends State<NewMacroForm> {
                 style: Theme.of(context).textTheme.headline6,
               ),
               SizedBox(width: 25),
-              RaisedButton(
-                  color: Theme.of(context).colorScheme.secondary,
-                  onPressed: () {
-                    wizardFormBloc.actionSheetColumn
-                        .addFieldBloc(TextFieldBloc());
-                  },
-                  child: Text(
-                    "Add Column",
-                    style: Theme.of(context).textTheme.button,
-                  )),
+              NormalButton(
+                context: context,
+                text: "Add Column",
+                onPress: () {
+                  wizardFormBloc.actionSheetColumn
+                      .addFieldBloc(TextFieldBloc());
+                },
+              ),
             ],
           ),
           BlocBuilder<ListFieldBloc<TextFieldBloc>,
