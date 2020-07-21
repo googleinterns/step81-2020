@@ -43,6 +43,7 @@ import java.util.List;
 @RestController
 public class Bot {
   static final String CHAT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
+  private static final String SERVICE_ACCOUNT = "/service-acct.json";
   private static final Logger logger = Logger.getLogger(Bot.class.getName());
 
   private static MacroExecutionModule macroExecutionModule;
@@ -92,7 +93,7 @@ public class Bot {
     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
     NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     GoogleCredentials credentials = GoogleCredentials.fromStream(
-            Bot.class.getResourceAsStream("/service-acct.json")
+            Bot.class.getResourceAsStream(SERVICE_ACCOUNT)
     ).createScoped(CHAT_SCOPE);
     HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
 
