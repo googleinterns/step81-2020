@@ -45,11 +45,7 @@ public class FirebaseDataStorage implements DataStorage {
     try {
       // Get the document representing the queried macro in firebase
       QueryDocumentSnapshot document = querySnapshot.get().getDocuments().get(0);
-      if (document.exists()) {
-        return Optional.of(document);
-      } else {
-        return Optional.empty();
-      }
+      return document.exists() ? Optional.of(document) : Optional.empty();
     } catch (InterruptedException e) {
       throw new IllegalStateException(e);
     } catch (ExecutionException e) {
