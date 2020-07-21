@@ -69,7 +69,6 @@ public class FirebaseDataStorage implements DataStorage {
             .build();
 
     FirebaseApp.initializeApp(options);
-    Firestore dbFirestore = FirestoreClient.getFirestore();
-    return dbFirestore;
+    return FirestoreClient.getFirestore();
   }
 }
