@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 // The Logic class of the server
-public class MacroExecutionModuleImplementation {
+public class MacroExecutionModuleImplementation implements MacroExecutionModule {
 
   private final EntityModule entityModule;
 
@@ -38,7 +38,7 @@ public class MacroExecutionModuleImplementation {
 
   public String execute(String userEmail, String message) throws IOException, GeneralSecurityException {
 
-    String macroName = message.split(" ")[0];
+    String macroName = message.split(" ")[1];
 
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {

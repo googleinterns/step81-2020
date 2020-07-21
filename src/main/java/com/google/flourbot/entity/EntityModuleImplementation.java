@@ -11,6 +11,11 @@ import com.google.flourbot.entity.trigger.Trigger;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.*;
 
 public class EntityModuleImplementation implements EntityModule {
 
@@ -86,7 +91,6 @@ public class EntityModuleImplementation implements EntityModule {
         String sheetUrl = (String) actionMap.get("sheetUrl");
 
         Action action = new SheetAppendAction(columnValue, sheetAction, sheetUrl);
-
         return Optional.of(action);
       default:
         return Optional.empty();

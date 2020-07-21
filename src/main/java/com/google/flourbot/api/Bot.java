@@ -44,8 +44,13 @@ public class Bot {
   static final String CHAT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
   private static final Logger logger = Logger.getLogger(Bot.class.getName());
 
+  //TODO: use interface
+  private static MacroExecutionModuleImplementation exec;
+
   public static void main(String[] args) {
+    exec = MacroExecutionModuleImplementation.initializeServer();
     SpringApplication.run(Bot.class, args);
+    
   }
 
   /**
@@ -71,7 +76,7 @@ public class Bot {
       case "MESSAGE":
         String email = event.at("/message/sender/email").asText();
         String message = event.at("/message/text").asText();
-        MacroExecutionModuleImplementation exec = MacroExecutionModuleImplementation.initializeServer();
+        // Sends request to execution module
         replyText = exec.execute(email, message);
         break;
       case "REMOVED_FROM_SPACE":
