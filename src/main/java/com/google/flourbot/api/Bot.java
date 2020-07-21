@@ -80,8 +80,7 @@ public class Bot {
         replyText = macroExecutionModule.execute(email, message);
         break;
       case "REMOVED_FROM_SPACE":
-        String name = event.at("/space/name").asText();
-        logger.info(String.format("Bot removed from %s", name));
+        logger.info("Bot removed from space");
         break;
       default:
         throw new IllegalArgumentException();
