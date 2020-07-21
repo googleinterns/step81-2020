@@ -33,7 +33,7 @@ class SheetAction extends Action {
 
 class AppendAction extends SheetAction {
   // TODO: ENUM
-  static const List<String> VALUE_LIST = ["EMPTY", "TIME", "EMAIL", "Variable"];
+  static const List<String> VALUE_LIST = ["EMPTY", "TIME", "EMAIL", "CONTENT"];
 
   final List<String> columnValue;
 

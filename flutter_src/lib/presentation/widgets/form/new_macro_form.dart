@@ -194,7 +194,7 @@ class _NewMacroFormState extends State<NewMacroForm> {
                     return Row(
                       children: [
                         Container(
-                          width: 150,
+                          width: 125,
                           child: Text(
                             "Column #" + i.toString() + " is  ",
                             style: Theme.of(context).textTheme.headline6,

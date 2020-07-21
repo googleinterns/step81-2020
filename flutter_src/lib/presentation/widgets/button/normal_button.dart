@@ -14,7 +14,7 @@ class NormalButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return RaisedButton(
         color: Theme.of(context).colorScheme.secondary,
-        onPressed: () {},
+        onPressed: onPress,
         child: Text(
           text,
           style: Theme.of(context).textTheme.button,

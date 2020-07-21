@@ -86,7 +86,8 @@ class WizardFormBloc extends FormBloc<String, String> {
     if (state.currentStep == 0) {
       emitSuccess();
     } else if (state.currentStep == 1) {
-      preFillCommand();
+      // Do not extract variables from message for now.
+      //preFillCommand();
       emitSuccess();
     } else if (state.currentStep == 2) {
       dynamic trigger;

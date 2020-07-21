@@ -1,9 +1,7 @@
 package com.google.flourbot.execution;
 
-import com.google.flourbot.api.CloudDocClient;
 import com.google.flourbot.api.DriveClient;
 import com.google.flourbot.api.CloudSheet;
-import com.google.flourbot.api.DriveCloudSheet;
 import com.google.flourbot.datastorage.DataStorage;
 import com.google.flourbot.datastorage.FirebaseDataStorage;
 import com.google.flourbot.entity.EntityModule;
@@ -11,7 +9,8 @@ import com.google.flourbot.entity.EntityModuleImplementation;
 import com.google.flourbot.entity.Macro;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.ActionType;
-import com.google.flourbot.entity.action.SheetAppendAction;
+import com.google.flourbot.entity.action.sheet.SheetAppendAction;
+import com.google.flourbot.entity.action.sheet.SheetEntryType;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -51,16 +50,43 @@ public class MacroExecutionModuleImplementation {
 
     switch (actionType) {
       case SHEET_APPEND:
-        // Create timestamp
-        LocalDateTime myDateObj = LocalDateTime.now();
-        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedDate = myDateObj.format(myFormatObj);
 
+        // Read instructions on what to write
+
+        SheetEntryType[] columns = ((SheetAppendAction) action).getColumnValue();
         // Prepare values to write into the sheet
         ArrayList<String> values = new ArrayList<String>();
-        values.add(formattedDate);
-        values.add(userEmail);
-        values.add(message);
+
+        for (SheetEntryType type : columns) {
+          switch (type) {
+
+            case TIME:
+              // Create timestamp
+              LocalDateTime myDateObj = LocalDateTime.now();
+              DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+              String formattedDate = myDateObj.format(myFormatObj);
+
+              values.add(formattedDate);
+              break;
+
+            case EMAIL:
+              values.add(userEmail);
+              break;
+
+            case CONTENT:
+              values.add(message);
+              break;
+
+            case EMPTY:
+              values.add("");
+              break;
+
+            default:
+              values.add("");
+              break;
+
+          }
+        }
 
         // Append values to first free bottom row of sheet
         SheetAppendAction a = (SheetAppendAction) optionalMacro.get().getAction();

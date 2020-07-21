@@ -25,7 +25,7 @@ class _DropDownFormState extends State<DropDownForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
+      width: 120,
       child: DropdownButton<String>(
         isExpanded: true,
         value: dropdownValue,
