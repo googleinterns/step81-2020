@@ -94,6 +94,14 @@ class _NewMacroFormState extends State<NewMacroForm> {
                 MacroTemplateButton(
                   onPressed: () {
                     FormBlocTemplate.setTemplate(
+                        FormBlocTemplate.PASS_THE_BATON, wizardFormBloc);
+                  },
+                  templateName: FormBlocTemplate.PASS_THE_BATON,
+                  imagePath: "abstract-no-comments.png",
+                ),
+                MacroTemplateButton(
+                  onPressed: () {
+                    FormBlocTemplate.setTemplate(
                         FormBlocTemplate.FROM_SCRATCH, wizardFormBloc);
                   },
                   templateName: FormBlocTemplate.FROM_SCRATCH,
@@ -148,9 +156,31 @@ class _NewMacroFormState extends State<NewMacroForm> {
           ),
           HintRow(hint: "1. Create an empty Google sheet."),
           HintRow(
-              hint:
-                  "2. Add remindmebot@stepladder-2020.iam.gserviceaccount.com as an Editor"),
+            hint: "2. Add remindmebot@stepladder-2020.iam.gserviceaccount.com as an Editor",
+          ),
           HintRow(hint: "3. Copy in the Sheet URL!"),
+          Container(
+            alignment: Alignment.centerLeft,
+            child: ButtonBar(
+                mainAxisSize: MainAxisSize.min, // this will take space as minimum as posible(to center)
+                children: <Widget>[
+                  NormalButton(
+                    context: context,
+                    text: "Spreadsheet Write",
+                    onPress: () {
+
+                    },
+                  ),
+                  NormalButton(
+                    context: context,
+                    text: "Spreadsheet Read",
+                    onPress: () {
+                      
+                    },
+                  ),
+                ]
+            ),
+          ),
           TextFieldBlocBuilder(
             textFieldBloc: wizardFormBloc.actionSheetUrl,
             decoration: InputDecoration(

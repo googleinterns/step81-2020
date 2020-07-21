@@ -13,7 +13,7 @@ class NormalButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.secondaryVariant,
         onPressed: onPress,
         child: Text(
           text,
