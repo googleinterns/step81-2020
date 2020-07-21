@@ -78,8 +78,8 @@ public class EntityModuleImplementation implements EntityModule {
 
     switch (actionType) {
       case ("Sheet Action"):
-        ArrayList<String> colVal = (ArrayList<String>) actionMap.get("columnValue");
-        String[] columnValue = colVal.stream().toArray(String[]::new);
+        ArrayList<String> colValList = (ArrayList<String>) actionMap.get("columnValue");
+        String[] columnValue = colValList.stream().toArray(String[]::new);
         String sheetAction = (String) actionMap.get("sheetAction");
         String sheetUrl = (String) actionMap.get("sheetUrl");
         Action action = new SheetAppendAction(columnValue, sheetAction, sheetUrl);
