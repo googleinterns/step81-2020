@@ -1,5 +1,6 @@
 package com.google.flourbot.api;
 
+import com.google.flourbot.execution.MacroExecutionModule;
 import com.google.flourbot.execution.MacroExecutionModuleImplementation;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -44,13 +45,11 @@ public class Bot {
   static final String CHAT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
   private static final Logger logger = Logger.getLogger(Bot.class.getName());
 
-  //TODO: use interface
-  private static MacroExecutionModuleImplementation exec;
+  private static MacroExecutionModule macroExecutionModule;
 
   public static void main(String[] args) {
-    exec = MacroExecutionModuleImplementation.initializeServer();
+    macroExecutionModule = MacroExecutionModuleImplementation.initializeServer();
     SpringApplication.run(Bot.class, args);
-    
   }
 
   /**
@@ -77,7 +76,7 @@ public class Bot {
         String email = event.at("/message/sender/email").asText();
         String message = event.at("/message/text").asText();
         // Sends request to execution module
-        replyText = exec.execute(email, message);
+        replyText = macroExecutionModule.execute(email, message);
         break;
       case "REMOVED_FROM_SPACE":
         String name = event.at("/space/name").asText();
