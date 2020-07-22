@@ -1,3 +1,6 @@
+/*
+ * Interface for module that reads/writes to sheet documents.
+ */
 package com.google.flourbot.api;
 
 import java.io.IOException;

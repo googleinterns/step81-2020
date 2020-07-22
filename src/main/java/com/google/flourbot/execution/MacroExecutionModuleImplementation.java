@@ -21,6 +21,8 @@ import java.util.ArrayList;
 
 import java.util.Optional;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 // The Logic class of the server
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
@@ -73,19 +75,9 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
     switch (actionType) {
       case SHEET_APPEND:
-        // Create timestamp
-        LocalDateTime myDateObj = LocalDateTime.now();
-        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedDate = myDateObj.format(myFormatObj);
-
-        // Prepare values to write into the sheet
-        ArrayList<String> values = new ArrayList<String>();
-        values.add(formattedDate);
-        values.add(userEmail);
-        values.add(message);
-
-        // Append values to first free bottom row of sheet
+        // Append values to first free bottom row of sheet, 
         SheetAppendAction a = (SheetAppendAction) optionalMacro.get().getAction();
+        List<String> values = getWriteData(a.getColumnValue(), userEmail, message);
         String documentId = a.getSheetId();
         CloudSheet cs = this.cloudDocClient.getCloudSheet(documentId);
         cs.appendRow(values);
@@ -97,5 +89,39 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
     // TODO: Return a response object
     return "Sucessfully executed";
+  }
+
+  private List<String> getWriteData(String[] columnTypes, String userEmail, String message) {
+    // Return values for write request, based on the information types to be in each column
+    
+    // TODO: Is there a better way than passing the userEmail and message?
+
+    List<String> values = new ArrayList<String>();
+
+    for (String cv : columnTypes) {
+      switch(cv) {
+        case "TIME":
+                  values.add(this.getDate("dd-MM-yyyy HH:mm:ss"));
+                  break;
+        case "EMAIL":
+                  values.add(userEmail);
+                  break;
+        case "CONTENT":
+                  values.add(message);
+                  break;
+        default: // unrecognized will give empty column - should we throw except?
+                  values.add("");
+                  break;
+      }
+    }
+
+    return values;
+  }
+
+  private String getDate(String pattern) {
+    // Create timestamp based on pattern provided
+    LocalDateTime myDateObj = LocalDateTime.now();
+    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(pattern);
+    return myDateObj.format(myFormatObj);
   }
 }
