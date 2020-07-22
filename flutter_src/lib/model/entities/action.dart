@@ -7,7 +7,7 @@ class Action extends Equatable {
 
   final String type;
 
-  Action(@required this.type);
+  Action(this.type);
 
   @override
   List<Object> get props => [type];
@@ -16,7 +16,8 @@ class Action extends Equatable {
 
 // Defines the operation to append a row to a Google Sheet
 class SheetAction extends Action {
-  static const String APPEND_ACTION = "Sheet Append Action";
+  static const String APPEND_ACTION = "Append Action";
+  static const String READ_ACTION = "Read Action";
 
   final String sheetUrl;
   final String sheetAction;
@@ -30,17 +31,22 @@ class SheetAction extends Action {
   List<Object> get props => super.props..addAll([sheetUrl, sheetAction]);
 }
 
+
 class AppendAction extends SheetAction {
+  // TODO: ENUM
+  static const List<String> VALUE_LIST = ["EMPTY", "TIME", "EMAIL", "CONTENT"];
+
   final List<String> columnValue;
 
   AppendAction(
-    @required sheetUrl,
-    @required this.columnValue,
+    sheetUrl,
+    this.columnValue,
   ) : super(sheetUrl: sheetUrl, sheetAction: SheetAction.APPEND_ACTION);
 
   @override
   List<Object> get props => super.props..addAll([columnValue]);
 }
+
 
 // Defines a Poll action configuration
 class PollAction extends Action {

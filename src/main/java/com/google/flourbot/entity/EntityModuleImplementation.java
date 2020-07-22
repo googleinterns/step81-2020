@@ -3,10 +3,12 @@ package com.google.flourbot.entity;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.flourbot.datastorage.DataStorage;
 import com.google.flourbot.entity.action.Action;
-import com.google.flourbot.entity.action.SheetAppendAction;
+import com.google.flourbot.entity.action.sheet.SheetAppendAction;
+import com.google.flourbot.entity.action.sheet.SheetEntryType;
 import com.google.flourbot.entity.trigger.CommandTrigger;
 import com.google.flourbot.entity.trigger.Trigger;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Collections;
@@ -78,10 +80,18 @@ public class EntityModuleImplementation implements EntityModule {
 
     switch (actionType) {
       case ("Sheet Action"):
-        ArrayList<String> colVal = (ArrayList<String>) actionMap.get("columnValue");
-        String[] columnValue = colVal.stream().toArray(String[]::new);
+
+        ArrayList<String> columnStringList = (ArrayList<String>) actionMap.get("columnValue");
+        // Converts into ENUM type
+        ArrayList<SheetEntryType> columnTypeList = new ArrayList<>();
+        for (String type : columnStringList) {
+            columnTypeList.add(SheetEntryType.valueOf(type));
+        }
+        SheetEntryType[] columnValue = columnTypeList.stream().toArray(SheetEntryType[]::new);
+
         String sheetAction = (String) actionMap.get("sheetAction");
         String sheetUrl = (String) actionMap.get("sheetUrl");
+
         Action action = new SheetAppendAction(columnValue, sheetAction, sheetUrl);
         return Optional.of(action);
       default:
