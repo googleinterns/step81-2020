@@ -83,8 +83,10 @@ public class EntityModuleImplementation implements EntityModule {
 
         ArrayList<String> columnStringList = (ArrayList<String>) actionMap.get("columnValue");
         // Converts into ENUM type
-        ArrayList<SheetEntryType> columnTypeList =
-            (ArrayList<SheetEntryType>) columnStringList.stream().map(type -> SheetEntryType.valueOf(type));
+        ArrayList<SheetEntryType> columnTypeList = new ArrayList<>();
+        for (String type : columnStringList) {
+            columnTypeList.add(SheetEntryType.valueOf(type));
+        }
         SheetEntryType[] columnValue = columnTypeList.stream().toArray(SheetEntryType[]::new);
 
         String sheetAction = (String) actionMap.get("sheetAction");
