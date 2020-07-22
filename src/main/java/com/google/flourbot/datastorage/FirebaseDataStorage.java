@@ -40,18 +40,23 @@ public class FirebaseDataStorage implements DataStorage {
     // Retrieve  query results asynchronously using query.get()
     ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
+    // Get the document representing the queried macro in firebase
+
+    QueryDocumentSnapshot document = null;
     try {
-      // Get the document representing the queried macro in firebase
-      QueryDocumentSnapshot document = querySnapshot.get().getDocuments().get(0);
-      if (document.exists()) {
-        return Optional.of(document);
-      } else {
-        return Optional.empty();
-      }
+      document = querySnapshot.get().getDocuments().get(0);
+    } catch (IndexOutOfBoundsException e) {
+      throw new IllegalStateException(e);
     } catch (InterruptedException e) {
       throw new IllegalStateException(e);
     } catch (ExecutionException e) {
       throw new IllegalStateException(e);
+    }
+
+    if (document.exists()) {
+      return Optional.of(document);
+    } else {
+      return Optional.empty();
     }
   }
 
