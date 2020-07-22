@@ -76,43 +76,12 @@ class WizardFormBloc extends FormBloc<String, String> {
     );
     addFieldBlocs(
       step: 1,
-      fieldBlocs: [actionType, sheetActionType, actionSheetUrl, actionSheetColumn],
+      fieldBlocs: [sheetActionType, actionSheetUrl, actionSheetColumn],
     );
     addFieldBlocs(
       step: 2,
-      fieldBlocs: [triggerType, triggerCommand],
+      fieldBlocs: [triggerCommand],
     );
-
-    actionTypeSetup();
-    sheetActionSetup();
-    triggerTypeSetup();
-  }
-
-  void triggerTypeSetup() {
-    triggerType.onValueChanges(onData: (_, current) async* {
-      removeFieldBlocs(fieldBlocs: [triggerCommand]);
-      if (current.value == Trigger.COMMAND_BASED) {
-        addFieldBlocs(step: 2, fieldBlocs: [triggerCommand]);
-      }
-    });
-  }
-
-  void actionTypeSetup() {
-    actionType.onValueChanges(onData: (_, current) async* {
-      removeFieldBlocs(fieldBlocs: [sheetActionType, actionSheetUrl]);
-      if (current.value == Action.SHEET_ACTION) {
-        addFieldBlocs(step: 1, fieldBlocs: [sheetActionType, actionSheetUrl]);
-      }
-    });
-  }
-
-  void sheetActionSetup() {
-    sheetActionType.onValueChanges(onData: (_, current) async* {
-      removeFieldBlocs(fieldBlocs: [actionSheetColumn]);
-      if (current.value == SheetAction.APPEND_ACTION) {
-        addFieldBlocs(step: 1, fieldBlocs: [actionSheetColumn]);
-      }
-    });
   }
 
   void preFillCommand() {

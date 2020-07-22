@@ -288,13 +288,13 @@ class _SheetActionFormState extends State<SheetActionForm> {
           BlocBuilder<SelectFieldBloc, SelectFieldBlocState>(
               bloc: wizardFormBloc.sheetActionType,
               builder: (context, state) {
-//                if (state.value == entity.SheetAction.APPEND_ACTION){
-//                  return SheetAppendActionForm(
-//                    wizardFormBloc: wizardFormBloc,
-//                  );
-//                } else {
+                if (state.value == entity.SheetAction.APPEND_ACTION){
+                  return SheetAppendActionForm(
+                    wizardFormBloc: wizardFormBloc,
+                  );
+                } else {
                   return Container();
-//                }
+                }
               }),
         ],
       ),
