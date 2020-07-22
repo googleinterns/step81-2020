@@ -36,8 +36,7 @@ public class DriveClient implements CloudDocClient {
   static final String SPREADSHEET_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 
   public CloudSheet getCloudSheet(String documentId) throws IOException, GeneralSecurityException {
-    DriveCloudSheet cs = new DriveCloudSheet(documentId, this.createService());
-    return cs;
+    return new DriveCloudSheet(documentId, this.createService());
   }
 
   private Sheets createService() throws IOException, GeneralSecurityException {
@@ -51,13 +50,11 @@ public class DriveClient implements CloudDocClient {
     HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
 
     // Create sheetService
-    Sheets sheetsService = new Sheets.Builder(
+    return new Sheets.Builder(
             httpTransport,
             jsonFactory,
             requestInitializer)
           .setApplicationName("bot-sheets")
           .build();
-
-    return sheetsService;
   }
 }
