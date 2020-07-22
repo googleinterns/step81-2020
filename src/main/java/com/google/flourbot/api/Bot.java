@@ -74,16 +74,17 @@ public class Bot {
         }
         break;
       case "MESSAGE":
+        // Sends request to execution module
         String email = event.at("/message/sender/email").asText();
         String message = event.at("/message/text").asText();
-        // Sends request to execution module
-        replyText = macroExecutionModule.execute(email, message);
+        String threadId = event.at("/message/thread/name").asText();
+        replyText = macroExecutionModule.execute(email, message, threadId);
         break;
       case "REMOVED_FROM_SPACE":
         logger.info("Bot removed from space");
         break;
       default:
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException(event.at("/type").asText());
     }
 
     // [START async-response]
