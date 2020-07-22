@@ -45,7 +45,7 @@ class _NewMacroFormState extends State<NewMacroForm> {
                   content: Text(state.successResponse),
                   duration: Duration(seconds: 2),
                 ));
-//                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => MainNavigator()));
+                // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => MainNavigator()));
               }
             },
             onFailure: (context, state) {
@@ -154,111 +154,15 @@ class _NewMacroFormState extends State<NewMacroForm> {
               ),
             ],
           ),
-          HintRow(hint: "1. Create an empty Google sheet."),
-          HintRow(
-            hint:
-                "2. Add remindmebot@stepladder-2020.iam.gserviceaccount.com as an Editor",
-          ),
-          HintRow(hint: "3. Copy in the Sheet URL!"),
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.actionSheetUrl,
-            decoration: InputDecoration(
-              labelText: 'The URL for sheet',
-              prefixIcon: Icon(Icons.book),
-              suffixIcon: InkWell(
-                borderRadius: BorderRadius.circular(25),
-                child: Icon(Icons.help),
-                onTap: () {
-                  // TODO
-                },
-              ),
-            ),
-          ),
-          RadioButtonGroupFieldBlocBuilder(
-            selectFieldBloc: wizardFormBloc.sheetActionType,
-            itemBuilder: (context, item) => item,
-            decoration: InputDecoration(
-              labelText: 'Select Sheet Action Type',
-              prefixIcon: SizedBox(),
-            ),
-          ),
           BlocBuilder<SelectFieldBloc, SelectFieldBlocState>(
-              bloc: wizardFormBloc.sheetActionType,
+              bloc: wizardFormBloc.actionType,
               builder: (context, state) {
-                if (state.value != entity.SheetAction.APPEND_ACTION) {
+                if (state.value == entity.Action.SHEET_ACTION) {
+                  return SheetActionForm(wizardFormBloc: wizardFormBloc);
+                } else {
                   return Container();
                 }
-                return Container(
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "Specify Column Values: ",
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                          SizedBox(width: 25),
-                          NormalButton(
-                            context: context,
-                            text: "Add Column",
-                            onPress: () {
-                              wizardFormBloc.actionSheetColumn
-                                  .addFieldBloc(TextFieldBloc());
-                            },
-                          ),
-                        ],
-                      ),
-                      BlocBuilder<ListFieldBloc<TextFieldBloc>,
-                          ListFieldBlocState<TextFieldBloc>>(
-                        bloc: wizardFormBloc.actionSheetColumn,
-                        builder: (context, state) {
-                          if (state.fieldBlocs.isNotEmpty && state.fieldBlocs != null) {
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: state.fieldBlocs.length,
-                              itemBuilder: (context, i) {
-                                return Row(
-                                  children: [
-                                    Container(
-                                      width: 125,
-                                      child: Text(
-                                        "Column #" + i.toString() + " is  ",
-                                        style: Theme.of(context).textTheme.headline6,
-                                      ),
-                                    ),
-                                    DropDownForm(
-                                      options: entity.AppendAction.VALUE_LIST,
-                                      bloc: state.fieldBlocs[i],
-                                    ),
-                                    Flexible(
-                                      child: TextFieldBlocBuilder(
-                                        textFieldBloc: state.fieldBlocs[i],
-                                        decoration: InputDecoration(
-                                          suffixIcon: InkWell(
-                                              borderRadius: BorderRadius.circular(25),
-                                              child: Icon(Icons.delete),
-                                              onTap: () {
-                                                setState(() {
-                                                  state.fieldBlocs.removeAt(i);
-                                                });
-                                              }),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          }
-                          return Container();
-                        },
-                      )
-                    ],
-                  ),
-                );
               }),
-
         ],
       ),
     );
@@ -331,6 +235,155 @@ class LoadingDialog extends StatelessWidget {
             child: CircularProgressIndicator(),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class SheetActionForm extends StatefulWidget {
+  final WizardFormBloc wizardFormBloc;
+  const SheetActionForm({Key key, this.wizardFormBloc}) : super(key: key);
+
+  @override
+  _SheetActionFormState createState() => _SheetActionFormState(wizardFormBloc);
+}
+
+class _SheetActionFormState extends State<SheetActionForm> {
+  final WizardFormBloc wizardFormBloc;
+  _SheetActionFormState(this.wizardFormBloc);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          HintRow(hint: "1. Create an empty Google sheet."),
+          HintRow(
+            hint:
+                "2. Add remindmebot@stepladder-2020.iam.gserviceaccount.com as an Editor",
+          ),
+          HintRow(hint: "3. Copy in the Sheet URL!"),
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.actionSheetUrl,
+            decoration: InputDecoration(
+              labelText: 'The URL for sheet',
+              prefixIcon: Icon(Icons.book),
+              suffixIcon: InkWell(
+                borderRadius: BorderRadius.circular(25),
+                child: Icon(Icons.help),
+                onTap: () {
+                  // TODO
+                },
+              ),
+            ),
+          ),
+          RadioButtonGroupFieldBlocBuilder(
+            selectFieldBloc: wizardFormBloc.sheetActionType,
+            itemBuilder: (context, item) => item,
+            decoration: InputDecoration(
+              labelText: 'Select Sheet Action Type',
+              prefixIcon: SizedBox(),
+            ),
+          ),
+          BlocBuilder<SelectFieldBloc, SelectFieldBlocState>(
+              bloc: wizardFormBloc.sheetActionType,
+              builder: (context, state) {
+//                if (state.value == entity.SheetAction.APPEND_ACTION){
+//                  return SheetAppendActionForm(
+//                    wizardFormBloc: wizardFormBloc,
+//                  );
+//                } else {
+                  return Container();
+//                }
+              }),
+        ],
+      ),
+    );
+  }
+}
+
+class SheetAppendActionForm extends StatefulWidget {
+  final WizardFormBloc wizardFormBloc;
+  const SheetAppendActionForm({Key key, this.wizardFormBloc}) : super(key: key);
+
+  @override
+  _SheetAppendActionFormState createState() =>
+      _SheetAppendActionFormState(wizardFormBloc);
+}
+
+class _SheetAppendActionFormState extends State<SheetAppendActionForm> {
+  final WizardFormBloc wizardFormBloc;
+  _SheetAppendActionFormState(this.wizardFormBloc);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                "Specify Column Values: ",
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              SizedBox(width: 25),
+              NormalButton(
+                context: context,
+                text: "Add Column",
+                onPress: () {
+                  wizardFormBloc.actionSheetColumn
+                      .addFieldBloc(TextFieldBloc());
+                },
+              ),
+            ],
+          ),
+          BlocBuilder<ListFieldBloc<TextFieldBloc>,
+              ListFieldBlocState<TextFieldBloc>>(
+            bloc: wizardFormBloc.actionSheetColumn,
+            builder: (context, state) {
+              if (state.fieldBlocs.isNotEmpty) {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: state.fieldBlocs.length,
+                  itemBuilder: (context, i) {
+                    return Row(
+                      children: [
+                        Container(
+                          width: 125,
+                          child: Text(
+                            "Column #" + i.toString() + " is  ",
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                        ),
+                        DropDownForm(
+                          options: entity.AppendAction.VALUE_LIST,
+                          bloc: state.fieldBlocs[i],
+                        ),
+                        Flexible(
+                          child: TextFieldBlocBuilder(
+                            textFieldBloc: state.fieldBlocs[i],
+                            decoration: InputDecoration(
+                              suffixIcon: InkWell(
+                                  borderRadius: BorderRadius.circular(25),
+                                  child: Icon(Icons.delete),
+                                  onTap: () {
+                                    setState(() {
+                                      state.fieldBlocs.removeAt(i);
+                                    });
+                                  }),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+              return Container();
+            },
+          )
+        ],
       ),
     );
   }
