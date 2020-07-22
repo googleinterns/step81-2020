@@ -6,7 +6,7 @@ import 'package:macrobaseapp/logic/usecases/macro_firestore/firestore_macro_oper
 import 'package:macrobaseapp/model/adapters/action_model.dart';
 import 'package:macrobaseapp/model/adapters/macro_model.dart';
 import 'package:macrobaseapp/model/adapters/trigger_model.dart';
-import 'package:macrobaseapp/model/entities/action.dart' as Model;
+import 'package:macrobaseapp/model/entities/action.dart';
 import 'package:macrobaseapp/model/entities/trigger.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 
@@ -32,7 +32,15 @@ class WizardFormBloc extends FormBloc<String, String> {
     validators: [
       FieldBlocValidators.required,
     ],
-    items: [Model.Action.SHEET_ACTION, Model.Action.POLL_ACTION],
+    items: [Action.SHEET_ACTION, Action.POLL_ACTION],
+  );
+
+  SelectFieldBloc sheetActionType = SelectFieldBloc(
+    name: 'Sheet Action Type',
+    validators: [
+      FieldBlocValidators.required,
+    ],
+    items: [SheetAction.APPEND_ACTION, SheetAction.READ_ACTION],
   );
 
   TextFieldBloc actionSheetUrl = TextFieldBloc(
@@ -61,18 +69,50 @@ class WizardFormBloc extends FormBloc<String, String> {
   );
 
   WizardFormBloc({this.user}) {
+    // Default Setup
     addFieldBlocs(
       step: 0,
       fieldBlocs: [macroName, description],
     );
     addFieldBlocs(
       step: 1,
-      fieldBlocs: [actionSheetUrl, actionSheetColumn],
+      fieldBlocs: [actionType, sheetActionType, actionSheetUrl, actionSheetColumn],
     );
     addFieldBlocs(
       step: 2,
-      fieldBlocs: [triggerCommand],
+      fieldBlocs: [triggerType, triggerCommand],
     );
+
+    actionTypeSetup();
+    sheetActionSetup();
+    triggerTypeSetup();
+  }
+
+  void triggerTypeSetup() {
+    triggerType.onValueChanges(onData: (_, current) async* {
+      removeFieldBlocs(fieldBlocs: [triggerCommand]);
+      if (current.value == Trigger.COMMAND_BASED) {
+        addFieldBlocs(step: 2, fieldBlocs: [triggerCommand]);
+      }
+    });
+  }
+
+  void actionTypeSetup() {
+    actionType.onValueChanges(onData: (_, current) async* {
+      removeFieldBlocs(fieldBlocs: [sheetActionType, actionSheetUrl, actionSheetColumn] + actionSheetColumn.value.toList());
+      if (current.value == Action.SHEET_ACTION) {
+        addFieldBlocs(step: 1, fieldBlocs: [sheetActionType, actionSheetUrl]);
+      }
+    });
+  }
+
+  void sheetActionSetup() {
+    sheetActionType.onValueChanges(onData: (_, current) async* {
+      removeFieldBlocs(fieldBlocs: [actionSheetColumn]);
+      if (current.value == SheetAction.APPEND_ACTION) {
+        addFieldBlocs(step: 1, fieldBlocs: [actionSheetColumn]);
+      }
+    });
   }
 
   void preFillCommand() {
@@ -120,10 +160,7 @@ class WizardFormBloc extends FormBloc<String, String> {
         action: action,
       );
 
-      List<dynamic> blocs = [macroName, description, actionType, actionSheetUrl, triggerType, triggerCommand] + actionSheetColumn.value.toList();
-      blocs.forEach((bloc) {
-        bloc.close();
-      });
+
 
       uploadMacro(macro.toJson());
 
@@ -133,6 +170,16 @@ class WizardFormBloc extends FormBloc<String, String> {
         ),
       );
     }
+  }
+
+  @override
+  Future<void> close() {
+    List<dynamic> blocs = [macroName, description, actionType, actionSheetUrl, triggerType, triggerCommand] + actionSheetColumn.value.toList();
+    blocs.forEach((bloc) {
+      bloc.close();
+    });
+
+    return super.close();
   }
 }
 

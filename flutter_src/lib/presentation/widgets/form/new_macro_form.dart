@@ -156,42 +156,30 @@ class _NewMacroFormState extends State<NewMacroForm> {
           ),
           HintRow(hint: "1. Create an empty Google sheet."),
           HintRow(
-            hint: "2. Add remindmebot@stepladder-2020.iam.gserviceaccount.com as an Editor",
+            hint:
+                "2. Add remindmebot@stepladder-2020.iam.gserviceaccount.com as an Editor",
           ),
           HintRow(hint: "3. Copy in the Sheet URL!"),
-          Container(
-            alignment: Alignment.centerLeft,
-            child: ButtonBar(
-                mainAxisSize: MainAxisSize.min, // this will take space as minimum as posible(to center)
-                children: <Widget>[
-                  NormalButton(
-                    context: context,
-                    text: "Spreadsheet Write",
-                    onPress: () {
-
-                    },
-                  ),
-                  NormalButton(
-                    context: context,
-                    text: "Spreadsheet Read",
-                    onPress: () {
-                      
-                    },
-                  ),
-                ]
-            ),
-          ),
           TextFieldBlocBuilder(
             textFieldBloc: wizardFormBloc.actionSheetUrl,
             decoration: InputDecoration(
               labelText: 'The URL for sheet',
               prefixIcon: Icon(Icons.book),
               suffixIcon: InkWell(
-                  borderRadius: BorderRadius.circular(25),
-                  child: Icon(Icons.help),
-                  onTap: () {
-                    // TODO
-                  }),
+                borderRadius: BorderRadius.circular(25),
+                child: Icon(Icons.help),
+                onTap: () {
+                  // TODO
+                },
+              ),
+            ),
+          ),
+          RadioButtonGroupFieldBlocBuilder(
+            selectFieldBloc: wizardFormBloc.sheetActionType,
+            itemBuilder: (context, item) => item,
+            decoration: InputDecoration(
+              labelText: 'Select Sheet Action Type',
+              prefixIcon: SizedBox(),
             ),
           ),
           Row(
@@ -205,8 +193,7 @@ class _NewMacroFormState extends State<NewMacroForm> {
                 context: context,
                 text: "Add Column",
                 onPress: () {
-                  wizardFormBloc.actionSheetColumn
-                      .addFieldBloc(TextFieldBloc());
+                  wizardFormBloc.actionSheetColumn.addFieldBloc(TextFieldBloc());
                 },
               ),
             ],
@@ -222,41 +209,41 @@ class _NewMacroFormState extends State<NewMacroForm> {
                   itemCount: state.fieldBlocs.length,
                   itemBuilder: (context, i) {
                     return Row(
-                      children: [
-                        Container(
-                          width: 125,
-                          child: Text(
-                            "Column #" + i.toString() + " is  ",
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ),
-                        DropDownForm(
-                          options: entity.AppendAction.VALUE_LIST,
-                          bloc: state.fieldBlocs[i],
-                        ),
-                        Flexible(
-                          child: TextFieldBlocBuilder(
-                            textFieldBloc: state.fieldBlocs[i],
-                            decoration: InputDecoration(
-                              suffixIcon: InkWell(
-                                  borderRadius: BorderRadius.circular(25),
-                                  child: Icon(Icons.delete),
-                                  onTap: () {
-                                    setState(() {
-                                      state.fieldBlocs.removeAt(i);
-                                    });
-                                  }),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
+                            children: [
+                              Container(
+                                width: 125,
+                                child: Text(
+                                  "Column #" + i.toString() + " is  ",
+                                  style: Theme.of(context).textTheme.headline6,
+                                ),
+                              ),
+                              DropDownForm(
+                                options: entity.AppendAction.VALUE_LIST,
+                                bloc: state.fieldBlocs[i],
+                              ),
+                              Flexible(
+                                child: TextFieldBlocBuilder(
+                                  textFieldBloc: state.fieldBlocs[i],
+                                  decoration: InputDecoration(
+                                    suffixIcon: InkWell(
+                                        borderRadius: BorderRadius.circular(25),
+                                        child: Icon(Icons.delete),
+                                        onTap: () {
+                                          setState(() {
+                                            state.fieldBlocs.removeAt(i);
+                                          });
+                                        }),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
                   },
                 );
               }
               return Container();
             },
-          ),
+          )
         ],
       ),
     );

@@ -16,7 +16,8 @@ class Action extends Equatable {
 
 // Defines the operation to append a row to a Google Sheet
 class SheetAction extends Action {
-  static const String APPEND_ACTION = "Sheet Append Action";
+  static const String APPEND_ACTION = "Append Action";
+  static const String READ_ACTION = "Read Action";
 
   final String sheetUrl;
   final String sheetAction;
