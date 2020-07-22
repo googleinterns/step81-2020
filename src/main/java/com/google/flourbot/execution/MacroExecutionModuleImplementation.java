@@ -25,7 +25,7 @@ import java.util.Optional;
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
 
   private final EntityModule entityModule;
-  private final DriveClient driveClient;
+  private final DriveClient cloudDocClient;
 
   private MacroExecutionModuleImplementation(EntityModule entityModule) {
     this.entityModule = entityModule;
@@ -34,14 +34,17 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
   public static MacroExecutionModuleImplementation initializeServer() {
     DataStorage dataStorage = new FirebaseDataStorage();
     EntityModule entityModule = new EntityModuleImplementation(dataStorage);
-    DriveClient driveClient = new DriveClient();
-
+    DriveClient cloudDocClient = new DriveClient();
     return new MacroExecutionModuleImplementation(entityModule);
   }
 
+  private String getMacroName(String message, String threadId) {
+    return message.split(" ")[1];
+  }
+
+
   public String execute(String userEmail, String message, String threadId) throws IOException, GeneralSecurityException {
-    // Get the first word after @MacroBot from the chat message (this is the name of the macro)
-    String macroName = message.split(" ")[1];
+    String macroName = this.getMacroName(message, threadId);
 
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
@@ -67,7 +70,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         // Append values to first free bottom row of sheet
         SheetAppendAction a = (SheetAppendAction) optionalMacro.get().getAction();
         String documentId = a.getSheetId();
-        CloudSheet cs = driveClient.getCloudSheet(documentId);
+        CloudSheet cs = cloudDocClient.getCloudSheet(documentId);
         cs.appendRow(values);
         break;
       default:
