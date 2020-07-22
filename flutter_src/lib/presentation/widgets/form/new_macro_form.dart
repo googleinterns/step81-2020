@@ -182,68 +182,83 @@ class _NewMacroFormState extends State<NewMacroForm> {
               prefixIcon: SizedBox(),
             ),
           ),
-          Row(
-            children: [
-              Text(
-                "Specify Column Values: ",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              SizedBox(width: 25),
-              NormalButton(
-                context: context,
-                text: "Add Column",
-                onPress: () {
-                  wizardFormBloc.actionSheetColumn.addFieldBloc(TextFieldBloc());
-                },
-              ),
-            ],
-          ),
-          BlocBuilder<ListFieldBloc<TextFieldBloc>,
-              ListFieldBlocState<TextFieldBloc>>(
-            bloc: wizardFormBloc.actionSheetColumn,
-            builder: (context, state) {
-              if (state.fieldBlocs.isNotEmpty) {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: state.fieldBlocs.length,
-                  itemBuilder: (context, i) {
-                    return Row(
-                            children: [
-                              Container(
-                                width: 125,
-                                child: Text(
-                                  "Column #" + i.toString() + " is  ",
-                                  style: Theme.of(context).textTheme.headline6,
-                                ),
-                              ),
-                              DropDownForm(
-                                options: entity.AppendAction.VALUE_LIST,
-                                bloc: state.fieldBlocs[i],
-                              ),
-                              Flexible(
-                                child: TextFieldBlocBuilder(
-                                  textFieldBloc: state.fieldBlocs[i],
-                                  decoration: InputDecoration(
-                                    suffixIcon: InkWell(
-                                        borderRadius: BorderRadius.circular(25),
-                                        child: Icon(Icons.delete),
-                                        onTap: () {
-                                          setState(() {
-                                            state.fieldBlocs.removeAt(i);
-                                          });
-                                        }),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                  },
+          BlocBuilder<SelectFieldBloc, SelectFieldBlocState>(
+              bloc: wizardFormBloc.sheetActionType,
+              builder: (context, state) {
+                if (state.value != entity.SheetAction.APPEND_ACTION) {
+                  return Container();
+                }
+                return Container(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Specify Column Values: ",
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                          SizedBox(width: 25),
+                          NormalButton(
+                            context: context,
+                            text: "Add Column",
+                            onPress: () {
+                              wizardFormBloc.actionSheetColumn
+                                  .addFieldBloc(TextFieldBloc());
+                            },
+                          ),
+                        ],
+                      ),
+                      BlocBuilder<ListFieldBloc<TextFieldBloc>,
+                          ListFieldBlocState<TextFieldBloc>>(
+                        bloc: wizardFormBloc.actionSheetColumn,
+                        builder: (context, state) {
+                          if (state.fieldBlocs.isNotEmpty && state.fieldBlocs != null) {
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: state.fieldBlocs.length,
+                              itemBuilder: (context, i) {
+                                return Row(
+                                  children: [
+                                    Container(
+                                      width: 125,
+                                      child: Text(
+                                        "Column #" + i.toString() + " is  ",
+                                        style: Theme.of(context).textTheme.headline6,
+                                      ),
+                                    ),
+                                    DropDownForm(
+                                      options: entity.AppendAction.VALUE_LIST,
+                                      bloc: state.fieldBlocs[i],
+                                    ),
+                                    Flexible(
+                                      child: TextFieldBlocBuilder(
+                                        textFieldBloc: state.fieldBlocs[i],
+                                        decoration: InputDecoration(
+                                          suffixIcon: InkWell(
+                                              borderRadius: BorderRadius.circular(25),
+                                              child: Icon(Icons.delete),
+                                              onTap: () {
+                                                setState(() {
+                                                  state.fieldBlocs.removeAt(i);
+                                                });
+                                              }),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                          return Container();
+                        },
+                      )
+                    ],
+                  ),
                 );
-              }
-              return Container();
-            },
-          )
+              }),
+
         ],
       ),
     );
