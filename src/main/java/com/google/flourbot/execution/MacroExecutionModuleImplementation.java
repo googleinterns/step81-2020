@@ -20,26 +20,43 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import java.util.Optional;
+import java.util.HashMap;
 
 // The Logic class of the server
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
 
   private final EntityModule entityModule;
   private final DriveClient cloudDocClient;
+  private HashMap<String, String> threadMacroMap = new HashMap<String, String>();
 
-  private MacroExecutionModuleImplementation(EntityModule entityModule) {
+  private MacroExecutionModuleImplementation(EntityModule entityModule, DriveClient cloudDocClient) {
     this.entityModule = entityModule;
+    this.cloudDocClient = cloudDocClient;
   }
 
   public static MacroExecutionModuleImplementation initializeServer() {
     DataStorage dataStorage = new FirebaseDataStorage();
     EntityModule entityModule = new EntityModuleImplementation(dataStorage);
     DriveClient cloudDocClient = new DriveClient();
-    return new MacroExecutionModuleImplementation(entityModule);
+    return new MacroExecutionModuleImplementation(entityModule, cloudDocClient);
   }
 
   private String getMacroName(String message, String threadId) {
-    return message.split(" ")[1];
+    // Retrieve macroname based on threadId
+    if (this.threadMacroMap.containsKey(threadId)) {
+      return this.threadMacroMap.get(threadId);
+    }
+
+    // If not yet stored, add threadId and macroName to hashmap
+    String macroName = "";
+    try {
+      macroName = message.split(" ")[1];
+    } catch(ArrayIndexOutOfBoundsException e) {
+      throw new IllegalStateException(e);
+    }
+
+    this.threadMacroMap.put(threadId, macroName);
+    return macroName;
   }
 
 
@@ -70,7 +87,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         // Append values to first free bottom row of sheet
         SheetAppendAction a = (SheetAppendAction) optionalMacro.get().getAction();
         String documentId = a.getSheetId();
-        CloudSheet cs = cloudDocClient.getCloudSheet(documentId);
+        CloudSheet cs = this.cloudDocClient.getCloudSheet(documentId);
         cs.appendRow(values);
         break;
       default:
