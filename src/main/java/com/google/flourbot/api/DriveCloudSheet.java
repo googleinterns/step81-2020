@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Collections;
 
 public class DriveCloudSheet implements CloudSheet {
   private static final String VALUE_INPUT_OPTION = "USER_ENTERED";
@@ -51,11 +52,47 @@ public class DriveCloudSheet implements CloudSheet {
     }
   }
 
+  public List<List<String>> readRange(String range) {
+    ValueRange response = sheetsService.spreadsheets().values()
+        .get(spreadsheetId, range)
+        .execute();
+    return (List<List<String>>) response.getValues();
+  }
+
+  public List<String> readRow(int row) {
+    List<List<String>> values = readRange(String.format("Sheet1!%d:%d", row, row));
+
+    if (values != null || !values.isEmpty()) {
+      return (List<String>) values.get(0);
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  public List<String> readCol(int column) {
+    // Overload readCol to take a number
+    return readCol(toAlphabetic(column));
+  }
+
+  public List<String> readCol(String column) {
+    List<List<String>> values = readRange(String.format("Sheet1!%s:%s", column, column));
+
+    if (values != null || !values.isEmpty()) {
+      return (List<String>) values.get(0);
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  public List<List<String>> readSheet(String sheetName) {
+    return readRange(sheetName);
+  }
+
   public void appendRow(List<String> values) throws IOException, GeneralSecurityException {
     // Method generates and sends request to append rows to bottom of sheet containing values
 
     // Calculate the range where the values will be inserted
-    String range = this.getRange(values.size(), 0);
+    String range = getRange(values.size(), 0);
     
     // Convert the values into a List of Lists, which is needed to send the request
     String[] array = values.stream().toArray(String[]::new);
@@ -67,7 +104,7 @@ public class DriveCloudSheet implements CloudSheet {
 
     // Send request
     Sheets.Spreadsheets.Values.Append request =
-      this.sheetsService.spreadsheets().values().append(this.spreadsheetId, range, requestBody);
+      this.sheetsService.spreadsheets().values().append(spreadsheetId, range, requestBody);
     request.setValueInputOption(VALUE_INPUT_OPTION);
     request.setInsertDataOption(INSERT_DATA_OPTION);
     

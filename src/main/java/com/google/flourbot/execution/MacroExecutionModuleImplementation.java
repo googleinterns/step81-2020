@@ -18,6 +18,7 @@ import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -66,8 +67,17 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         SheetAppendAction a = (SheetAppendAction) optionalMacro.get().getAction();
         String documentId = a.getSheetId();
         DriveClient cdc = new DriveClient();
-        CloudSheet cs = cdc.getCloudSheet(documentId);
-        cs.appendRow(values);
+        CloudSheet cloudSheet = cdc.getCloudSheet(documentId);
+        cloudSheet.appendRow(values);
+        break;
+      case SHEET_READ_ROW:
+        // TODO: after merge with master, move CloudSheet init to before the switch statement
+        CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
+        List<String> sheetData = cloudSheet.readRow(2); //TODO: Replace hardcoded
+        break;
+      case SHEET_READ_COLUMN:
+        CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
+        List<String> sheetData = cloudSheet.readCol("B");//TODO: Replace hardcoded
         break;
       default:
         throw new IllegalStateException(
@@ -75,6 +85,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     }
 
     // TODO: Return a response object
+    // If read row or read col - give the row or col
     return "Sucessfully executed";
   }
 }
