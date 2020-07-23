@@ -4,7 +4,7 @@ import 'package:macrobaseapp/logic/usecases/login/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 
-Widget signInButton(BuildContext context) {
+Widget GoogleSigninButton(BuildContext context) {
   return OutlineButton(
     splashColor: Colors.grey,
     onPressed: () {

@@ -1,9 +1,7 @@
 package com.google.flourbot.execution;
 
-import com.google.flourbot.api.CloudDocClient;
 import com.google.flourbot.api.DriveClient;
 import com.google.flourbot.api.CloudSheet;
-import com.google.flourbot.api.DriveCloudSheet;
 import com.google.flourbot.datastorage.DataStorage;
 import com.google.flourbot.datastorage.FirebaseDataStorage;
 import com.google.flourbot.entity.EntityModule;
@@ -11,7 +9,8 @@ import com.google.flourbot.entity.EntityModuleImplementation;
 import com.google.flourbot.entity.Macro;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.ActionType;
-import com.google.flourbot.entity.action.SheetAppendAction;
+import com.google.flourbot.entity.action.sheet.SheetAppendAction;
+import com.google.flourbot.entity.action.sheet.SheetEntryType;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -20,26 +19,50 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import java.util.Optional;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 // The Logic class of the server
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
 
   private final EntityModule entityModule;
+  private final CloudDocClient cloudDocClient;
+  private HashMap<String, String> threadMacroMap = new HashMap<String, String>();
 
-  private MacroExecutionModuleImplementation(EntityModule entityModule) {
+  private MacroExecutionModuleImplementation(EntityModule entityModule, CloudDocClient cloudDocClient) {
     this.entityModule = entityModule;
+    this.cloudDocClient = cloudDocClient;
   }
 
   public static MacroExecutionModuleImplementation initializeServer() {
     DataStorage dataStorage = new FirebaseDataStorage();
     EntityModule entityModule = new EntityModuleImplementation(dataStorage);
-
-    return new MacroExecutionModuleImplementation(entityModule);
+    CloudDocClient cloudDocClient = new DriveClient();
+    return new MacroExecutionModuleImplementation(entityModule, cloudDocClient);
   }
 
-  public String execute(String userEmail, String message) throws IOException, GeneralSecurityException {
-    // Get the first word after @MacroBot from the chat message (this is the name of the macro)
-    String macroName = message.split(" ")[1];
+  private String getMacroName(String message, String threadId) {
+    // Retrieve macroname based on threadId
+    if (this.threadMacroMap.containsKey(threadId)) {
+      return this.threadMacroMap.get(threadId);
+    }
+
+    // If not yet stored, add threadId and macroName to hashmap
+    String macroName = "";
+    try {
+      macroName = message.split(" ")[1];
+    } catch(ArrayIndexOutOfBoundsException e) {
+      throw new IllegalStateException(e);
+    }
+
+    this.threadMacroMap.put(threadId, macroName);
+    return macroName;
+  }
+
+
+  public String execute(String userEmail, String message, String threadId) throws IOException, GeneralSecurityException {
+    String macroName = this.getMacroName(message, threadId);
 
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
@@ -51,22 +74,49 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
     switch (actionType) {
       case SHEET_APPEND:
-        // Create timestamp
-        LocalDateTime myDateObj = LocalDateTime.now();
-        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedDate = myDateObj.format(myFormatObj);
+        // Read instructions on what to write
 
+        SheetEntryType[] columns = ((SheetAppendAction) action).getColumnValue();
         // Prepare values to write into the sheet
         ArrayList<String> values = new ArrayList<String>();
-        values.add(formattedDate);
-        values.add(userEmail);
-        values.add(message);
+
+        for (SheetEntryType type : columns) {
+          switch (type) {
+
+            case TIME:
+              // Create timestamp
+              LocalDateTime myDateObj = LocalDateTime.now();
+              DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+              String formattedDate = myDateObj.format(myFormatObj);
+
+              values.add(formattedDate);
+              break;
+
+            case EMAIL:
+              values.add(userEmail);
+              break;
+
+            case CONTENT:
+              values.add(message);
+              break;
+
+            case EMPTY:
+              values.add("");
+              break;
+
+            default:
+              values.add("");
+              break;
+
+          }
+        }
 
         // Append values to first free bottom row of sheet
+
         SheetAppendAction a = (SheetAppendAction) optionalMacro.get().getAction();
+        List<String> values = getWriteData(a.getColumnValue(), userEmail, message);
         String documentId = a.getSheetId();
-        DriveClient cdc = new DriveClient();
-        CloudSheet cs = cdc.getCloudSheet(documentId);
+        CloudSheet cs = this.cloudDocClient.getCloudSheet(documentId);
         cs.appendRow(values);
         break;
       default:
@@ -76,5 +126,39 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
     // TODO: Return a response object
     return "Sucessfully executed";
+  }
+
+  private List<String> getWriteData(String[] columnTypes, String userEmail, String message) {
+    // Return values for write request, based on the information types to be in each column
+    
+    // TODO: Is there a better way than passing the userEmail and message?
+
+    List<String> values = new ArrayList<String>();
+
+    for (String cv : columnTypes) {
+      switch(cv) {
+        case "TIME":
+                  values.add(this.getDate("dd-MM-yyyy HH:mm:ss"));
+                  break;
+        case "EMAIL":
+                  values.add(userEmail);
+                  break;
+        case "CONTENT":
+                  values.add(message);
+                  break;
+        default: // unrecognized will give empty column - should we throw except?
+                  values.add("");
+                  break;
+      }
+    }
+
+    return values;
+  }
+
+  private String getDate(String pattern) {
+    // Create timestamp based on pattern provided
+    LocalDateTime myDateObj = LocalDateTime.now();
+    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(pattern);
+    return myDateObj.format(myFormatObj);
   }
 }

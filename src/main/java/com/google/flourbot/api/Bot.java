@@ -5,18 +5,12 @@ import com.google.flourbot.execution.MacroExecutionModuleImplementation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.chat.v1.HangoutsChat;
 import com.google.api.services.chat.v1.model.Message;
 import com.google.api.services.chat.v1.model.Thread;
@@ -45,6 +39,7 @@ public class Bot {
   static final String CHAT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
   private static final String SERVICE_ACCOUNT = "/service-acct.json";
   private static final Logger logger = Logger.getLogger(Bot.class.getName());
+  private String replyText;
 
   private static MacroExecutionModule macroExecutionModule;
 
@@ -61,7 +56,6 @@ public class Bot {
     */
   @PostMapping("/")
   public void onEvent(@RequestBody JsonNode event) throws IOException, GeneralSecurityException {
-    String replyText = "";
     switch (event.at("/type").asText()) {
       case "ADDED_TO_SPACE":
         String spaceType = event.at("/space/type").asText();
@@ -74,15 +68,20 @@ public class Bot {
         }
         break;
       case "MESSAGE":
+        // Sends request to execution module
         String email = event.at("/message/sender/email").asText();
         String message = event.at("/message/text").asText();
-        // Sends request to execution module
-        replyText = macroExecutionModule.execute(email, message);
+        String threadId = event.at("/message/thread/name").asText();
+        replyText = macroExecutionModule.execute(email, message, threadId);
         break;
       case "REMOVED_FROM_SPACE":
-        logger.info("Bot removed from space");
+        logger.info("Bot removed from space.");
         break;
       default:
+        throw new IllegalArgumentException(event.at("/type").asText());
+    }
+
+    if (replyText.isEmpty()) {
         throw new IllegalArgumentException();
     }
 
