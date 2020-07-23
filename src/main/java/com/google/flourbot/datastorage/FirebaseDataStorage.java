@@ -47,8 +47,8 @@ public class FirebaseDataStorage implements DataStorage {
   }
 
   public Optional<QueryDocumentSnapshot> getDocument(String userEmail, String macroName) {
-
     // Create a query to find a macro named macroName belonging to userEmail
+    
     Query query =
         db.collection(COLLECTION_NAME)
             .whereEqualTo(USER_IDENTIFIER, userEmail)
@@ -56,14 +56,23 @@ public class FirebaseDataStorage implements DataStorage {
     // Retrieve  query results asynchronously using query.get()
     ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
+    // Get the document representing the queried macro in firebase
+
+    QueryDocumentSnapshot document = null;
     try {
-      // Get the document representing the queried macro in firebase
-      QueryDocumentSnapshot document = querySnapshot.get().getDocuments().get(0);
-      return document.exists() ? Optional.of(document) : Optional.empty();
+      document = querySnapshot.get().getDocuments().get(0);
+    } catch (IndexOutOfBoundsException e) {
+      throw new IllegalStateException(e);
     } catch (InterruptedException e) {
       throw new IllegalStateException(e);
     } catch (ExecutionException e) {
       throw new IllegalStateException(e);
+    }
+
+    if (document.exists()) {
+      return Optional.of(document);
+    } else {
+      return Optional.empty();
     }
   }
 }
