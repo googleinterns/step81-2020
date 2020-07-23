@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.*;
+import java.util.stream.Stream;
 
 public class EntityModuleImplementation implements EntityModule {
 
@@ -37,13 +37,13 @@ public class EntityModuleImplementation implements EntityModule {
     // Retrieve value from optional if it's not empty
     QueryDocumentSnapshot document = optionalDocument.get();
 
-    Map<String, Object> macroMap = document.getData();
+    Map<String, Object> macroData = document.getData();
 
-    Map<String, Object> triggerMap = (Map<String, Object>) macroMap.get("trigger");
-    Map<String, Object> actionMap = (Map<String, Object>) macroMap.get("action");
+    Map<String, Object> triggerData = (Map<String, Object>) macroData.get("trigger");
+    Map<String, Object> actionData = (Map<String, Object>) macroData.get("action");
 
-    Optional<Trigger> optionalTrigger = getTrigger(triggerMap);
-    Optional<Action> optionalAction = getAction(actionMap);
+    Optional<Trigger> optionalTrigger = getTrigger(triggerData);
+    Optional<Action> optionalAction = getAction(actionData);
 
     if (!optionalTrigger.isPresent() || !optionalAction.isPresent()) {
       return Optional.empty();
@@ -52,19 +52,19 @@ public class EntityModuleImplementation implements EntityModule {
     Trigger trigger = optionalTrigger.get();
     Action action = optionalAction.get();
 
-    String creatorId = (String) macroMap.get("creatorId");
+    String creatorId = (String) macroData.get("creatorId");
     Macro macro = new Macro(creatorId, macroName, trigger, action);
 
     return Optional.of(macro);
   }
 
-  private Optional<Trigger> getTrigger(Map<String, Object> triggerMap) {
+  private Optional<Trigger> getTrigger(Map<String, Object> triggerData) {
 
-    String triggerType = (String) triggerMap.get("type");
+    String triggerType = (String) triggerData.get("type");
 
     switch (triggerType) {
       case ("Command Trigger"):
-        String command = (String) triggerMap.get("command");
+        String command = (String) triggerData.get("command");
         Trigger trigger = new CommandTrigger(command);
 
         return Optional.of(trigger);
@@ -74,13 +74,12 @@ public class EntityModuleImplementation implements EntityModule {
     }
   }
 
-  private Optional<Action> getAction(Map<String, Object> actionMap) {
+  private Optional<Action> getAction(Map<String, Object> actionData) {
 
-    String actionType = (String) actionMap.get("type");
+    String actionType = (String) actionData.get("type");
 
     switch (actionType) {
       case ("Sheet Action"):
-
         ArrayList<String> columnStringList = (ArrayList<String>) actionMap.get("columnValue");
         // Converts into ENUM type
         ArrayList<SheetEntryType> columnTypeList = new ArrayList<>();

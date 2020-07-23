@@ -19,26 +19,50 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import java.util.Optional;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 // The Logic class of the server
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
 
   private final EntityModule entityModule;
+  private final CloudDocClient cloudDocClient;
+  private HashMap<String, String> threadMacroMap = new HashMap<String, String>();
 
-  private MacroExecutionModuleImplementation(EntityModule entityModule) {
+  private MacroExecutionModuleImplementation(EntityModule entityModule, CloudDocClient cloudDocClient) {
     this.entityModule = entityModule;
+    this.cloudDocClient = cloudDocClient;
   }
 
   public static MacroExecutionModuleImplementation initializeServer() {
     DataStorage dataStorage = new FirebaseDataStorage();
     EntityModule entityModule = new EntityModuleImplementation(dataStorage);
-
-    return new MacroExecutionModuleImplementation(entityModule);
+    CloudDocClient cloudDocClient = new DriveClient();
+    return new MacroExecutionModuleImplementation(entityModule, cloudDocClient);
   }
 
-  public String execute(String userEmail, String message) throws IOException, GeneralSecurityException {
+  private String getMacroName(String message, String threadId) {
+    // Retrieve macroname based on threadId
+    if (this.threadMacroMap.containsKey(threadId)) {
+      return this.threadMacroMap.get(threadId);
+    }
 
-    String macroName = message.split(" ")[1];
+    // If not yet stored, add threadId and macroName to hashmap
+    String macroName = "";
+    try {
+      macroName = message.split(" ")[1];
+    } catch(ArrayIndexOutOfBoundsException e) {
+      throw new IllegalStateException(e);
+    }
+
+    this.threadMacroMap.put(threadId, macroName);
+    return macroName;
+  }
+
+
+  public String execute(String userEmail, String message, String threadId) throws IOException, GeneralSecurityException {
+    String macroName = this.getMacroName(message, threadId);
 
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
@@ -50,7 +74,6 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
     switch (actionType) {
       case SHEET_APPEND:
-
         // Read instructions on what to write
 
         SheetEntryType[] columns = ((SheetAppendAction) action).getColumnValue();
@@ -89,10 +112,11 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         }
 
         // Append values to first free bottom row of sheet
+
         SheetAppendAction a = (SheetAppendAction) optionalMacro.get().getAction();
+        List<String> values = getWriteData(a.getColumnValue(), userEmail, message);
         String documentId = a.getSheetId();
-        DriveClient cdc = new DriveClient();
-        CloudSheet cs = cdc.getCloudSheet(documentId);
+        CloudSheet cs = this.cloudDocClient.getCloudSheet(documentId);
         cs.appendRow(values);
         break;
       default:
@@ -102,5 +126,39 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
     // TODO: Return a response object
     return "Sucessfully executed";
+  }
+
+  private List<String> getWriteData(String[] columnTypes, String userEmail, String message) {
+    // Return values for write request, based on the information types to be in each column
+    
+    // TODO: Is there a better way than passing the userEmail and message?
+
+    List<String> values = new ArrayList<String>();
+
+    for (String cv : columnTypes) {
+      switch(cv) {
+        case "TIME":
+                  values.add(this.getDate("dd-MM-yyyy HH:mm:ss"));
+                  break;
+        case "EMAIL":
+                  values.add(userEmail);
+                  break;
+        case "CONTENT":
+                  values.add(message);
+                  break;
+        default: // unrecognized will give empty column - should we throw except?
+                  values.add("");
+                  break;
+      }
+    }
+
+    return values;
+  }
+
+  private String getDate(String pattern) {
+    // Create timestamp based on pattern provided
+    LocalDateTime myDateObj = LocalDateTime.now();
+    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(pattern);
+    return myDateObj.format(myFormatObj);
   }
 }
