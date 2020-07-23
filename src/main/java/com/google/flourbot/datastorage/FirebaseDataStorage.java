@@ -75,4 +75,17 @@ public class FirebaseDataStorage implements DataStorage {
       return Optional.empty();
     }
   }
+
+  private Firestore initializeFirebase() throws IOException {
+
+    GoogleCredentials credentials = GoogleCredentials.fromStream(
+            FirebaseDataStorage.class.getResourceAsStream("/key.json")
+    );
+
+    if (document.exists()) {
+      return Optional.of(document);
+    } else {
+      return Optional.empty();
+    }
+  }
 }
