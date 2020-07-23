@@ -28,10 +28,10 @@ import java.util.List;
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
 
   private final EntityModule entityModule;
-  private final DriveClient cloudDocClient;
+  private final CloudDocClient cloudDocClient;
   private HashMap<String, String> threadMacroMap = new HashMap<String, String>();
 
-  private MacroExecutionModuleImplementation(EntityModule entityModule, DriveClient cloudDocClient) {
+  private MacroExecutionModuleImplementation(EntityModule entityModule, CloudDocClient cloudDocClient) {
     this.entityModule = entityModule;
     this.cloudDocClient = cloudDocClient;
   }
@@ -39,7 +39,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
   public static MacroExecutionModuleImplementation initializeServer() {
     DataStorage dataStorage = new FirebaseDataStorage();
     EntityModule entityModule = new EntityModuleImplementation(dataStorage);
-    DriveClient cloudDocClient = new DriveClient();
+    CloudDocClient cloudDocClient = new DriveClient();
     return new MacroExecutionModuleImplementation(entityModule, cloudDocClient);
   }
 
