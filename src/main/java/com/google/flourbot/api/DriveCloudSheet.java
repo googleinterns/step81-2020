@@ -12,8 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DriveCloudSheet implements CloudSheet {
-  private String valueInputOption = "USER_ENTERED";
-  private String insertDataOption = "INSERT_ROWS";
+  private static final String VALUE_INPUT_OPTION = "USER_ENTERED";
+  private static final String INSERT_DATA_OPTION = "INSERT_ROWS";
   private Sheets sheetsService;
   private String spreadsheetId;
 
@@ -26,9 +26,9 @@ public class DriveCloudSheet implements CloudSheet {
     // Returns range for sheets request by calculating the alphabetic name of
     // the start and end column based on the number of columns filled and pre-skipped
 
-    String startColumn = this.toAlphabetic(numSkipColumns);
-    String endColumn = this.toAlphabetic(numSkipColumns + numEntryColumns - 1);
-    return "Sheet1!" + startColumn + "1:" + endColumn + "1";
+    String startColumn = toAlphabetic(numSkipColumns);
+    String endColumn = toAlphabetic(numSkipColumns + numEntryColumns - 1);
+    return String.format("Sheet1!%d:%d", startColumn, endColumn);
   }
 
   private String toAlphabetic(int i) {
@@ -36,9 +36,9 @@ public class DriveCloudSheet implements CloudSheet {
     // of a column based on column number i
     // e.g. 0 -> A, 1 -> B... 25 -> Z, 26 -> AA...
     
-    // Only consider the absolute value of the number
+    // Negative numbers cause errors
     if (i < 0) {
-      i *= -1;
+      throw new IllegalArgumentException(String.format("Column number %d is invalid", i));
     }
 
     // Every calculation produces 1 letter
@@ -69,8 +69,8 @@ public class DriveCloudSheet implements CloudSheet {
     // Send request
     Sheets.Spreadsheets.Values.Append request =
       this.sheetsService.spreadsheets().values().append(this.spreadsheetId, range, requestBody);
-    request.setValueInputOption(this.valueInputOption);
-    request.setInsertDataOption(this.insertDataOption);
+    request.setValueInputOption(VALUE_INPUT_OPTION);
+    request.setInsertDataOption(INSERT_DATA_OPTION);
     
     AppendValuesResponse response = request.execute();
   }
