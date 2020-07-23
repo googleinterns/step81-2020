@@ -56,7 +56,6 @@ public class Bot {
     */
   @PostMapping("/")
   public void onEvent(@RequestBody JsonNode event) throws IOException, GeneralSecurityException {
-    //final String replyText;
     switch (event.at("/type").asText()) {
       case "ADDED_TO_SPACE":
         String spaceType = event.at("/space/type").asText();
