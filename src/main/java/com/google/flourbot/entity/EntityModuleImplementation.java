@@ -80,7 +80,7 @@ public class EntityModuleImplementation implements EntityModule {
 
     switch (actionType) {
       case ("Sheet Action"):
-        ArrayList<String> columnStringList = (ArrayList<String>) actionMap.get("columnValue");
+        ArrayList<String> columnStringList = (ArrayList<String>) actionData.get("columnValue");
         // Converts into ENUM type
         ArrayList<SheetEntryType> columnTypeList = new ArrayList<>();
         for (String type : columnStringList) {
@@ -88,8 +88,8 @@ public class EntityModuleImplementation implements EntityModule {
         }
         SheetEntryType[] columnValue = columnTypeList.stream().toArray(SheetEntryType[]::new);
 
-        String sheetAction = (String) actionMap.get("sheetAction");
-        String sheetUrl = (String) actionMap.get("sheetUrl");
+        String sheetAction = (String) actionData.get("sheetAction");
+        String sheetUrl = (String) actionData.get("sheetUrl");
 
         Action action = new SheetAppendAction(columnValue, sheetAction, sheetUrl);
         return Optional.of(action);
