@@ -77,6 +77,10 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
       case SHEET_APPEND:
         // Read instructions on what to write
 
+        // Remove "@Macrobot macroName" from message
+        String[] messages = message.split(" ", 3);
+        message = messages[2];
+
         SheetEntryType[] columns = ((SheetAppendAction) action).getColumnValue();
         // Prepare values to write into the sheet
         ArrayList<String> values = new ArrayList<String>();
