@@ -1,22 +1,18 @@
 package com.google.flourbot.datastorage;
-
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
-
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-
 public class FirebaseDataStorage implements DataStorage {
   private Firestore db;
   private static final String PROJECT_ID = "stepladder-2020";
@@ -45,10 +41,8 @@ public class FirebaseDataStorage implements DataStorage {
       throw new IllegalStateException(e);
     }
   }
-
   public Optional<QueryDocumentSnapshot> getDocument(String userEmail, String macroName) {
     // Create a query to find a macro named macroName belonging to userEmail
-    
     Query query =
         db.collection(COLLECTION_NAME)
             .whereEqualTo(USER_IDENTIFIER, userEmail)
@@ -59,8 +53,11 @@ public class FirebaseDataStorage implements DataStorage {
     // Get the document representing the queried macro in firebase
 
     QueryDocumentSnapshot document = null;
+    
     try {
+      // Get the document representing the queried macro in firebase
       document = querySnapshot.get().getDocuments().get(0);
+      return document.exists() ? Optional.of(document) : Optional.empty();
     } catch (IndexOutOfBoundsException e) {
       throw new IllegalStateException(e);
     } catch (InterruptedException e) {
@@ -68,24 +65,6 @@ public class FirebaseDataStorage implements DataStorage {
     } catch (ExecutionException e) {
       throw new IllegalStateException(e);
     }
-
-    if (document.exists()) {
-      return Optional.of(document);
-    } else {
-      return Optional.empty();
-    }
   }
 
-  private Firestore initializeFirebase() throws IOException {
-
-    GoogleCredentials credentials = GoogleCredentials.fromStream(
-            FirebaseDataStorage.class.getResourceAsStream("/key.json")
-    );
-
-    if (document.exists()) {
-      return Optional.of(document);
-    } else {
-      return Optional.empty();
-    }
-  }
 }
