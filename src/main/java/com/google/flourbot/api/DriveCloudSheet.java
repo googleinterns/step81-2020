@@ -28,7 +28,7 @@ public class DriveCloudSheet implements CloudSheet {
 
     String startColumn = toAlphabetic(numSkipColumns);
     String endColumn = toAlphabetic(numSkipColumns + numEntryColumns - 1);
-    return String.format("Sheet1!%d:%d", startColumn, endColumn);
+    return String.format("Sheet1!%s:%s", startColumn, endColumn);
   }
 
   private String toAlphabetic(int i) {
@@ -43,8 +43,7 @@ public class DriveCloudSheet implements CloudSheet {
 
     // Every calculation produces 1 letter
     int quotient = i / 26;
-    int remainder = i % 26;
-    char letter = (char)((int)'A' + remainder);
+    char letter = (char)(i % 26 + 'A');
     if (quotient == 0) {
         return "" + letter;
     } else {
