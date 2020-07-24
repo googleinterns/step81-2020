@@ -61,7 +61,7 @@ public class Bot {
         String spaceType = event.at("/space/type").asText();
         if ("ROOM".equals(spaceType)) {
           String displayName = event.at("/space/displayName").asText();
-          replyText = String.format("Thanks for adding me to %s", displayName);
+          replyText = String.format("Thanks for adding me to %s. Type \"@MacroBot help\" at any time to see my instructions.", displayName);
         } else {
           String displayName = event.at("/user/displayName").asText();
           replyText = String.format("Thanks for adding me to a DM, %s!", displayName);
