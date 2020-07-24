@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 // The Logic class of the server
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
@@ -75,6 +76,13 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
 
     String replyText = "Action not recognized";
+
+
+
+    //actionType = ActionType.SHEET_READ_ROW;
+
+
+
 
     switch (actionType) {
       case SHEET_APPEND:
@@ -130,14 +138,22 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         cloudSheet.appendRow(values);
         replyText = "Appended row to " + action.getSheetUrl();
         break;
+
       case SHEET_READ_ROW:
         List<String> rowData = cloudSheet.readRow(2); //TODO: Replace hardcoded
-        replyText = rowData.get(0);
+        replyText = selectRandomFromData(rowData);
         break;
+
       case SHEET_READ_COLUMN:
         List<String> columnData = cloudSheet.readColumn("B");//TODO: Replace hardcoded
-        replyText = columnData.get(0);
+        replyText = selectRandomFromData(columnData);
         break;
+
+      case SHEET_READ_SHEET:
+        List<List<String>> sheetData = cloudSheet.readSheet("Sheet1");
+        replyText = "Read sheet"; // TODO: display in grid
+        break;
+        
       default:
         throw new IllegalStateException(
             "Action type named: " + actionType.toString() + "is not implemented yet!");
@@ -152,5 +168,10 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     LocalDateTime myDateObj = LocalDateTime.now();
     DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(pattern);
     return myDateObj.format(myFormatObj);
+  }
+
+  private String selectRandomFromData(List<String> data) {
+    Random rand = new Random();
+    return data.get(rand.nextInt(data.size()));
   }
 }

@@ -2,7 +2,7 @@
  * Creates card response for bot
  */
 
-package com.google.flourbot.execution;
+package com.google.flourbot.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.services.chat.v1.model.ActionParameter;
@@ -38,7 +38,7 @@ public class CardResponse {
   private static final String INTERACTIVE_TEXT_BUTTON_ACTION = "doTextButtonAction";
   private static final String INTERACTIVE_IMAGE_BUTTON_ACTION = "doImageButtonAction";
   private static final String INTERACTIVE_BUTTON_KEY = "originalMessage";
-  private static final String HEADER_IMAGE = "https://goo.gl/5obRKj";
+  private static final String HEADER_IMAGE = "https://shop.googlemerchandisestore.com/store/20160512512/assets/items/largeimages/GGOEACBA116699.jpg";
   private static final String BOT_NAME = "MacroBot";
   private static final String REDIRECT_URL = "https://goo.gl/kwhSNz"; // TODO: Change to spreadsheet link
 
@@ -64,8 +64,10 @@ public class CardResponse {
     card.setHeader(header);
 
     // TEXT PARAGRAPH
-    TextParagraph textParagraphWidget = new TextParagraph().setText("<b>This</b> is a <i>text paragraph</i>.");
+    TextParagraph textParagraphWidget = new TextParagraph().setText("<b>The reply text we got:</b> is <i>" + message + "</i>.");
     widgets.add(new WidgetMarkup().setTextParagraph(textParagraphWidget));
+
+    // TODO: Add cute image if CongraBot (do this after we make a response object)
 
     // KEY VALUE
     KeyValue keyValueWidget = new KeyValue()
@@ -90,4 +92,5 @@ public class CardResponse {
     
     return card;
   }
+
 }
