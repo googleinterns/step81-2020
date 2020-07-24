@@ -150,18 +150,15 @@ class WizardFormBloc extends FormBloc<String, String> {
 
   @override
   Future<void> close() {
-    List<dynamic> blocs = [
-          macroName,
-          description,
-          actionType,
-          actionSheetUrl,
-          triggerType,
-          triggerCommand
-        ] +
-        actionSheetColumn.value.toList();
-    blocs.forEach((bloc) {
-      bloc.close();
-    });
+    macroName.close();
+    description.close();
+    actionType.close();
+    sheetActionType.close();
+    scope.close();
+    actionSheetUrl.close();
+    triggerType.close();
+    triggerCommand.close();
+    actionSheetColumn.close();
 
     return super.close();
   }
