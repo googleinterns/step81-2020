@@ -7,9 +7,7 @@ abstract class ActionModel extends Action {
   }) : super(actionType);
 
   static fromJson(Map<String, dynamic> json) {
-    if (json['type'] == Action.POLL_ACTION) {
-      return PollActionModel.fromJson(json);
-    } else if (json['type'] == Action.SHEET_ACTION) {
+    if (json['type'] == Action.SHEET_ACTION) {
       return SheetActionModel.fromJson(json);
     }
   }
@@ -47,38 +45,6 @@ class SheetAppendActionModel extends AppendAction {
       "sheetUrl": sheetUrl,
       "sheetAction": SheetAction.APPEND_ACTION,
       "columnValue": columnValue,
-    };
-  }
-}
-
-class PollActionModel extends PollAction {
-  PollActionModel({
-    @required String question,
-    @required List<String> choices,
-    @required bool userCanAddOptions,
-    @required bool userCanVoteMultiple,
-  }) : super(
-            question: question,
-            choices: choices,
-            userCanAddOptions: userCanAddOptions,
-            userCanVoteMultiple: userCanVoteMultiple);
-
-  factory PollActionModel.fromJson(Map<String, dynamic> json) {
-    return PollActionModel(
-      question: json['question'],
-      choices: json['choices'].cast<String>(),
-      userCanAddOptions: json['userCanAddOptions'],
-      userCanVoteMultiple: json['userCanVoteMuiltiple'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "type": type,
-      "question": question,
-      "choices": choices,
-      "userCanAddOptions": userCanAddOptions,
-      "userCanVoteMuiltiple": userCanVoteMultiple
     };
   }
 }
