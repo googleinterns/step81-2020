@@ -39,8 +39,8 @@ public class CardResponse {
   private static final String INTERACTIVE_IMAGE_BUTTON_ACTION = "doImageButtonAction";
   private static final String INTERACTIVE_BUTTON_KEY = "originalMessage";
   private static final String HEADER_IMAGE = "https://goo.gl/5obRKj";
-  private static final String BOT_NAME = "Card Bot Java";
-  private static final String REDIRECT_URL = "https://goo.gl/kwhSNz";
+  private static final String BOT_NAME = "MacroBot";
+  private static final String REDIRECT_URL = "https://goo.gl/kwhSNz"; // TODO: Change to spreadsheet link
 
   /**
     * Creates a card-formatted response based on the message sent in Hangouts Chat.
@@ -55,100 +55,39 @@ public class CardResponse {
             new ActionParameter().setKey(INTERACTIVE_BUTTON_KEY).setValue(message)
     );
 
-    // Parse the message and add widgets to the responseStr in the order that
-    // they were requested in the message.
-    Stream.of(message.split(" ")).forEach((s -> {
-        if (s.contains("header")) {
-          CardHeader header = new CardHeader()
+    // HEADER
+    CardHeader header = new CardHeader()
                   .setTitle(BOT_NAME)
                   .setSubtitle("Card header")
                   .setImageUrl(HEADER_IMAGE)
                   .setImageStyle("IMAGE");
-          card.setHeader(header);
-        } else if (s.contains("textparagraph")) {
-          TextParagraph widget = new TextParagraph().setText("<b>This</b> is a <i>text paragraph</i>.");
-          widgets.add(new WidgetMarkup().setTextParagraph(widget));
-        } else if (s.contains("keyvalue")) {
-          KeyValue widget = new KeyValue()
+    card.setHeader(header);
+
+    // TEXT PARAGRAPH
+    TextParagraph textParagraphWidget = new TextParagraph().setText("<b>This</b> is a <i>text paragraph</i>.");
+    widgets.add(new WidgetMarkup().setTextParagraph(textParagraphWidget));
+
+    // KEY VALUE
+    KeyValue keyValueWidget = new KeyValue()
                   .setTopLabel("KeyValue widget")
                   .setContent("This is a KeyValue widget")
                   .setBottomLabel("The bottom label")
-                  .setIcon("STAR");
-          widgets.add(new WidgetMarkup().setKeyValue(widget));
-        } else if (s.contains("interactivetextbutton")) {
-          FormAction action = new FormAction()
-                  .setActionMethodName(INTERACTIVE_TEXT_BUTTON_ACTION)
-                  .setParameters(customParameters);
-          OnClick onClick = new OnClick().setAction(action);
-          TextButton button = new TextButton()
-                  .setText("INTERACTIVE BUTTON")
-                  .setOnClick(onClick);
-          Button widget = new Button().setTextButton(button);
-          widgets.add(new WidgetMarkup().setButtons(Collections.singletonList((widget))));
-        } else if (s.contains("interactiveimagebutton")) {
-          FormAction action = new FormAction()
-                  .setActionMethodName(INTERACTIVE_IMAGE_BUTTON_ACTION)
-                  .setParameters(customParameters);
-          OnClick onClick = new OnClick().setAction(action);
-          ImageButton button = new ImageButton()
-                  .setIcon("EVENT_SEAT")
-                  .setOnClick(onClick);
-          Button widget = new Button().setImageButton(button);
-          widgets.add(new WidgetMarkup().setButtons(Collections.singletonList((widget))));
-        } else if (s.contains("textbutton")) {
-          OpenLink openLink = new OpenLink().setUrl(REDIRECT_URL);
-          OnClick onClick = new OnClick().setOpenLink(openLink);
-          TextButton button = new TextButton()
-                  .setText("TEXT BUTTON")
-                  .setOnClick(onClick);
-          Button widget = new Button().setTextButton(button);
-          widgets.add(new WidgetMarkup().setButtons(Collections.singletonList((widget))));
-        } else if (s.contains("imagebutton")) {
-          OpenLink openLink = new OpenLink().setUrl(REDIRECT_URL);
-          OnClick onClick = new OnClick().setOpenLink(openLink);
-          ImageButton button = new ImageButton()
-                  .setIcon("EVENT_SEAT")
-                  .setOnClick(onClick);
-          Button widget = new Button().setImageButton(button);
-          widgets.add(new WidgetMarkup().setButtons(Collections.singletonList((widget))));
-        } else if (s.contains("image")) {
-          Image widget = new Image().setImageUrl("https://goo.gl/Bpa3Y5");
-          widgets.add(new WidgetMarkup().setImage(widget));
-        }
-      }));
+                  .setIcon("DESCRIPTION");
+    widgets.add(new WidgetMarkup().setKeyValue(keyValueWidget));
 
-      Section section = new Section()
-              .setWidgets(widgets);
-      card.setSections(Collections.singletonList(section));
-      return card;
-  }
-
-  /**
-    * Handles the click for an interactive button.
-    *
-    * @param actionName name of action invoked
-    * @param customParameterValue custom payload from event
-    * @return a response card
-    */
-  public static Card respondToInteractiveCardClick(String actionName, String customParameterValue) {
-    // Determine which button the user clicked.
-    String message = String.format("You clicked <u>%s</u>. <br> Your original message was \"%s\".",
-            actionName.equals(INTERACTIVE_TEXT_BUTTON_ACTION) ? "a TextButton" : "an ImageButton",
-            customParameterValue);
-
-    Card card = new Card();
-    CardHeader header = new CardHeader();
-    header.setTitle(BOT_NAME)
-            .setSubtitle("Interactive card click")
-            .setImageUrl(HEADER_IMAGE)
-            .setImageStyle("IMAGE");
-    card.setHeader(header);
-    TextParagraph text = new TextParagraph().setText(message);
-    List<WidgetMarkup> widgets = Collections.singletonList
-            (new WidgetMarkup().setTextParagraph(text));
+    // TEXT BUTTON
+    OpenLink openLink = new OpenLink().setUrl(REDIRECT_URL);
+    OnClick onClick = new OnClick().setOpenLink(openLink);
+    TextButton button = new TextButton()
+                  .setText("TODO: OPEN SHEET")
+                  .setOnClick(onClick);
+    Button buttonWidget = new Button().setTextButton(button);
+    widgets.add(new WidgetMarkup().setButtons(Collections.singletonList((buttonWidget))));
+    
     Section section = new Section()
-            .setWidgets(widgets);
+                  .setWidgets(widgets);
     card.setSections(Collections.singletonList(section));
+    
     return card;
   }
 }
