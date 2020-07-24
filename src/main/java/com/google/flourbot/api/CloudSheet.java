@@ -10,5 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface CloudSheet {
+  // Method generates and sends request to append rows to bottom of sheet containing values
   public void appendRow(List<String> values) throws IOException, GeneralSecurityException;
+
+  public List<List<String>> readRange(String range);
+
+  public List<String> readRow(int row);
+  public List<String> readColumn(int column);
+  public List<String> readColumn(String column);
+  public List<List<String>> readSheet(String sheetName);
 }

@@ -14,51 +14,104 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Collections;
 
 public class DriveCloudSheet implements CloudSheet {
-  Sheets sheetsService;
-  String spreadsheetId;
+  private static final String VALUE_INPUT_OPTION = "USER_ENTERED";
+  private static final String INSERT_DATA_OPTION = "INSERT_ROWS";
+  private Sheets sheetsService;
+  private String spreadsheetId;
 
   public DriveCloudSheet(String documentId, Sheets documentService) {
     this.spreadsheetId = documentId;
     this.sheetsService = documentService;
   }
 
-  // TODO: replace hardcoded range with calculated range (so far values must be length 3)
-  public void appendRow(List<String> values) throws IOException, GeneralSecurityException {
-    
-    // Generate request to append to sheet
-    String range = "Sheet1!A1:C1";
-    String valueInputOption = "USER_ENTERED";
-    String insertDataOption = "INSERT_ROWS";
+  private String getRange(int numEntryColumns, int numSkipColumns) {
+    // Returns range for sheets request by calculating the alphabetic name of
+    // the start and end column based on the number of columns filled and pre-skipped
 
-    ValueRange requestBody = new ValueRange();
+    String startColumn = toAlphabetic(numSkipColumns);
+    String endColumn = toAlphabetic(numSkipColumns + numEntryColumns - 1);
+    return String.format("Sheet1!%s:%s", startColumn, endColumn);
+  }
+
+  private String toAlphabetic(int i) {
+    // Recursive strategy to build a string that represents the alphabetic name
+    // of a column based on column number i
+    // e.g. 0 -> A, 1 -> B... 25 -> Z, 26 -> AA...
     
+    // Negative numbers cause errors
+    if (i < 0) {
+      throw new IllegalArgumentException(String.format("Column number %d is invalid", i));
+    }
+
+    // Every calculation produces 1 letter
+    int quotient = i / 26;
+    char letter = (char)(i % 26 + 'A');
+    if (quotient == 0) {
+        return "" + letter;
+    } else {
+        return toAlphabetic(quotient-1) + letter;
+    }
+  }
+
+  public List<List<String>> readRange(String range) {
+    ValueRange response = sheetsService.spreadsheets().values()
+        .get(spreadsheetId, range)
+        .execute();
+    return (List<List<String>>) response.getValues();
+  }
+
+  public List<String> readRow(int row) {
+    List<List<String>> values = readRange(String.format("Sheet1!%d:%d", row, row));
+
+    if (values != null || !values.isEmpty()) {
+      return (List<String>) values.get(0);
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  public List<String> readColumn(int column) {
+    // Overload readCol to take a number
+    return readCol(toAlphabetic(column));
+  }
+
+  public List<String> readColumn(String column) {
+    List<List<String>> values = readRange(String.format("Sheet1!%s:%s", column, column));
+
+    if (values != null || !values.isEmpty()) {
+      return (List<String>) values.get(0);
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  public List<List<String>> readSheet(String sheetName) {
+    return readRange(sheetName);
+  }
+
+  public void appendRow(List<String> values) throws IOException, GeneralSecurityException {
+    // Method generates and sends request to append rows to bottom of sheet containing values
+
+    // Calculate the range where the values will be inserted
+    String range = getRange(values.size(), 0);
+    
+    // Convert the values into a List of Lists, which is needed to send the request
     String[] array = values.stream().toArray(String[]::new);
-    List<List<Object>> v = Arrays.asList(
+    List<List<Object>> valuesList = Arrays.asList(
       Arrays.asList(array)
     );
-    
-    requestBody.setValues(v);
 
+    ValueRange requestBody = new ValueRange().setValues(valuesList);
+
+    // Send request
     Sheets.Spreadsheets.Values.Append request =
-      this.sheetsService.spreadsheets().values().append(this.spreadsheetId, range, requestBody);
-    request.setValueInputOption(valueInputOption);
-    request.setInsertDataOption(insertDataOption);
+      this.sheetsService.spreadsheets().values().append(spreadsheetId, range, requestBody);
+    request.setValueInputOption(VALUE_INPUT_OPTION);
+    request.setInsertDataOption(INSERT_DATA_OPTION);
     
     AppendValuesResponse response = request.execute();
-  }
-  
-  // May not use this method
-  public String createNew() throws IOException, GeneralSecurityException {
-
-    // make a new sheet and tell the user the ID and URL
-    Spreadsheet requestBody = new Spreadsheet()
-                  .setProperties(new SpreadsheetProperties()
-                    .setTitle("TEST"));;
-    Sheets.Spreadsheets.Create request = this.sheetsService.spreadsheets().create(requestBody);
-    Spreadsheet response = request.execute();
-
-    return response.getSpreadsheetId();
   }
 }
