@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.logging.Logger;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
@@ -36,10 +37,12 @@ import java.util.List;
 @SpringBootApplication
 @RestController
 public class Bot {
+
   static final String CHAT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
   private static final String SERVICE_ACCOUNT = "/service-acct.json";
   private static final Logger logger = Logger.getLogger(Bot.class.getName());
   private String replyText;
+  private HashMap<String, String> roomToCreator = new HashMap<String, String>();
 
   private static MacroExecutionModule macroExecutionModule;
 
@@ -69,12 +72,28 @@ public class Bot {
         break;
       case "MESSAGE":
         // Sends request to execution module
-        String email = event.at("/message/sender/email").asText();
         String message = event.at("/message/text").asText();
         String threadId = event.at("/message/thread/name").asText();
-        replyText = macroExecutionModule.execute(email, message, threadId);
+
+        String[] words = message.split(" "); 
+
+        if (words[1].equalsIgnoreCase("initiate")) {
+            String creator = event.at("/message/sender/email").asText();
+            roomToCreator.put(event.at("/space/name").asText(), creator);
+            replyText = "Your macros have now been initiated for this room. All users in this room can use your macros.";
+        }
+        else {
+            if (roomToCreator.containsKey(event.at("/space/name").asText())) {
+                String email = roomToCreator.get(event.at("/space/name").asText());
+                replyText = macroExecutionModule.execute(email, message, threadId);
+            }
+            else {
+                replyText = "You do not have access to this macro.";
+            }
+        }
         break;
       case "REMOVED_FROM_SPACE":
+        roomToCreator.remove(event.at("/space/name").asText());
         logger.info("Bot removed from space.");
         break;
       default:
