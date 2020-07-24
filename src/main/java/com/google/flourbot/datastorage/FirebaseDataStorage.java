@@ -59,7 +59,7 @@ public class FirebaseDataStorage implements DataStorage {
       document = querySnapshot.get().getDocuments().get(0);
       return document.exists() ? Optional.of(document) : Optional.empty();
     } catch (IndexOutOfBoundsException e) {
-      throw new IllegalStateException(e);
+      return Optional.empty();
     } catch (InterruptedException e) {
       throw new IllegalStateException(e);
     } catch (ExecutionException e) {
