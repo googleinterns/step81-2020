@@ -3,7 +3,7 @@ import 'package:macrobaseapp/logic/state/macro_notifier.dart';
 import 'package:macrobaseapp/model/adapters/macro_model.dart';
 import 'package:macrobaseapp/model/entities/macro.dart';
 
-getMacros(MacroNotifier macroNotifier, String creatorId) async{
+getMacros(MacroNotifier macroNotifier, String creatorId) async {
   QuerySnapshot snapshot = await Firestore.instance.collection('macros').where("creatorId", isEqualTo: creatorId).getDocuments();
 
   List<Macro> _macroList = [];

@@ -25,7 +25,7 @@ class MacroModel extends Macro {
       macroName: json['macroName'],
       description: json['description'],
       creatorId: json['creatorId'],
-      scope: json['scope'],
+      scope: json['scope'].cast<String>(),
       trigger: TriggerModel.fromJson(json['trigger']),
       action: ActionModel.fromJson(json['action'])
     );
