@@ -294,8 +294,12 @@ class _SheetActionFormState extends State<SheetActionForm> {
           BlocBuilder<SelectFieldBloc, SelectFieldBlocState>(
               bloc: wizardFormBloc.sheetActionType,
               builder: (context, state) {
-                if (state.value == entity.SheetAction.APPEND_ACTION){
+                if (state.value == entity.SheetAction.APPEND_ACTION) {
                   return SheetAppendActionForm(
+                    wizardFormBloc: wizardFormBloc,
+                  );
+                } else if (state.value == entity.SheetAction.BATCH_ACTION) {
+                  return SheetBatchActionForm(
                     wizardFormBloc: wizardFormBloc,
                   );
                 } else {
@@ -389,6 +393,40 @@ class _SheetAppendActionFormState extends State<SheetAppendActionForm> {
               return Container();
             },
           )
+        ],
+      ),
+    );
+  }
+}
+
+class SheetBatchActionForm extends StatefulWidget {
+  final WizardFormBloc wizardFormBloc;
+
+  const SheetBatchActionForm({Key key, this.wizardFormBloc}) : super(key: key);
+
+  @override
+  _SheetBatchActionFormState createState() =>
+      _SheetBatchActionFormState(wizardFormBloc);
+}
+
+class _SheetBatchActionFormState extends State<SheetBatchActionForm> {
+  final WizardFormBloc wizardFormBloc;
+
+  _SheetBatchActionFormState(this.wizardFormBloc);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          RadioButtonGroupFieldBlocBuilder(
+            selectFieldBloc: wizardFormBloc.batchActionType,
+            itemBuilder: (context, item) => item,
+            decoration: InputDecoration(
+              labelText: 'Select Batch Action Type',
+              prefixIcon: SizedBox(),
+            ),
+          ),
         ],
       ),
     );

@@ -23,6 +23,9 @@ abstract class SheetActionModel extends SheetAction {
     if (json['sheetAction'] == SheetAction.APPEND_ACTION) {
       return SheetAppendActionModel.fromJson(json);
     }
+    else if (json['sheetAction'] == SheetAction.BATCH_ACTION) {
+      return SheetBatchActionModel.fromJson(json);
+    }
   }
 }
 
@@ -45,6 +48,38 @@ class SheetAppendActionModel extends AppendAction {
       "sheetUrl": sheetUrl,
       "sheetAction": SheetAction.APPEND_ACTION,
       "columnValue": columnValue,
+    };
+  }
+}
+
+class SheetBatchActionModel extends BatchAction {
+  SheetBatchActionModel({
+    @required sheetUrl,
+    row,
+    column,
+    batchType,
+    randomizeOrder,
+  }) : super(sheetUrl, row, column, batchType, randomizeOrder);
+
+  factory SheetBatchActionModel.fromJson(Map<String, dynamic> json) {
+    return SheetBatchActionModel(
+      sheetUrl: json["sheetUrl"],
+      row: json["row"],
+      column: json["column"],
+      batchType: json["batchType"],
+      randomizeOrder: json["randomizeOrder"]
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "type": type,
+      "sheetAction": sheetAction,
+      "sheetUrl": sheetUrl,
+      "row": row,
+      "column": column,
+      "batchType": batchType,
+      "randomizeOrder": randomizeOrder
     };
   }
 }

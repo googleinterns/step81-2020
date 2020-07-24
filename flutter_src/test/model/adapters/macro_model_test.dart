@@ -17,12 +17,12 @@ void main() {
     trigger: CommandTriggerModel(
         command: "make game poll"
     ),
-    action: PollActionModel(
-      question: "What game should we play tomorrow ? ",
-      choices: ["Saboteur", "Pubg", "Code name"],
-      userCanAddOptions: true,
-      userCanVoteMultiple: false,
-    ),
+//    action: PollActionModel(
+//      question: "What game should we play tomorrow ? ",
+//      choices: ["Saboteur", "Pubg", "Code name"],
+//      userCanAddOptions: true,
+//      userCanVoteMultiple: false,
+//    ),
   );
 
   test(

@@ -3,8 +3,6 @@ import 'package:meta/meta.dart';
 
 class Action extends Equatable {
   static const String SHEET_ACTION = "Sheet Action";
-  static const String POLL_ACTION = "Poll Action";
-
   final String type;
 
   Action(this.type);

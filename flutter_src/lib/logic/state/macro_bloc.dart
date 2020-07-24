@@ -14,10 +14,10 @@ class WizardFormBloc extends FormBloc<String, String> {
   final User user;
 
   TextFieldBloc macroName = TextFieldBloc(
+    asyncValidators: [CustomBlocValidator.nameValidator],
     validators: [
       FieldBlocValidators.required,
     ],
-    asyncValidators: [CustomBlocValidator.nameValidator],
     name: 'Macro Name',
   );
 
@@ -37,7 +37,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     validators: [
       FieldBlocValidators.required,
     ],
-    items: [Action.SHEET_ACTION, Action.POLL_ACTION],
+    items: [Action.SHEET_ACTION],
   );
 
   SelectFieldBloc sheetActionType = SelectFieldBloc(
@@ -46,6 +46,14 @@ class WizardFormBloc extends FormBloc<String, String> {
       FieldBlocValidators.required,
     ],
     items: [SheetAction.APPEND_ACTION, SheetAction.BATCH_ACTION],
+  );
+
+  SelectFieldBloc batchActionType = SelectFieldBloc(
+    name: 'Batch Action Type',
+    validators: [
+      FieldBlocValidators.required,
+    ],
+    items: [BatchAction.READ_TYPE, BatchAction.DELETE_TYPE],
   );
 
   TextFieldBloc actionSheetUrl = TextFieldBloc(
@@ -82,7 +90,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     );
     addFieldBlocs(
       step: 1,
-      fieldBlocs: [sheetActionType, actionSheetUrl, actionSheetColumn],
+      fieldBlocs: [sheetActionType, actionSheetUrl, actionSheetColumn, batchActionType],
     );
     addFieldBlocs(
       step: 2,
@@ -110,13 +118,36 @@ class WizardFormBloc extends FormBloc<String, String> {
       dynamic action;
 
       switch (actionType.value) {
+        case Action.SHEET_ACTION:
+          {
+            switch (sheetActionType.value) {
+              case SheetAction.APPEND_ACTION:
+                action = new SheetAppendActionModel(
+                  sheetUrl: actionSheetUrl.value,
+                  columnValue:
+                  actionSheetColumn.value.map((bloc) => bloc.value).toList(),
+                );
+                break;
+              case SheetAction.BATCH_ACTION:
+                action = new SheetBatchActionModel(
+                  sheetUrl: actionSheetUrl.value,
+                  //TODO Remove hard-coded
+                  row: 0,
+                  column: "A",
+                  batchType: batchActionType.value,
+                  randomizeOrder: true,
+                );
+                break;
+              default:
+                print(sheetActionType.value);
+                throw new Exception([sheetActionType.value + " [sheetActionType] is not implemented!"]);
+            }
+          }
+          break;
         default:
           {
-            action = new SheetAppendActionModel(
-              sheetUrl: actionSheetUrl.value,
-              columnValue:
-                  actionSheetColumn.value.map((bloc) => bloc.value).toList(),
-            );
+            print(actionType.value);
+            throw new Exception([actionType.value + " [actionType] is not implemented!"]);
           }
           break;
       }
