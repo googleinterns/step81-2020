@@ -21,4 +21,19 @@ class CustomBlocValidator {
     }
     return "Sheet URL Format - Validator Error";
   }
+
+  static String commaSeperatedEmailValidator(String string) {
+    List<String> errors = [];
+
+    List<String> emails = string.split(',');
+
+    for (int i = 0; i < emails.length; i++) {
+      bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(emails[i]);
+      if (!emailValid) {
+        errors.add(emails[i] + " is not an valid email.");
+      }
+    }
+
+    return errors.isEmpty ? null : errors.join("\n");
+  }
 }

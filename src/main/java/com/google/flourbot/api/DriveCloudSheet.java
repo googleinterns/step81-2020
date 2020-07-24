@@ -65,7 +65,6 @@ public class DriveCloudSheet implements CloudSheet {
     } catch (IOException e) {
       throw new IllegalArgumentException(e);
     }
-  
     return (List<List<String>>)((Object)response.getValues());
   }
 

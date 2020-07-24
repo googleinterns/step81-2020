@@ -18,7 +18,7 @@ public class FirebaseDataStorage implements DataStorage {
   private static final String PROJECT_ID = "stepladder-2020";
   private static final String SERVICE_ACCOUNT = "/key.json";
   private static final String COLLECTION_NAME = "macros";
-  private static final String USER_IDENTIFIER = "creatorId";
+  private static final String SCOPE_IDENTIFIER =  "scope";
   private static final String MACRO_IDENTIFIER = "macroName";
 
   public FirebaseDataStorage() {
@@ -45,8 +45,8 @@ public class FirebaseDataStorage implements DataStorage {
     // Create a query to find a macro named macroName belonging to userEmail
     Query query =
         db.collection(COLLECTION_NAME)
-            .whereEqualTo(USER_IDENTIFIER, userEmail)
-            .whereEqualTo(MACRO_IDENTIFIER, macroName);
+            .whereEqualTo(MACRO_IDENTIFIER, macroName)
+            .whereArrayContains(SCOPE_IDENTIFIER, userEmail);
     // Retrieve  query results asynchronously using query.get()
     ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
@@ -59,7 +59,7 @@ public class FirebaseDataStorage implements DataStorage {
       document = querySnapshot.get().getDocuments().get(0);
       return document.exists() ? Optional.of(document) : Optional.empty();
     } catch (IndexOutOfBoundsException e) {
-      throw new IllegalStateException(e);
+      return Optional.empty();
     } catch (InterruptedException e) {
       throw new IllegalStateException(e);
     } catch (ExecutionException e) {
