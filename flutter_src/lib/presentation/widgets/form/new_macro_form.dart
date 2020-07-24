@@ -182,27 +182,6 @@ class _NewMacroFormState extends State<NewMacroForm> {
       ),
       content: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  wizardFormBloc.triggerType.updateValue(Trigger.COMMAND_BASED);
-                },
-                padding: EdgeInsets.all(0.0),
-                child: Column(children: <Widget>[
-                  Image(
-                    image: AssetImage("hangout.png"),
-                    height: 100,
-                    width: 200,
-                  ),
-                  Text(
-                    "Command Based",
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                ]),
-              ),
-            ],
-          ),
           TextFieldBlocBuilder(
             textFieldBloc: wizardFormBloc.triggerCommand,
             decoration: InputDecoration(
