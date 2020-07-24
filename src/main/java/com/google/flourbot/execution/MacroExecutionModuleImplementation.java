@@ -77,7 +77,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         break;
       case SHEET_READ_COLUMN:
         CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
-        List<String> sheetData = cloudSheet.readCol("B");//TODO: Replace hardcoded
+        List<String> sheetData = cloudSheet.readColumn("B");//TODO: Replace hardcoded
         break;
       default:
         throw new IllegalStateException(

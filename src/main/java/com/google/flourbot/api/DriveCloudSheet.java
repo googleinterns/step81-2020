@@ -69,12 +69,12 @@ public class DriveCloudSheet implements CloudSheet {
     }
   }
 
-  public List<String> readCol(int column) {
+  public List<String> readColumn(int column) {
     // Overload readCol to take a number
     return readCol(toAlphabetic(column));
   }
 
-  public List<String> readCol(String column) {
+  public List<String> readColumn(String column) {
     List<List<String>> values = readRange(String.format("Sheet1!%s:%s", column, column));
 
     if (values != null || !values.isEmpty()) {
