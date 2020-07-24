@@ -77,6 +77,23 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
       case SHEET_APPEND:
         // Read instructions on what to write
 
+        // If the message contains the macroName, remove "@Macrobot macroName" from message 
+        if (message.contains(macroName)) {
+            String[] messages = message.split(" ", 3);
+            if (messages.length != 3) {
+                throw new IllegalArgumentException();
+            }
+            message = messages[2];
+        }
+        // Otherwise if the message uses the threadId instead of explicitly stating the macroName, remove only "@Macrobot"
+        else {
+            String[] messages = message.split(" ", 2);
+            if (messages.length!= 2) {
+                throw new IllegalArgumentException();
+            }
+            message = messages[1];
+        }
+
         SheetEntryType[] columns = ((SheetAppendAction) action).getColumnValue();
         // Prepare values to write into the sheet
         ArrayList<String> values = new ArrayList<String>();
