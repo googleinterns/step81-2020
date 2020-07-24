@@ -1,3 +1,7 @@
+/*
+ * Interface for module that creates service with Google Sheets API. 
+ */
+
 package com.google.flourbot.api;
 
 import java.io.IOException;

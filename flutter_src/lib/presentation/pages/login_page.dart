@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:macrobaseapp/presentation/widgets/google_signin_button.dart';
+import 'package:macrobaseapp/presentation/widgets/button/google_signin_button.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key key}) : super(key: key);
@@ -35,7 +35,7 @@ class LoginPageBody extends StatelessWidget {
                 height: 400,
               ),
               SizedBox(height: 30),
-              signInButton(context),
+              GoogleSigninButton(context),
             ],
           ),
         ),
@@ -43,3 +43,4 @@ class LoginPageBody extends StatelessWidget {
     );
   }
 }
+

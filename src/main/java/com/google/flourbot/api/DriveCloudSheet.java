@@ -1,3 +1,7 @@
+/*
+ * Controls read/write logic with provided sheetId and sheetsService.
+ */
+
 package com.google.flourbot.api;
 
 import com.google.api.services.sheets.v4.*;
