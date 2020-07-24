@@ -4,8 +4,9 @@
 
 package com.google.flourbot.api;
 
-import com.google.api.services.sheets.v4.*;
-import com.google.api.services.sheets.v4.model.*;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.api.services.sheets.v4.model.AppendValuesResponse;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
