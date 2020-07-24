@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 import java.util.Optional;
 import java.util.HashMap;
@@ -79,6 +77,10 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
     Action action = optionalMacro.get().getAction();
     ActionType actionType = action.getActionType();
+    String documentId = action.getSheetId();
+    CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
+
+    String replyText = "Action not recognized";
 
     switch (actionType) {
       case SHEET_APPEND:
@@ -131,20 +133,16 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         }
 
         // Append values to first free bottom row of sheet
-
-        SheetAppendAction a = (SheetAppendAction) optionalMacro.get().getAction();
-        String documentId = a.getSheetId();
-        CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
         cloudSheet.appendRow(values);
+        replyText = "Appended row to " + action.getSheetUrl();
         break;
       case SHEET_READ_ROW:
-        // TODO: after merge with master, move CloudSheet init to before the switch statement
-        CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
-        List<String> sheetData = cloudSheet.readRow(2); //TODO: Replace hardcoded
+        List<String> rowData = cloudSheet.readRow(2); //TODO: Replace hardcoded
+        replyText = rowData.get(0);
         break;
       case SHEET_READ_COLUMN:
-        CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
-        List<String> sheetData = cloudSheet.readColumn("B");//TODO: Replace hardcoded
+        List<String> columnData = cloudSheet.readColumn("B");//TODO: Replace hardcoded
+        replyText = columnData.get(0);
         break;
       default:
         throw new IllegalStateException(
@@ -152,8 +150,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     }
 
     // TODO: Return a response object
-    // If read row or read col - give the row or col
-    return "Sucessfully executed";
+    return replyText;
   }
 
   private String getDate(String pattern) {

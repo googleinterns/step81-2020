@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Collections;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class DriveCloudSheet implements CloudSheet {
   private static final String VALUE_INPUT_OPTION = "USER_ENTERED";
@@ -56,11 +58,17 @@ public class DriveCloudSheet implements CloudSheet {
     }
   }
 
-  public List<List<String>> readRange(String range) {
-    ValueRange response = sheetsService.spreadsheets().values()
+  public List<List<String>> readRange(String range){
+    ValueRange response;
+    try {
+      response = sheetsService.spreadsheets().values()
         .get(spreadsheetId, range)
         .execute();
-    return (List<List<String>>) response.getValues();
+    } catch (IOException e) {
+      throw new IllegalArgumentException(e);
+    }
+
+    return (List<List<String>>)((Object)response.getValues());
   }
 
   public List<String> readRow(int row) {
@@ -75,7 +83,7 @@ public class DriveCloudSheet implements CloudSheet {
 
   public List<String> readColumn(int column) {
     // Overload readCol to take a number
-    return readCol(toAlphabetic(column));
+    return readColumn(toAlphabetic(column));
   }
 
   public List<String> readColumn(String column) {
