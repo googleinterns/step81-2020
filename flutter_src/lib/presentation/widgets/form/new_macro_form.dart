@@ -427,8 +427,31 @@ class _SheetBatchActionFormState extends State<SheetBatchActionForm> {
               prefixIcon: SizedBox(),
             ),
           ),
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.row,
+            decoration: InputDecoration(
+              labelText: 'Row',
+              prefixIcon: Icon(Icons.people),
+            ),
+          ),
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.column,
+            decoration: InputDecoration(
+              labelText: 'Column',
+              prefixIcon: Icon(Icons.people),
+            ),
+          ),
+          SwitchFieldBlocBuilder(
+            booleanFieldBloc: wizardFormBloc.randomOrder,
+            body: Container(
+              alignment: Alignment.centerLeft,
+              child: Text('Randomize the Order'),
+            ),
+          ),
         ],
       ),
     );
   }
 }
+
+

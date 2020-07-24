@@ -15,6 +15,7 @@ class WizardFormBloc extends FormBloc<String, String> {
 
   TextFieldBloc macroName = TextFieldBloc(
     asyncValidators: [CustomBlocValidator.nameValidator],
+    asyncValidatorDebounceTime: Duration(milliseconds: 300),
     validators: [
       FieldBlocValidators.required,
     ],
@@ -56,6 +57,22 @@ class WizardFormBloc extends FormBloc<String, String> {
     items: [BatchAction.READ_TYPE, BatchAction.DELETE_TYPE],
   );
 
+  TextFieldBloc row = TextFieldBloc(
+    name: "Row",
+    validators: [
+      FieldBlocValidators.required,
+    ],
+  );
+
+  TextFieldBloc column = TextFieldBloc(
+    name: "Column",
+    validators: [
+      FieldBlocValidators.required,
+    ],
+  );
+
+  BooleanFieldBloc randomOrder = BooleanFieldBloc();
+
   TextFieldBloc actionSheetUrl = TextFieldBloc(
     name: "Sheet URL",
     validators: [
@@ -90,12 +107,42 @@ class WizardFormBloc extends FormBloc<String, String> {
     );
     addFieldBlocs(
       step: 1,
-      fieldBlocs: [sheetActionType, actionSheetUrl, actionSheetColumn, batchActionType],
+      fieldBlocs: [
+        sheetActionType,
+        actionSheetUrl,
+      ],
     );
     addFieldBlocs(
       step: 2,
       fieldBlocs: [triggerCommand],
     );
+    setupSheetActionType();
+  }
+
+  void setupSheetActionType() {
+    sheetActionType.onValueChanges(onData: (_, current) async* {
+      removeFieldBlocs(
+        fieldBlocs: [
+          actionSheetColumn,
+          batchActionType,
+          row,
+          column,
+          randomOrder,
+        ],
+      );
+      if (current.value == SheetAction.APPEND_ACTION) {
+        addFieldBlocs(step: 1, fieldBlocs: [
+          actionSheetColumn,
+        ]);
+      } else if (current.value == SheetAction.BATCH_ACTION) {
+        addFieldBlocs(step: 1, fieldBlocs: [
+          batchActionType,
+          row,
+          column,
+          randomOrder,
+        ]);
+      }
+    });
   }
 
   void preFillCommand() {
@@ -124,30 +171,34 @@ class WizardFormBloc extends FormBloc<String, String> {
               case SheetAction.APPEND_ACTION:
                 action = new SheetAppendActionModel(
                   sheetUrl: actionSheetUrl.value,
-                  columnValue:
-                  actionSheetColumn.value.map((bloc) => bloc.value).toList(),
+                  columnValue: actionSheetColumn.value
+                      .map((bloc) => bloc.value)
+                      .toList(),
                 );
                 break;
               case SheetAction.BATCH_ACTION:
                 action = new SheetBatchActionModel(
                   sheetUrl: actionSheetUrl.value,
-                  //TODO Remove hard-coded
-                  row: 0,
-                  column: "A",
+                  row: int.parse(row.value),
+                  column: int.parse(column.value),
                   batchType: batchActionType.value,
-                  randomizeOrder: true,
+                  randomizeOrder: randomOrder.value,
                 );
                 break;
               default:
                 print(sheetActionType.value);
-                throw new Exception([sheetActionType.value + " [sheetActionType] is not implemented!"]);
+                throw new Exception([
+                  sheetActionType.value +
+                      " [sheetActionType] is not implemented!"
+                ]);
             }
           }
           break;
         default:
           {
             print(actionType.value);
-            throw new Exception([actionType.value + " [actionType] is not implemented!"]);
+            throw new Exception(
+                [actionType.value + " [actionType] is not implemented!"]);
           }
           break;
       }
@@ -181,16 +232,19 @@ class WizardFormBloc extends FormBloc<String, String> {
 
   @override
   Future<void> close() {
-    
     macroName.close();
     description.close();
     actionType.close();
     sheetActionType.close();
     scope.close();
     actionSheetUrl.close();
+    actionSheetColumn.close();
+    batchActionType.close();
+    row.close();
+    column.close();
+    randomOrder.close();
     triggerType.close();
     triggerCommand.close();
-    actionSheetColumn.close();
 
     return super.close();
   }

@@ -33,7 +33,7 @@ class BatchAction extends SheetAction {
   static const String DELETE_TYPE = "Delete";
 
   int row = null;
-  String column = null;
+  int column = null;
 
   String batchType;
   bool randomizeOrder = false;
