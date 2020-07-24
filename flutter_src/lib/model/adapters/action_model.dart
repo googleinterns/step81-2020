@@ -7,9 +7,7 @@ abstract class ActionModel extends Action {
   }) : super(actionType);
 
   static fromJson(Map<String, dynamic> json) {
-    if (json['type'] == Action.POLL_ACTION) {
-      return PollActionModel.fromJson(json);
-    } else if (json['type'] == Action.SHEET_ACTION) {
+    if (json['type'] == Action.SHEET_ACTION) {
       return SheetActionModel.fromJson(json);
     }
   }
@@ -24,6 +22,9 @@ abstract class SheetActionModel extends SheetAction {
   static fromJson(Map<String, dynamic> json) {
     if (json['sheetAction'] == SheetAction.APPEND_ACTION) {
       return SheetAppendActionModel.fromJson(json);
+    }
+    else if (json['sheetAction'] == SheetAction.BATCH_ACTION) {
+      return SheetBatchActionModel.fromJson(json);
     }
   }
 }
@@ -51,34 +52,34 @@ class SheetAppendActionModel extends AppendAction {
   }
 }
 
-class PollActionModel extends PollAction {
-  PollActionModel({
-    @required String question,
-    @required List<String> choices,
-    @required bool userCanAddOptions,
-    @required bool userCanVoteMultiple,
-  }) : super(
-            question: question,
-            choices: choices,
-            userCanAddOptions: userCanAddOptions,
-            userCanVoteMultiple: userCanVoteMultiple);
+class SheetBatchActionModel extends BatchAction {
+  SheetBatchActionModel({
+    @required sheetUrl,
+    row,
+    column,
+    batchType,
+    randomizeOrder,
+  }) : super(sheetUrl, row, column, batchType, randomizeOrder);
 
-  factory PollActionModel.fromJson(Map<String, dynamic> json) {
-    return PollActionModel(
-      question: json['question'],
-      choices: json['choices'].cast<String>(),
-      userCanAddOptions: json['userCanAddOptions'],
-      userCanVoteMultiple: json['userCanVoteMuiltiple'],
+  factory SheetBatchActionModel.fromJson(Map<String, dynamic> json) {
+    return SheetBatchActionModel(
+      sheetUrl: json["sheetUrl"],
+      row: json["row"],
+      column: json["column"],
+      batchType: json["batchType"],
+      randomizeOrder: json["randomizeOrder"]
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       "type": type,
-      "question": question,
-      "choices": choices,
-      "userCanAddOptions": userCanAddOptions,
-      "userCanVoteMuiltiple": userCanVoteMultiple
+      "sheetAction": sheetAction,
+      "sheetUrl": sheetUrl,
+      "row": row,
+      "column": column,
+      "batchType": batchType,
+      "randomizeOrder": randomizeOrder
     };
   }
 }

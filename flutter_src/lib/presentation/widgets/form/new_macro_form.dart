@@ -182,27 +182,6 @@ class _NewMacroFormState extends State<NewMacroForm> {
       ),
       content: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  wizardFormBloc.triggerType.updateValue(Trigger.COMMAND_BASED);
-                },
-                padding: EdgeInsets.all(0.0),
-                child: Column(children: <Widget>[
-                  Image(
-                    image: AssetImage("hangout.png"),
-                    height: 100,
-                    width: 200,
-                  ),
-                  Text(
-                    "Command Based",
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                ]),
-              ),
-            ],
-          ),
           TextFieldBlocBuilder(
             textFieldBloc: wizardFormBloc.triggerCommand,
             decoration: InputDecoration(
@@ -294,8 +273,12 @@ class _SheetActionFormState extends State<SheetActionForm> {
           BlocBuilder<SelectFieldBloc, SelectFieldBlocState>(
               bloc: wizardFormBloc.sheetActionType,
               builder: (context, state) {
-                if (state.value == entity.SheetAction.APPEND_ACTION){
+                if (state.value == entity.SheetAction.APPEND_ACTION) {
                   return SheetAppendActionForm(
+                    wizardFormBloc: wizardFormBloc,
+                  );
+                } else if (state.value == entity.SheetAction.BATCH_ACTION) {
+                  return SheetBatchActionForm(
                     wizardFormBloc: wizardFormBloc,
                   );
                 } else {
@@ -394,3 +377,60 @@ class _SheetAppendActionFormState extends State<SheetAppendActionForm> {
     );
   }
 }
+
+class SheetBatchActionForm extends StatefulWidget {
+  final WizardFormBloc wizardFormBloc;
+
+  const SheetBatchActionForm({Key key, this.wizardFormBloc}) : super(key: key);
+
+  @override
+  _SheetBatchActionFormState createState() =>
+      _SheetBatchActionFormState(wizardFormBloc);
+}
+
+class _SheetBatchActionFormState extends State<SheetBatchActionForm> {
+  final WizardFormBloc wizardFormBloc;
+
+  _SheetBatchActionFormState(this.wizardFormBloc);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          RadioButtonGroupFieldBlocBuilder(
+            selectFieldBloc: wizardFormBloc.batchActionType,
+            itemBuilder: (context, item) => item,
+            decoration: InputDecoration(
+              labelText: 'Select Batch Action Type',
+              prefixIcon: SizedBox(),
+            ),
+          ),
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.row,
+            decoration: InputDecoration(
+              labelText: 'Row',
+              prefixIcon: Icon(Icons.people),
+            ),
+          ),
+          TextFieldBlocBuilder(
+            textFieldBloc: wizardFormBloc.column,
+            decoration: InputDecoration(
+              labelText: 'Column',
+              prefixIcon: Icon(Icons.people),
+            ),
+          ),
+          SwitchFieldBlocBuilder(
+            booleanFieldBloc: wizardFormBloc.randomOrder,
+            body: Container(
+              alignment: Alignment.centerLeft,
+              child: Text('Randomize the Order'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+

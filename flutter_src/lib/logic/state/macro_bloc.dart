@@ -14,10 +14,11 @@ class WizardFormBloc extends FormBloc<String, String> {
   final User user;
 
   TextFieldBloc macroName = TextFieldBloc(
+    asyncValidators: [CustomBlocValidator.nameValidator],
+    asyncValidatorDebounceTime: Duration(milliseconds: 300),
     validators: [
       FieldBlocValidators.required,
     ],
-    asyncValidators: [CustomBlocValidator.nameValidator],
     name: 'Macro Name',
   );
 
@@ -37,7 +38,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     validators: [
       FieldBlocValidators.required,
     ],
-    items: [Action.SHEET_ACTION, Action.POLL_ACTION],
+    items: [Action.SHEET_ACTION],
   );
 
   SelectFieldBloc sheetActionType = SelectFieldBloc(
@@ -45,8 +46,32 @@ class WizardFormBloc extends FormBloc<String, String> {
     validators: [
       FieldBlocValidators.required,
     ],
-    items: [SheetAction.APPEND_ACTION, SheetAction.READ_ACTION],
+    items: [SheetAction.APPEND_ACTION, SheetAction.BATCH_ACTION],
   );
+
+  SelectFieldBloc batchActionType = SelectFieldBloc(
+    name: 'Batch Action Type',
+    validators: [
+      FieldBlocValidators.required,
+    ],
+    items: [BatchAction.READ_TYPE, BatchAction.DELETE_TYPE],
+  );
+
+  TextFieldBloc row = TextFieldBloc(
+    name: "Row",
+    validators: [
+      FieldBlocValidators.required,
+    ],
+  );
+
+  TextFieldBloc column = TextFieldBloc(
+    name: "Column",
+    validators: [
+      FieldBlocValidators.required,
+    ],
+  );
+
+  BooleanFieldBloc randomOrder = BooleanFieldBloc();
 
   TextFieldBloc actionSheetUrl = TextFieldBloc(
     name: "Sheet URL",
@@ -82,12 +107,42 @@ class WizardFormBloc extends FormBloc<String, String> {
     );
     addFieldBlocs(
       step: 1,
-      fieldBlocs: [sheetActionType, actionSheetUrl, actionSheetColumn],
+      fieldBlocs: [
+        sheetActionType,
+        actionSheetUrl,
+      ],
     );
     addFieldBlocs(
       step: 2,
       fieldBlocs: [triggerCommand],
     );
+    setupSheetActionType();
+  }
+
+  void setupSheetActionType() {
+    sheetActionType.onValueChanges(onData: (_, current) async* {
+      removeFieldBlocs(
+        fieldBlocs: [
+          actionSheetColumn,
+          batchActionType,
+          row,
+          column,
+          randomOrder,
+        ],
+      );
+      if (current.value == SheetAction.APPEND_ACTION) {
+        addFieldBlocs(step: 1, fieldBlocs: [
+          actionSheetColumn,
+        ]);
+      } else if (current.value == SheetAction.BATCH_ACTION) {
+        addFieldBlocs(step: 1, fieldBlocs: [
+          batchActionType,
+          row,
+          column,
+          randomOrder,
+        ]);
+      }
+    });
   }
 
   void preFillCommand() {
@@ -110,13 +165,40 @@ class WizardFormBloc extends FormBloc<String, String> {
       dynamic action;
 
       switch (actionType.value) {
+        case Action.SHEET_ACTION:
+          {
+            switch (sheetActionType.value) {
+              case SheetAction.APPEND_ACTION:
+                action = new SheetAppendActionModel(
+                  sheetUrl: actionSheetUrl.value,
+                  columnValue: actionSheetColumn.value
+                      .map((bloc) => bloc.value)
+                      .toList(),
+                );
+                break;
+              case SheetAction.BATCH_ACTION:
+                action = new SheetBatchActionModel(
+                  sheetUrl: actionSheetUrl.value,
+                  row: int.parse(row.value),
+                  column: int.parse(column.value),
+                  batchType: batchActionType.value,
+                  randomizeOrder: randomOrder.value,
+                );
+                break;
+              default:
+                print(sheetActionType.value);
+                throw new Exception([
+                  sheetActionType.value +
+                      " [sheetActionType] is not implemented!"
+                ]);
+            }
+          }
+          break;
         default:
           {
-            action = new SheetAppendActionModel(
-              sheetUrl: actionSheetUrl.value,
-              columnValue:
-                  actionSheetColumn.value.map((bloc) => bloc.value).toList(),
-            );
+            print(actionType.value);
+            throw new Exception(
+                [actionType.value + " [actionType] is not implemented!"]);
           }
           break;
       }
@@ -156,9 +238,13 @@ class WizardFormBloc extends FormBloc<String, String> {
     sheetActionType.close();
     scope.close();
     actionSheetUrl.close();
+    actionSheetColumn.close();
+    batchActionType.close();
+    row.close();
+    column.close();
+    randomOrder.close();
     triggerType.close();
     triggerCommand.close();
-    actionSheetColumn.close();
 
     return super.close();
   }

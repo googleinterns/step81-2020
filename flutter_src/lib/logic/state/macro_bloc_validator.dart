@@ -4,12 +4,12 @@ import 'package:macrobaseapp/model/entities/macro.dart';
 class CustomBlocValidator {
   static Future<String> nameValidator(String name) async {
     //Avoid too many Firestore calls
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(Duration(milliseconds: 500));
     List<Macro> list = await queryMacro(name);
-    if (list.length > 0)
+    if (list.length > 0) {
       return "Sorry, this macro name already exist";
-    else
-      return null;
+    }
+    return null;
   }
 
   static String sheetUrlValidator(String string) {
@@ -24,6 +24,9 @@ class CustomBlocValidator {
 
   static String commaSeperatedEmailValidator(String string) {
     List<String> errors = [];
+
+    string = string.trim();
+    if (string.length == 0) return null;
 
     List<String> emails = string.split(',');
 
