@@ -22,10 +22,15 @@ class WizardFormBloc extends FormBloc<String, String> {
   );
 
   TextFieldBloc description = TextFieldBloc(
+    name: "Description",
     validators: [
       FieldBlocValidators.required,
     ],
   );
+
+  TextFieldBloc scope = TextFieldBloc(name: 'Scope', validators: [
+    CustomBlocValidator.commaSeperatedEmailValidator,
+  ]);
 
   SelectFieldBloc actionType = SelectFieldBloc(
     name: 'Action Type',
@@ -51,7 +56,8 @@ class WizardFormBloc extends FormBloc<String, String> {
     ],
   );
 
-  ListFieldBloc<TextFieldBloc> actionSheetColumn = ListFieldBloc<TextFieldBloc>();
+  ListFieldBloc<TextFieldBloc> actionSheetColumn =
+      ListFieldBloc<TextFieldBloc>();
 
   SelectFieldBloc triggerType = SelectFieldBloc(
     name: 'Trigger Type',
@@ -62,7 +68,7 @@ class WizardFormBloc extends FormBloc<String, String> {
   );
 
   TextFieldBloc triggerCommand = TextFieldBloc(
-    name: 'command',
+    name: 'Command',
     validators: [
       FieldBlocValidators.required,
     ],
@@ -72,7 +78,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     // Default Setup
     addFieldBlocs(
       step: 0,
-      fieldBlocs: [macroName, description],
+      fieldBlocs: [macroName, description, scope],
     );
     addFieldBlocs(
       step: 1,
@@ -85,69 +91,74 @@ class WizardFormBloc extends FormBloc<String, String> {
   }
 
   void preFillCommand() {
-    List<String> variables = actionSheetColumn.value.map((bloc) => "{" + bloc.value + "}" ).toList();
+    List<String> variables =
+        actionSheetColumn.value.map((bloc) => "{" + bloc.value + "}").toList();
     String prefill = variables.join(" ");
     triggerCommand.updateValue(prefill);
   }
 
   @override
   void onSubmitting() async {
-    try {
-      if (state.currentStep == 0) {
-        emitSuccess();
-      } else if (state.currentStep == 1) {
-        // Do not extract variables from message for now.
-        //preFillCommand();
-        emitSuccess();
-      } else if (state.currentStep == 2) {
-        dynamic trigger;
-        dynamic action;
+    if (state.currentStep == 0) {
+      emitSuccess();
+    } else if (state.currentStep == 1) {
+      // Do not extract variables from message for now.
+      //preFillCommand();
+      emitSuccess();
+    } else if (state.currentStep == 2) {
+      dynamic trigger;
+      dynamic action;
 
-        switch (actionType.value) {
-          default:
-            {
-              action = new SheetAppendActionModel(
-                sheetUrl: actionSheetUrl.value,
-                columnValue: actionSheetColumn.value.map((bloc) => bloc.value).toList(),
-              );
-            }
-            break;
-        }
-
-        switch (triggerType.value) {
-          default:
-            {
-              trigger = new CommandTriggerModel(command: triggerCommand.value);
-            }
-            break;
-        }
-
-        final macro = MacroModel(
-          macroName: macroName.value.trim(),
-          description: description.value.trim(),
-          creatorId: this.user.email,
-          trigger: trigger,
-          action: action,
-        );
-
-        uploadMacro(macro.toJson());
-
-        emitSuccess(
-          successResponse: JsonEncoder.withIndent('  ').convert(
-            macro.toJson(),
-          ),
-        );
+      switch (actionType.value) {
+        default:
+          {
+            action = new SheetAppendActionModel(
+              sheetUrl: actionSheetUrl.value,
+              columnValue:
+                  actionSheetColumn.value.map((bloc) => bloc.value).toList(),
+            );
+          }
+          break;
       }
-    } catch (e) {
-      print(e);
+
+      switch (triggerType.value) {
+        default:
+          {
+            trigger = new CommandTriggerModel(command: triggerCommand.value);
+          }
+          break;
+      }
+
+      final macro = MacroModel(
+        macroName: macroName.value.trim(),
+        description: description.value.trim(),
+        creatorId: this.user.email,
+        scope: scope.value.split(",") + [this.user.email],
+        trigger: trigger,
+        action: action,
+      );
+
+      uploadMacro(macro.toJson());
+
+      emitSuccess(
+        successResponse: JsonEncoder.withIndent('  ').convert(
+          macro.toJson(),
+        ),
+      );
     }
-
-
   }
 
   @override
   Future<void> close() {
-    List<dynamic> blocs = [macroName, description, actionType, actionSheetUrl, triggerType, triggerCommand] + actionSheetColumn.value.toList();
+    List<dynamic> blocs = [
+          macroName,
+          description,
+          actionType,
+          actionSheetUrl,
+          triggerType,
+          triggerCommand
+        ] +
+        actionSheetColumn.value.toList();
     blocs.forEach((bloc) {
       bloc.close();
     });
@@ -155,4 +166,3 @@ class WizardFormBloc extends FormBloc<String, String> {
     return super.close();
   }
 }
-
