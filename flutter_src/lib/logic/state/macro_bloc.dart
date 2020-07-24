@@ -45,7 +45,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     validators: [
       FieldBlocValidators.required,
     ],
-    items: [SheetAction.APPEND_ACTION, SheetAction.READ_ACTION],
+    items: [SheetAction.APPEND_ACTION, SheetAction.BATCH_ACTION],
   );
 
   TextFieldBloc actionSheetUrl = TextFieldBloc(
@@ -150,6 +150,7 @@ class WizardFormBloc extends FormBloc<String, String> {
 
   @override
   Future<void> close() {
+    
     macroName.close();
     description.close();
     actionType.close();
