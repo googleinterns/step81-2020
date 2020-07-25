@@ -12,9 +12,16 @@ class CustomBlocValidator {
     return null;
   }
 
+  static String oneWordValidator(String string) {
+    if (string.split(" ").length > 1) {
+      return "Macro Name cannot have space in between.";
+    }
+    return null;
+  }
+
   static String sheetUrlValidator(String string) {
     final sheetUrlRegExp =
-    RegExp("https:\/\/docs.google.com\/spreadsheets\/d\/.*\/edit#gid=.*");
+        RegExp("https:\/\/docs.google.com\/spreadsheets\/d\/.*\/edit#gid=.*");
 
     if (string == null || string.isEmpty || sheetUrlRegExp.hasMatch(string)) {
       return null;
@@ -31,7 +38,9 @@ class CustomBlocValidator {
     List<String> emails = string.split(',');
 
     for (int i = 0; i < emails.length; i++) {
-      bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(emails[i]);
+      bool emailValid = RegExp(
+              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+          .hasMatch(emails[i]);
       if (!emailValid) {
         errors.add(emails[i] + " is not an valid email.");
       }

@@ -3,6 +3,8 @@ import 'package:meta/meta.dart';
 
 class Action extends Equatable {
   static const String SHEET_ACTION = "Sheet Action";
+  static const String ADDRESS_ACTION = "Address Action";
+
   final String type;
 
   Action(this.type);
@@ -28,6 +30,20 @@ class SheetAction extends Action {
   List<Object> get props => super.props..addAll([sheetUrl, sheetAction]);
 }
 
+class AddressAction extends Action {
+  static const String WEB_URL = "Redirect Url";
+  static const String PHYSICAL_ADDRESS = "Address";
+
+  final String addressType;
+  final String address;
+
+  AddressAction(@required this.addressType, @required this.address)
+      : super(Action.ADDRESS_ACTION);
+
+  @override
+  List<Object> get props => super.props..addAll([address]);
+}
+
 class BatchAction extends SheetAction {
   static const String READ_TYPE = "Read";
   static const String DELETE_TYPE = "Delete";
@@ -45,13 +61,12 @@ class BatchAction extends SheetAction {
     this.batchType,
     this.randomizeOrder,
   ) : super(sheetUrl: sheetUrl, sheetAction: SheetAction.BATCH_ACTION);
-  
+
   @override
   List<Object> get props => super.props..addAll([row, column, randomizeOrder]);
 }
 
 class AppendAction extends SheetAction {
-  // TODO: ENUM
   static const List<String> VALUE_LIST = ["EMPTY", "TIME", "EMAIL", "CONTENT"];
 
   final List<String> columnValue;

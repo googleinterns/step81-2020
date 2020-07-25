@@ -146,18 +146,34 @@ class _NewMacroFormState extends State<NewMacroForm> {
         children: <Widget>[
           Row(
             children: <Widget>[
-              FlatButton(
+              MacroTemplateButton(
                 onPressed: () {
                   wizardFormBloc.actionType
                       .updateValue(entity.Action.SHEET_ACTION);
                 },
-                padding: EdgeInsets.all(0.0),
-                child: Image(
-                  image: AssetImage("sheet.png"),
-                  height: 100,
-                  width: 200,
-                ),
+                templateName: "Google Sheet API",
+                imagePath: "sheet.png",
               ),
+              MacroTemplateButton(
+                onPressed: () {
+                  wizardFormBloc.actionType
+                      .updateValue(entity.Action.ADDRESS_ACTION);
+                  wizardFormBloc.addressType
+                      .updateValue(entity.AddressAction.PHYSICAL_ADDRESS);
+                },
+                templateName: "Google Map API",
+                imagePath: "google-maps.png",
+              ),
+              MacroTemplateButton(
+                onPressed: () {
+                  wizardFormBloc.actionType
+                      .updateValue(entity.Action.ADDRESS_ACTION);
+                  wizardFormBloc.addressType
+                      .updateValue(entity.AddressAction.WEB_URL);
+                },
+                templateName: "URL Redirection",
+                imagePath: "chrome.png",
+              )
             ],
           ),
           BlocBuilder<SelectFieldBloc, SelectFieldBlocState>(
@@ -165,6 +181,8 @@ class _NewMacroFormState extends State<NewMacroForm> {
               builder: (context, state) {
                 if (state.value == entity.Action.SHEET_ACTION) {
                   return SheetActionForm(wizardFormBloc: wizardFormBloc);
+                } else if (state.value == entity.Action.ADDRESS_ACTION) {
+                  return AddressActionForm(wizardFormBloc: wizardFormBloc);
                 } else {
                   return Container();
                 }
@@ -291,6 +309,45 @@ class _SheetActionFormState extends State<SheetActionForm> {
   }
 }
 
+class AddressActionForm extends StatefulWidget {
+  final WizardFormBloc wizardFormBloc;
+
+  const AddressActionForm({Key key, this.wizardFormBloc}) : super(key: key);
+
+  @override
+  _AddressActionFormState createState() =>
+      _AddressActionFormState(wizardFormBloc);
+}
+
+class _AddressActionFormState extends State<AddressActionForm> {
+  final WizardFormBloc wizardFormBloc;
+
+  _AddressActionFormState(this.wizardFormBloc);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(children: [
+        RadioButtonGroupFieldBlocBuilder(
+          selectFieldBloc: wizardFormBloc.addressType,
+          itemBuilder: (context, item) => item,
+          decoration: InputDecoration(
+            labelText: 'Select Address Type',
+            prefixIcon: SizedBox(),
+          ),
+        ),
+        TextFieldBlocBuilder(
+          textFieldBloc: wizardFormBloc.address,
+          decoration: InputDecoration(
+            labelText: 'URL/Map Address',
+            prefixIcon: Icon(Icons.location_city),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
 class SheetAppendActionForm extends StatefulWidget {
   final WizardFormBloc wizardFormBloc;
   const SheetAppendActionForm({Key key, this.wizardFormBloc}) : super(key: key);
@@ -406,20 +463,6 @@ class _SheetBatchActionFormState extends State<SheetBatchActionForm> {
               prefixIcon: SizedBox(),
             ),
           ),
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.row,
-            decoration: InputDecoration(
-              labelText: 'Row',
-              prefixIcon: Icon(Icons.people),
-            ),
-          ),
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.column,
-            decoration: InputDecoration(
-              labelText: 'Column',
-              prefixIcon: Icon(Icons.people),
-            ),
-          ),
           SwitchFieldBlocBuilder(
             booleanFieldBloc: wizardFormBloc.randomOrder,
             body: Container(
@@ -432,5 +475,3 @@ class _SheetBatchActionFormState extends State<SheetBatchActionForm> {
     );
   }
 }
-
-
