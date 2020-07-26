@@ -10,7 +10,7 @@ import com.google.flourbot.entity.EntityModuleImplementation;
 import com.google.flourbot.entity.Macro;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.ActionType;
-import com.google.flourbot.entity.action.sheet.SheetAppendAction;
+import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
 import com.google.flourbot.entity.action.sheet.SheetEntryType;
 
 import java.io.IOException;
@@ -45,8 +45,8 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
   private String getMacroName(String message, String threadId) {
     // Retrieve macroname based on threadId
-    if (this.threadMacroMap.containsKey(threadId)) {
-      return this.threadMacroMap.get(threadId);
+    if (threadMacroMap.containsKey(threadId)) {
+      return threadMacroMap.get(threadId);
     }
 
     // If not yet stored, add threadId and macroName to hashmap
@@ -57,35 +57,30 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
       throw new IllegalStateException(e);
     }
 
-    this.threadMacroMap.put(threadId, macroName);
+    threadMacroMap.put(threadId, macroName);
     return macroName;
   }
 
 
-  public String execute(String userEmail, String message, String threadId) throws IOException, GeneralSecurityException {
-    String macroName = this.getMacroName(message, threadId);
-
+  public ChatResponse execute(String userEmail, String message, String threadId) throws IOException, GeneralSecurityException {
+    String macroName = getMacroName(message, threadId);
+    
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
-      return "No macro of name: " + macroName + " found";
+      return new ChatResponse(String.format("No macro of name: %s found", macroName));
     }
 
     Action action = optionalMacro.get().getAction();
     ActionType actionType = action.getActionType();
     String documentId = action.getSheetId();
+    String documentUrl = action.getSheetUrl();
     CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
 
-    String replyText = "Action not recognized";
-
-
-
-    //actionType = ActionType.SHEET_READ_ROW;
-
-
-
+    String replyText = "";
+    ChatResponse chatResponse = null;
 
     switch (actionType) {
-      case SHEET_APPEND:
+      case SHEET_APPEND_ROW:
         // Read instructions on what to write
 
         // If the message contains the macroName, remove "@Macrobot macroName" from message 
@@ -99,13 +94,13 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         // Otherwise if the message uses the threadId instead of explicitly stating the macroName, remove only "@Macrobot"
         else {
             String[] messages = message.split(" ", 2);
-            if (messages.length!= 2) {
+            if (messages.length != 2) {
                 throw new IllegalArgumentException();
             }
             message = messages[1];
         }
 
-        SheetEntryType[] columns = ((SheetAppendAction) action).getColumnValue();
+        SheetEntryType[] columns = ((SheetAppendRowAction) action).getColumnValue();
         // Prepare values to write into the sheet
         ArrayList<String> values = new ArrayList<String>();
 
@@ -136,22 +131,26 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
         // Append values to first free bottom row of sheet
         cloudSheet.appendRow(values);
-        replyText = "Appended row to " + action.getSheetUrl();
+        replyText = values;
+        chatResponse = new ChatResponse(replyText, actionType, documentUrl);
         break;
 
       case SHEET_READ_ROW:
         List<String> rowData = cloudSheet.readRow(2); //TODO: Replace hardcoded
         replyText = selectRandomFromData(rowData);
+        chatResponse = new ChatResponse(replyText, actionType, documentUrl);
         break;
 
       case SHEET_READ_COLUMN:
         List<String> columnData = cloudSheet.readColumn("B");//TODO: Replace hardcoded
         replyText = selectRandomFromData(columnData);
+        chatResponse = new ChatResponse(replyText, actionType, documentUrl);
         break;
 
       case SHEET_READ_SHEET:
         List<List<String>> sheetData = cloudSheet.readSheet("Sheet1");
         replyText = "Read sheet"; // TODO: display in grid
+        chatResponse = new ChatResponse(replyText, actionType, documentUrl);
         break;
         
       default:
@@ -159,8 +158,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
             "Action type named: " + actionType.toString() + "is not implemented yet!");
     }
 
-    // TODO: Return a response object
-    return replyText;
+    return chatResponse;
   }
 
   private String getDate(String pattern) {
