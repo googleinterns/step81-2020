@@ -61,8 +61,14 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     return macroName;
   }
 
-
   public ChatResponse execute(String userEmail, String message, String threadId) throws IOException, GeneralSecurityException {
+    
+    //Check if the message is a help message
+    String[] words = message.split(" ", 2);
+    if (words[1].equalsIgnoreCase("help")) {
+        return "To use your macro, please type \"@MacroBot MacroName <your message>\". If your macro has already been used in a room's thread, you may omit the MacroName and can simply write \"@MacroBot <your message>\". ";
+    }
+
     String macroName = getMacroName(message, threadId);
     
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);

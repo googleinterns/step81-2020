@@ -7,6 +7,7 @@ class Macro extends Equatable {
   final String macroName;
   final String description;
   final String creatorId;
+  final List<String> scope;
   final dynamic trigger;
   final dynamic action;
 
@@ -14,10 +15,11 @@ class Macro extends Equatable {
     @required this.macroName,
     @required this.description,
     @required this.creatorId,
+    @required this.scope,
     @required this.trigger,
     @required this.action,
   });
 
   @override
-  List<Object> get props => [macroName, description, creatorId, trigger, action];
+  List<Object> get props => [macroName, description, creatorId, scope, trigger, action];
 }
