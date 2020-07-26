@@ -131,28 +131,25 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
         // Append values to first free bottom row of sheet
         cloudSheet.appendRow(values);
-        replyText = values;
-        chatResponse = new ChatResponse(replyText, actionType, documentUrl);
+        chatResponse = ChatResponse.createChatResponseWithList(values, actionType, documentUrl);
         break;
 
       case SHEET_READ_ROW:
         List<String> rowData = cloudSheet.readRow(2); //TODO: Replace hardcoded
-        replyText = selectRandomFromData(rowData);
-        chatResponse = new ChatResponse(replyText, actionType, documentUrl);
+        chatResponse = ChatResponse.createChatResponseWithList(rowData, actionType, documentUrl);
         break;
 
       case SHEET_READ_COLUMN:
         List<String> columnData = cloudSheet.readColumn("B");//TODO: Replace hardcoded
-        replyText = selectRandomFromData(columnData);
-        chatResponse = new ChatResponse(replyText, actionType, documentUrl);
+        chatResponse = ChatResponse.createChatResponseWithList(columnData, actionType, documentUrl);
         break;
 
       case SHEET_READ_SHEET:
         List<List<String>> sheetData = cloudSheet.readSheet("Sheet1");
-        replyText = "Read sheet"; // TODO: display in grid
-        chatResponse = new ChatResponse(replyText, actionType, documentUrl);
+        chatResponse = ChatResponse.createChatResponseWithListList(sheetData, actionType, documentUrl);
         break;
-        
+      
+      // TODO: Add random option that uses function selectRandomFromData(data);
       default:
         throw new IllegalStateException(
             "Action type named: " + actionType.toString() + "is not implemented yet!");

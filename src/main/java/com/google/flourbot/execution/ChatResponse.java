@@ -6,6 +6,7 @@ package com.google.flourbot.execution;
 
 import com.google.flourbot.entity.action.ActionType;
 
+import java.util.Collection;
 import java.util.List;
 
 public class ChatResponse {
@@ -17,6 +18,8 @@ public class ChatResponse {
   public ChatResponse(String replyText) {
     // Constructor for response for failed actions
     this.replyText = replyText;
+    this.actionType = null;
+    this.documentUrl = null;
   }
 
   public ChatResponse(String replyText, ActionType actionType, String documentUrl) {
@@ -26,18 +29,12 @@ public class ChatResponse {
     this.documentUrl = documentUrl;
   }
 
-  public ChatResponse(List<String> replyText, ActionType actionType, String documentUrl) {
-    // Overloaded
-    this.replyText = listToString(replyText, actionType);
-    this.actionType = actionType;
-    this.documentUrl = documentUrl;
+  public static ChatResponse createChatResponseWithList(List<String> replyText, ActionType actionType, String documentUrl) {
+    return new ChatResponse(listToString(replyText, actionType), actionType, documentUrl);
   }
-
-  public ChatResponse(List<List<String>> replyText, ActionType actionType, String documentUrl) {
-    // Overloaded
-    this.replyText = listListToString(replyText, actionType);
-    this.actionType = actionType;
-    this.documentUrl = documentUrl;
+  
+  public static ChatResponse createChatResponseWithListList(List<List<String>> replyText, ActionType actionType, String documentUrl) {
+    return new ChatResponse(listListToString(replyText, actionType), actionType, documentUrl);
   }
 
   public ActionType getActionType() {
@@ -52,7 +49,7 @@ public class ChatResponse {
     return documentUrl;
   }
 
-  private String listToString (List<String> values, ActionType actionType) {
+  private static String listToString (List<String> values, ActionType actionType) {
     // Retrieves appropriate HTML string to display values in card response
     String replyText = "";
 
@@ -72,34 +69,31 @@ public class ChatResponse {
     return replyText;
   }
 
-  private String listToHtmlTable (List<String> values, String dimension) {
+  private static String listToHtmlTable (List<String> values, String dimension) {
     // Converts list of values to HTML tables
 
     // Open table
-    StringBuilder htmlTable = new StringBuilder("<table>");
+    StringBuilder htmlTable = new StringBuilder();
 
-    // If the values represent 1 row, open the row using <tr>, and add a <td> tag for every entry in the row
+    // If the values represent 1 row, open row using <br>, and add a | tag for every entry in the row
     if (dimension == "ROW") {
-      htmlTable.append("<tr>");
+      htmlTable.append("<br></br>");
       for (String v: values) {
-        htmlTable.append(String.format("<td>%s</td>", v));
+        htmlTable.append(String.format(" %s |", v));
       }
-      htmlTable.append("</tr>");
+      htmlTable.append("<br></br>");
 
     // If the values represent 1 column, create a new row <tr> and <td> tag for every entry
     } else if (dimension == "COLUMN") {
       for (String v: values) {
-        htmlTable.append(String.format("<tr><td>%s</td></tr>", v));
+        htmlTable.append(String.format("<br></br> %s <br></br>", v));
       }
     }
-
-    // Close table tag
-    htmlTable.append("</table>");
-
+  
     return htmlTable.toString();
   }
 
-  private String listListToString (List<List<String>> values, ActionType actionType) {
+  private static String listListToString (List<List<String>> values, ActionType actionType) {
     // Retrieves appropriate HTML string to display values in card response
     String replyText = "";
 
@@ -114,24 +108,24 @@ public class ChatResponse {
     return replyText;
   }
 
-    private String listListToHtmlTable (List<List<String>> values) {
+  private static String listListToHtmlTable (List<List<String>> values) {
     // Converts list of values to HTML tables
 
     // Open table
-    StringBuilder htmlTable = new StringBuilder("<table>");
+    StringBuilder htmlTable = new StringBuilder();
 
     // For row
-    for (List ls: values) {
-      htmlTable.append("<tr>");
+    for (List<String> ls: values) {
+      htmlTable.append("<br></br>");
 
       // For col
       for (String s: ls) {
-        htmlTable.append(String.format("<td>%s</td>", s));
+        htmlTable.append(String.format(" %s |", s));
       }
-      htmlTable.append("</tr>");
+      htmlTable.append("<br></br>");
     }
 
-    htmlTable.append("</table>");
+    htmlTable.append();
     return htmlTable.toString();
   }
 }

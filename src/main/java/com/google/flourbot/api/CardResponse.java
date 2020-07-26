@@ -64,7 +64,7 @@ public class CardResponse {
     card.setHeader(header);
 
     // TEXT PARAGRAPH
-    TextParagraph textParagraphWidget = new TextParagraph().setText("<b>The reply text we got:</b> is <i>" + message + "</i>.");
+    TextParagraph textParagraphWidget = new TextParagraph().setText("<b>The reply text we got:</b> is <br></br>" + message);
     widgets.add(new WidgetMarkup().setTextParagraph(textParagraphWidget));
 
     // TODO: Add cute image if CongraBot (do this after we make a response object)

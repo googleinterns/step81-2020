@@ -1,5 +1,6 @@
 package com.google.flourbot.api;
 
+import com.google.flourbot.execution.ChatResponse;
 import com.google.flourbot.execution.MacroExecutionModule;
 import com.google.flourbot.execution.MacroExecutionModuleImplementation;
 
@@ -77,7 +78,8 @@ public class Bot {
         String message = event.at("/message/text").asText();
         String threadId = event.at("/message/thread/name").asText();
         
-        replyText = macroExecutionModule.execute(email, message, threadId);
+        ChatResponse chatResponse = macroExecutionModule.execute(email, message, threadId);
+        replyText = chatResponse.getReplyText();
         Card card = CardResponse.createCardResponse(replyText);
         reply.setCards(Collections.singletonList(card));
         break;
