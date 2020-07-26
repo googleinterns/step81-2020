@@ -66,7 +66,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     //Check if the message is a help message
     String[] words = message.split(" ", 2);
     if (words[1].equalsIgnoreCase("help")) {
-        return "To use your macro, please type \"@MacroBot MacroName <your message>\". If your macro has already been used in a room's thread, you may omit the MacroName and can simply write \"@MacroBot <your message>\". ";
+        return new ChatResponse("To use your macro, please type \"@MacroBot MacroName <your message>\". If your macro has already been used in a room's thread, you may omit the MacroName and can simply write \"@MacroBot <your message>\". ");
     }
 
     String macroName = getMacroName(message, threadId);

@@ -89,7 +89,7 @@ public class ChatResponse {
         htmlTable.append(String.format("<br></br> %s <br></br>", v));
       }
     }
-  
+    
     return htmlTable.toString();
   }
 
@@ -125,7 +125,6 @@ public class ChatResponse {
       htmlTable.append("<br></br>");
     }
 
-    htmlTable.append();
     return htmlTable.toString();
   }
 }
