@@ -11,6 +11,8 @@ import com.google.flourbot.entity.Macro;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.ActionType;
 import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
+import com.google.flourbot.entity.action.sheet.SheetReadColumnAction;
+import com.google.flourbot.entity.action.sheet.SheetReadRowAction;
 import com.google.flourbot.entity.action.sheet.SheetEntryType;
 
 import java.io.IOException;
@@ -141,12 +143,14 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         break;
 
       case SHEET_READ_ROW:
-        List<String> rowData = cloudSheet.readRow(2); //TODO: Replace hardcoded
+        int row = ((SheetReadRowAction) action).getRow();
+        List<String> rowData = cloudSheet.readRow(row);
         chatResponse = ChatResponse.createChatResponseWithList(rowData, actionType, documentUrl);
         break;
 
       case SHEET_READ_COLUMN:
-        List<String> columnData = cloudSheet.readColumn("B");//TODO: Replace hardcoded
+        String column = ((SheetReadColumnAction) action).getColumn();
+        List<String> columnData = cloudSheet.readColumn(column);
         chatResponse = ChatResponse.createChatResponseWithList(columnData, actionType, documentUrl);
         break;
 
