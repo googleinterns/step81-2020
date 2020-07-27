@@ -43,7 +43,7 @@ public class Bot {
   static final String CHAT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
   private static final String SERVICE_ACCOUNT = "/service-acct.json";
   private static final Logger logger = Logger.getLogger(Bot.class.getName());
-  private static final String helpMessage;
+  private static String helpMessage;
   private String macroCreatorEmail;
   private String replyText;
   private Map<String, Map<String, String>> roomToMacro = new HashMap<String, Map<String, String>>();
