@@ -1,4 +1,4 @@
-import 'package:macrobaseapp/logic/state/macro_bloc.dart';
+import 'package:macrobaseapp/logic/state/macro_state/macro_bloc.dart';
 import 'package:macrobaseapp/model/entities/action.dart';
 
 class FormBlocTemplate {

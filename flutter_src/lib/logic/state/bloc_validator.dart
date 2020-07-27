@@ -19,6 +19,14 @@ class CustomBlocValidator {
     return null;
   }
 
+  static String UrlValidator(String string) {
+    bool isValidUrl = Uri.parse(string).isAbsolute;
+    if (!isValidUrl) {
+      return string + " is not a valid URL to an logo";
+    }
+    return null;
+  }
+
   static String sheetUrlValidator(String string) {
     final sheetUrlRegExp =
         RegExp("https:\/\/docs.google.com\/spreadsheets\/d\/.*\/edit#gid=.*");

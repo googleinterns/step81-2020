@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:macrobaseapp/logic/state/macro_notifier.dart';
+import 'package:macrobaseapp/logic/state/macro_state/macro_notifier.dart';
 import 'package:macrobaseapp/model/adapters/macro_model.dart';
 import 'package:macrobaseapp/model/entities/macro.dart';
 

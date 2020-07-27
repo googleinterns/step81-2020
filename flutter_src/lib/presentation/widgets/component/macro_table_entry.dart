@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:macrobaseapp/logic/state/macro_notifier.dart';
+import 'package:macrobaseapp/logic/state/macro_state/macro_notifier.dart';
 import 'package:macrobaseapp/logic/usecases/macro_firestore/firestore_macro_operation.dart';
 import 'package:macrobaseapp/presentation/pages/macro_detail.dart';
 

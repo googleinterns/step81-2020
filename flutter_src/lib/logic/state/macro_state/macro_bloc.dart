@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:macrobaseapp/logic/state/macro_bloc_validator.dart';
+import 'package:macrobaseapp/logic/state/bloc_validator.dart';
 import 'package:macrobaseapp/logic/usecases/macro_firestore/firestore_macro_operation.dart';
 import 'package:macrobaseapp/model/adapters/action_model.dart';
 import 'package:macrobaseapp/model/adapters/macro_model.dart';

@@ -3,8 +3,8 @@ import 'package:macrobaseapp/presentation/widgets/form/hint_row.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:macrobaseapp/logic/state/macro_bloc.dart';
-import 'package:macrobaseapp/logic/state/macro_bloc_template.dart';
+import 'package:macrobaseapp/logic/state/macro_state/macro_bloc.dart';
+import 'package:macrobaseapp/logic/state/macro_state/macro_bloc_template.dart';
 import 'package:macrobaseapp/model/entities/action.dart' as entity;
 import 'package:macrobaseapp/model/entities/trigger.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
