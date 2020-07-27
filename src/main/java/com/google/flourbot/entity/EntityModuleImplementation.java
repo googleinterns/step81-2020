@@ -102,18 +102,27 @@ public class EntityModuleImplementation implements EntityModule {
             break;
  
           case ("Read Row Action"):
-            int row = 1; // TODO: get it from database
-            action = new SheetReadRowAction(sheetUrl, row);
+            Object row = actionData.get("row");
+            if (row == null) {
+              throw new IllegalStateException("row not found in Firestore action");
+            }
+            action = new SheetReadRowAction(sheetUrl, (int) row);
             break;
 
           case ("Read Column Action"):
-            String column = "A"; // TODO: get it from database
-            action = new SheetReadColumnAction(sheetUrl, column);
+            Object column = actionData.get("column");
+            if (column == null) {
+              throw new IllegalStateException("column not found in Firestore action");
+            }
+            action = new SheetReadColumnAction(sheetUrl, (String) column);
             break;
 
           case ("Read Sheet Action"):
-            String sheetName = "Sheet1"; // TODO: get it from database
-            action = new SheetReadSheetAction(sheetUrl, sheetName);
+            Object sheetName = actionData.get("sheetName");
+            if (sheetName == null) {
+              throw new IllegalStateException("sheetName not found in Firestore action");
+            }
+            action = new SheetReadSheetAction(sheetUrl, (String) sheetName);
             break;
 
           case ("Batch Action"):
