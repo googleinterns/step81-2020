@@ -97,6 +97,7 @@ public class Bot {
         }        
         else if (words.length >= 2) {
             // If a macro is being initialized for a room.
+            // TODO: handle cases where a user tries to initialize a macro they don't have 
             if (words[1].equalsIgnoreCase("initiate")) {
                 // getMacroName() requires the macroName to be the second word of the message, so remove the word "initiate". This will put the macro name as the second word in the message.
                 List<String> wordsWithoutInitiate = new LinkedList(Arrays.asList(words));
