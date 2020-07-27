@@ -58,7 +58,6 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
     threadMacroMap.put(threadId, macroName);
     return macroName;
-    //return message.split(" ")[1];
   }
 
   public String execute(String userEmail, String macroCreatorEmail, String message, String threadId, String macroName) throws IOException, GeneralSecurityException {
