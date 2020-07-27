@@ -28,7 +28,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
   private final EntityModule entityModule;
   private final CloudDocClient cloudDocClient;
-  private HashMap<String, String> threadMacroMap = new HashMap<String, String>();
+  private static HashMap<String, String> threadMacroMap = new HashMap<String, String>();
 
   private MacroExecutionModuleImplementation(EntityModule entityModule, CloudDocClient cloudDocClient) {
     this.entityModule = entityModule;
@@ -42,10 +42,10 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     return new MacroExecutionModuleImplementation(entityModule, cloudDocClient);
   }
 
-  private String getMacroName(String message, String threadId) {
+  public static String getMacroName(String message, String threadId) {
     // Retrieve macroname based on threadId
-    if (this.threadMacroMap.containsKey(threadId)) {
-      return this.threadMacroMap.get(threadId);
+    if (threadMacroMap.containsKey(threadId)) {
+      return threadMacroMap.get(threadId);
     }
 
     // If not yet stored, add threadId and macroName to hashmap
@@ -56,23 +56,16 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
       throw new IllegalStateException(e);
     }
 
-    this.threadMacroMap.put(threadId, macroName);
+    threadMacroMap.put(threadId, macroName);
     return macroName;
+    //return message.split(" ")[1];
   }
 
+  public String execute(String userEmail, String macroCreatorEmail, String message, String threadId, String macroName) throws IOException, GeneralSecurityException {
 
-  public String execute(String userEmail, String message, String threadId) throws IOException, GeneralSecurityException {
-    //Check if the message is a help message
-    String[] words = message.split(" ", 2);
-    if (words[1].equalsIgnoreCase("help")) {
-        return "To use your macro, please type \"@MacroBot MacroName <your message>\". If your macro has already been used in a room's thread, you may omit the MacroName and can simply write \"@MacroBot <your message>\". ";
-    }
-    
-    String macroName = this.getMacroName(message, threadId);
-
-    Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
+    Optional<Macro> optionalMacro = entityModule.getMacro(macroCreatorEmail, macroName);
     if (!optionalMacro.isPresent()) {
-      return "No macro of name: " + macroName + " found";
+      return "No macro of name: " + macroName + " found for " + macroCreatorEmail;
     }
 
     Action action = optionalMacro.get().getAction();
