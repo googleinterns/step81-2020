@@ -6,15 +6,15 @@ import com.google.flourbot.entity.action.ActionType;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class SheetAppendAction extends Action {
+public final class SheetAppendRowAction extends Action {
 
-  private final ActionType actionType = ActionType.SHEET_APPEND;
+  private final ActionType actionType = ActionType.SHEET_APPEND_ROW;
 
   private final SheetEntryType[] columnValue;
   private final String sheetAction;
   private final String sheetUrl;
 
-  public SheetAppendAction(SheetEntryType[] columnValue, String sheetAction, String sheetUrl) {
+  public SheetAppendRowAction(SheetEntryType[] columnValue, String sheetAction, String sheetUrl) {
     this.columnValue = columnValue;
     this.sheetAction = sheetAction;
     this.sheetUrl = sheetUrl;
