@@ -114,21 +114,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     ],
     items: [BatchAction.READ_TYPE, BatchAction.DELETE_TYPE],
   );
-
-//  TextFieldBloc row = TextFieldBloc(
-//    name: "Row",
-//    validators: [
-//      FieldBlocValidators.required,
-//    ],
-//  );
-//
-//  TextFieldBloc column = TextFieldBloc(
-//    name: "Column",
-//    validators: [
-//      FieldBlocValidators.required,
-//    ],
-//  );
-
+  
   BooleanFieldBloc randomOrder = BooleanFieldBloc();
 
   /*
