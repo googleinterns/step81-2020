@@ -3,6 +3,7 @@ package com.google.flourbot.api;
 import com.google.flourbot.execution.ChatResponse;
 import com.google.flourbot.execution.MacroExecutionModule;
 import com.google.flourbot.execution.MacroExecutionModuleImplementation;
+import com.google.flourbot.entity.action.ActionType;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -79,9 +80,17 @@ public class Bot {
         String threadId = event.at("/message/thread/name").asText();
         
         ChatResponse chatResponse = macroExecutionModule.execute(email, message, threadId);
+        
         replyText = chatResponse.getReplyText();
-        Card card = CardResponse.createCardResponse(replyText);
-        reply.setCards(Collections.singletonList(card));
+        ActionType actionType = chatResponse.getActionType();
+        String documentUrl = chatResponse.getDocumentUrl();
+
+        // Create card if appropriate
+        if (actionType != null && documentUrl != null) {
+          Card card = CardResponse.createCardResponse(replyText, actionType, documentUrl);
+          reply.setCards(Collections.singletonList(card));
+        }
+
         break;
 
       case "REMOVED_FROM_SPACE":
