@@ -110,6 +110,7 @@ public class EntityModuleImplementation implements EntityModule {
             break;
 
           case ("Read Column Action"):
+            // TODO: also handle column as an integer, or just completely remove that logic
             Object column = actionData.get("column");
             if (column == null) {
               throw new IllegalStateException("column not found in Firestore action");
