@@ -155,7 +155,8 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         break;
 
       case SHEET_READ_SHEET:
-        List<List<String>> sheetData = cloudSheet.readSheet("Sheet1");
+        String sheetName = ((SheetReadSheetAction) action).getSheetName();
+        List<List<String>> sheetData = cloudSheet.readSheet(sheetName);
         chatResponse = ChatResponse.createChatResponseWithListList(sheetData, actionType, documentUrl);
         break;
       

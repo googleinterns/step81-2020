@@ -5,7 +5,7 @@ import com.google.flourbot.entity.action.ActionType;
 
 public final class SheetReadColumnAction extends SheetAction {
 
-  private final ActionType actionType = ActionType.SHEET_READ_ROW;
+  private final ActionType actionType = ActionType.SHEET_READ_COLUMN;
   private final String column;
 
   public SheetReadColumnAction(String sheetUrl, String column) {

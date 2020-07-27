@@ -6,6 +6,7 @@ import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
 import com.google.flourbot.entity.action.sheet.SheetReadColumnAction;
 import com.google.flourbot.entity.action.sheet.SheetReadRowAction;
+import com.google.flourbot.entity.action.sheet.SheetReadSheetAction;
 import com.google.flourbot.entity.action.sheet.SheetEntryType;
 import com.google.flourbot.entity.trigger.CommandTrigger;
 import com.google.flourbot.entity.trigger.Trigger;
@@ -110,8 +111,14 @@ public class EntityModuleImplementation implements EntityModule {
             action = new SheetReadColumnAction(sheetUrl, column);
             break;
 
+          case ("Read Sheet Action"):
+            String sheetName = "Sheet1"; // TODO: get it from database
+            action = new SheetReadSheetAction(sheetUrl, sheetName);
+            break;
+
           case ("Batch Action"):
             break;
+
           default:
             throw new IllegalStateException("Action type not recognized");
         }
