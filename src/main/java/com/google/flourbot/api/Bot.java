@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.logging.Logger;
 import java.io.FileNotFoundException;
+import java.util.Map;
 import java.util.HashMap;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,6 +34,7 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.LinkedList;
 
 @SpringBootApplication
 @RestController
@@ -41,8 +43,10 @@ public class Bot {
   static final String CHAT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
   private static final String SERVICE_ACCOUNT = "/service-acct.json";
   private static final Logger logger = Logger.getLogger(Bot.class.getName());
+  private static String helpMessage;
+  private String macroCreatorEmail;
   private String replyText;
-  private HashMap<String, String> roomToCreator = new HashMap<String, String>();
+  private Map<String, Map<String, String>> roomToMacro = new HashMap<String, Map<String, String>>();
 
   private static MacroExecutionModule macroExecutionModule;
 
@@ -60,42 +64,75 @@ public class Bot {
   @PostMapping("/")
   public void onEvent(@RequestBody JsonNode event) throws IOException, GeneralSecurityException {
     switch (event.at("/type").asText()) {
+
       case "ADDED_TO_SPACE":
         String spaceType = event.at("/space/type").asText();
         if ("ROOM".equals(spaceType)) {
           String displayName = event.at("/space/displayName").asText();
           replyText = String.format("Thanks for adding me to %s. Type \"@MacroBot help\" at any time to see my instructions.", displayName);
+          helpMessage = "To use a room member's macro, the creator of a macro must write \"@MacroBot initiate MacroName \". " + 
+            "Once this has been sent, any room member can use the initialized macro by writing \"@MacroBot MacroName <your message> \" " + 
+            "If your macro has already been used in a thread, you may omit the MacroName and can simply write \"@MacroBot <your message>\".";
+
         } else {
           String displayName = event.at("/user/displayName").asText();
-          replyText = String.format("Thanks for adding me to a DM, %s!", displayName);
+          replyText = String.format("Thanks for adding me to a DM, %s! Type \"@MacroBot help\" at any time to see my instructions.", displayName);
+          helpMessage = "To use one of your macros, simply write \"@MacroBot MacroName <your message> \".";
         }
         break;
+
       case "MESSAGE":
-        // Sends request to execution module
         String message = event.at("/message/text").asText();
+        String[] words = message.split(" ");
         String threadId = event.at("/message/thread/name").asText();
 
-        String[] words = message.split(" "); 
+        // Check that a message was written.
+        if (words.length <= 1) {
+            replyText = "You must type a message when you message me. Please type \"@MacroBot help\" for more instructions.";
+            break;
+        }
+        // Reply to the help message.
+        if (words[1].equalsIgnoreCase("help")) {  
+            replyText = helpMessage; 
+        }        
+        else if (words.length >= 2) {
+            // If a macro is being initialized for a room.
+            if (words[1].equalsIgnoreCase("initiate")) {
+                // getMacroName() requires the macroName to be the second word of the message, so remove the word "initiate". This will put the macro name as the second word in the message.
+                List<String> wordsWithoutInitiate = new LinkedList(Arrays.asList(words));
+                wordsWithoutInitiate.remove("initiate");
+                String newMessage = String.join(" ", wordsWithoutInitiate);
+                String macroName = MacroExecutionModuleImplementation.getMacroName(newMessage, threadId);
 
-        if (words[1].equalsIgnoreCase("initiate")) {
-            String creator = event.at("/message/sender/email").asText();
-            roomToCreator.put(event.at("/space/name").asText(), creator);
-            replyText = "Your macros have now been initiated for this room. All users in this room can use your macros.";
+                macroCreatorEmail = event.at("/message/sender/email").asText();
+                Map<String, String> macroToCreator = new HashMap<String, String> ();
+                macroToCreator.put(macroName, macroCreatorEmail);
+
+                roomToMacro.put(event.at("/space/name").asText(), macroToCreator);
+                replyText = "The " + macroName + " macro belonging to " + macroCreatorEmail + " has been initiated for this room. All users in this room can use this macro.";
+            }
+            // If someone is trying to use the macro
+            else if (roomToMacro.containsKey(event.at("/space/name").asText())) {
+                String macroName = MacroExecutionModuleImplementation.getMacroName(message, threadId);
+                Map<String, String> macroToCreator = roomToMacro.get(event.at("/space/name").asText());
+                macroCreatorEmail = macroToCreator.get(macroName);
+                String userEmail = event.at("/message/sender/email").asText();
+                replyText = macroExecutionModule.execute(userEmail, macroCreatorEmail, message, threadId, macroName);
+            }  
+            else {
+                replyText = "You do not have any macros initialized for this room.";
+            } 
         }
         else {
-            if (roomToCreator.containsKey(event.at("/space/name").asText())) {
-                String email = roomToCreator.get(event.at("/space/name").asText());
-                replyText = macroExecutionModule.execute(email, message, threadId);
-            }
-            else {
-                replyText = "You do not have access to this macro.";
-            }
+            replyText = "That is not a valid message.";
         }
         break;
+
       case "REMOVED_FROM_SPACE":
-        roomToCreator.remove(event.at("/space/name").asText());
+        roomToMacro.remove(event.at("/space/name").asText());
         logger.info("Bot removed from space.");
         break;
+
       default:
         throw new IllegalArgumentException(event.at("/type").asText());
     }
