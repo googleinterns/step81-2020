@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:macrobaseapp/logic/state/bloc_validator.dart';
 import 'package:macrobaseapp/logic/api/firestore_db.dart';
@@ -15,7 +14,7 @@ class WizardFormBloc extends FormBloc<String, String> {
   final User user;
   final FirestoreService db;
 
-  WizardFormBloc({@required this.user,@required  this.db}) {
+  WizardFormBloc({this.user, this.db}) {
     // Default Setup
     addFieldBlocs(
       step: 0,
