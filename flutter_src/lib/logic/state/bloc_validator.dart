@@ -1,11 +1,13 @@
-import 'package:macrobaseapp/logic/usecases/macro_firestore/firestore_macro_operation.dart';
+import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/model/entities/macro.dart';
 
 class CustomBlocValidator {
   static Future<String> nameValidator(String name) async {
+    FirestoreService db = FirestoreService();
+
     //Avoid too many Firestore calls
     await Future.delayed(Duration(milliseconds: 500));
-    List<Macro> list = await queryMacro(name);
+    List<Macro> list = await db.queryMacro(name);
     if (list.length > 0) {
       return "Sorry, this macro name already exist";
     }
@@ -22,7 +24,7 @@ class CustomBlocValidator {
   static String UrlValidator(String string) {
     bool isValidUrl = Uri.parse(string).isAbsolute;
     if (!isValidUrl) {
-      return string + " is not a valid URL to an logo";
+      return string + " is not a valid URL to an ";
     }
     return null;
   }

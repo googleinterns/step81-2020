@@ -1,6 +1,6 @@
 // Adapted from: https://medium.com/flutter-community/flutter-implementing-google-sign-in-71888bca24edimport 'package:macrobaseapp/presentation/navigation/side_drawer_widget.dart';import 'package:macrobaseapp/presentation/navigation/setting_page.dart';
 import 'package:flutter/material.dart';
-import 'package:macrobaseapp/logic/usecases/login/firebase_auth.dart';
+import 'package:macrobaseapp/logic/api/firebase_auth.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 import 'package:macrobaseapp/presentation/pages/setting_page.dart';
 import 'package:macrobaseapp/presentation/widgets/component/side_drawer_widget.dart';

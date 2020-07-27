@@ -1,3 +1,4 @@
+import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/presentation/widgets/button/normal_button.dart';
 import 'package:macrobaseapp/presentation/widgets/form/hint_row.dart';
 
@@ -23,9 +24,10 @@ class _NewMacroFormState extends State<NewMacroForm> {
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<User>(context);
+    final FirestoreService db = context.read<FirestoreService>();
 
     return BlocProvider(
-      create: (context) => WizardFormBloc(user: user),
+      create: (context) => WizardFormBloc(user: user, db: db),
       child: Builder(builder: (context) {
         return Theme(
           data: Theme.of(context).copyWith(

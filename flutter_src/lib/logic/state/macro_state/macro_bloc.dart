@@ -1,8 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:macrobaseapp/logic/state/bloc_validator.dart';
-import 'package:macrobaseapp/logic/usecases/macro_firestore/firestore_macro_operation.dart';
+import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/model/adapters/action_model.dart';
 import 'package:macrobaseapp/model/adapters/macro_model.dart';
 import 'package:macrobaseapp/model/adapters/trigger_model.dart';
@@ -12,6 +13,25 @@ import 'package:macrobaseapp/model/entities/user.dart';
 
 class WizardFormBloc extends FormBloc<String, String> {
   final User user;
+  final FirestoreService db;
+
+  WizardFormBloc({@required this.user,@required  this.db}) {
+    // Default Setup
+    addFieldBlocs(
+      step: 0,
+      fieldBlocs: [macroName, description, scope],
+    );
+    addFieldBlocs(
+      step: 1,
+      fieldBlocs: [],
+    );
+    addFieldBlocs(
+      step: 2,
+      fieldBlocs: [triggerCommand],
+    );
+    setupActionType();
+    setupSheetActionType();
+  }
 
   /*
    Fields that exist for all Macros
@@ -127,24 +147,6 @@ class WizardFormBloc extends FormBloc<String, String> {
       FieldBlocValidators.required,
     ],
   );
-
-  WizardFormBloc({this.user}) {
-    // Default Setup
-    addFieldBlocs(
-      step: 0,
-      fieldBlocs: [macroName, description, scope],
-    );
-    addFieldBlocs(
-      step: 1,
-      fieldBlocs: [],
-    );
-    addFieldBlocs(
-      step: 2,
-      fieldBlocs: [triggerCommand],
-    );
-    setupActionType();
-    setupSheetActionType();
-  }
 
   void setupActionType() {
     actionType.onValueChanges(onData: (_, current) async* {
@@ -277,7 +279,7 @@ class WizardFormBloc extends FormBloc<String, String> {
         action: action,
       );
 
-      uploadMacro(macro.toJson());
+      db.uploadMacro(macro.toJson());
 
       emitSuccess(
         successResponse: JsonEncoder.withIndent('  ').convert(
