@@ -4,6 +4,7 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.flourbot.datastorage.DataStorage;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
+import com.google.flourbot.entity.action.sheet.SheetReadColumnAction;
 import com.google.flourbot.entity.action.sheet.SheetReadRowAction;
 import com.google.flourbot.entity.action.sheet.SheetEntryType;
 import com.google.flourbot.entity.trigger.CommandTrigger;
@@ -96,11 +97,17 @@ public class EntityModuleImplementation implements EntityModule {
 
         switch(sheetAction) {
           case ("Sheet Append Action"):
-            action = new SheetAppendRowAction(columnValue, sheetAction, sheetUrl);
+            action = new SheetAppendRowAction(sheetUrl, columnValue);
             break;
  
           case ("Read Row Action"):
-            action = new SheetReadRowAction(columnValue, sheetAction, sheetUrl);
+            int row = 1; // TODO: get it from database
+            action = new SheetReadRowAction(sheetUrl, row);
+            break;
+
+          case ("Read Column Action"):
+            String column = "A"; // TODO: get it from database
+            action = new SheetReadColumnAction(sheetUrl, column);
             break;
 
           case ("Batch Action"):

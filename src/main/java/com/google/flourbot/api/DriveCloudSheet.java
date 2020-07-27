@@ -36,7 +36,7 @@ public class DriveCloudSheet implements CloudSheet {
     return String.format("Sheet1!%s:%s", startColumn, endColumn);
   }
 
-  private String toAlphabetic(int i) {
+  public static String toAlphabetic(int i) {
     // Recursive strategy to build a string that represents the alphabetic name
     // of a column based on column number i
     // e.g. 0 -> A, 1 -> B... 25 -> Z, 26 -> AA...
