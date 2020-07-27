@@ -7,7 +7,7 @@ import 'package:macrobaseapp/presentation/widgets/component/side_drawer_widget.d
 import 'package:provider/provider.dart';
 
 import '../pages/macro_table_page.dart';
-import '../pages/new_marco_page.dart';
+import '../pages/new_object_page.dart';
 
 class MainNavigator extends StatefulWidget {
   @override
@@ -52,7 +52,7 @@ class _MainNavigatorState extends State<MainNavigator> {
         drawer: SideDrawerWidget(user: user),
         body: TabBarView(
           children: [
-            NewMacroPage(),
+            NewObjectPage(),
             MacroTable(),
             SettingPage(),
           ],

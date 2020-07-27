@@ -2,7 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MacroTemplateButton extends StatelessWidget {
-  const MacroTemplateButton({Key key, this.templateName, this.imagePath, this.onPressed})
+  const MacroTemplateButton(
+      {Key key,
+      @required this.templateName,
+      @required this.imagePath,
+      @required this.onPressed})
       : super(key: key);
 
   final String templateName;

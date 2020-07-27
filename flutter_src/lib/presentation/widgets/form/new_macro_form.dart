@@ -44,7 +44,7 @@ class _NewMacroFormState extends State<NewMacroForm> {
                   content: Text(state.successResponse),
                   duration: Duration(seconds: 2),
                 ));
-                // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => MainNavigator()));
+                // pushReplacement(MaterialPageRoute(builder: (_) => MainNavigator()));
               }
             },
             onFailure: (context, state) {
