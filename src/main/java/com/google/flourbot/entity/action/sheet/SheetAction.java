@@ -25,7 +25,7 @@ public abstract class SheetAction extends Action {
     String documentId = "";
     Pattern pattern = Pattern.compile(REGEX_PATTERN);
     Matcher matcher = pattern.matcher(documentUrl);
-    // Take the first occurance
+    // Take the first occurence
     if (matcher.find()) {
       documentId = matcher.group(0).substring(2);
     }
