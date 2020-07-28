@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/logic/state/bloc_validator.dart';
@@ -42,6 +44,12 @@ class TeamFormBloc extends FormBloc<String, String> {
     );
 
     db.uploadObject('teams', team.toJson());
+
+    emitSuccess(
+      successResponse: JsonEncoder.withIndent('  ').convert(
+        team.toJson(),
+      ),
+    );
   }
 
   @override

@@ -33,8 +33,12 @@ class _NewTeamFormState extends State<NewTeamForm> {
               onSubmitting: (context, state) => LoadingDialog.show(context),
               onSuccess: (context, state) {
                 LoadingDialog.hide(context);
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => MainNavigator()));
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(state.successResponse),
+                  duration: Duration(seconds: 2),
+                ));
+//                Navigator.of(context).pushReplacement(
+//                    MaterialPageRoute(builder: (_) => MainNavigator()));
               },
               onFailure: (context, state) {
                 LoadingDialog.hide(context);

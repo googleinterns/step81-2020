@@ -26,8 +26,7 @@ class TeamModel extends Team {
       "name": name,
       "iconUrl": iconUrl,
       "description": description,
-      "macros": macros
-          .cast<MacroModel>()
+      "macros": macros == null ? [] : macros.cast<MacroModel>()
           .map((macroObject) => macroObject.toJson())
           .toList()
     };
