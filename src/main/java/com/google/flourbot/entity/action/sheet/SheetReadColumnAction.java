@@ -7,16 +7,19 @@ public final class SheetReadColumnAction extends SheetAction {
 
   private final ActionType actionType = ActionType.SHEET_READ_COLUMN;
   private final String column;
+  private final boolean selectRandomEntry;
 
-  public SheetReadColumnAction(String sheetUrl, String column) {
+  public SheetReadColumnAction(String sheetUrl, String column, boolean selectRandomEntry) {
     super(sheetUrl);
     this.column = column;
+    this.selectRandomEntry = selectRandomEntry;
   }
 
-  public SheetReadColumnAction(String sheetUrl, int column) {
+  public SheetReadColumnAction(String sheetUrl, int column, boolean selectRandomEntry) {
     // Overload
     super(sheetUrl);
     this.column = DriveCloudSheet.toAlphabetic(column + 1);
+    this.selectRandomEntry = selectRandomEntry;
   }
 
   public final ActionType getActionType() {
@@ -25,5 +28,9 @@ public final class SheetReadColumnAction extends SheetAction {
 
   public final String getColumn() {
     return column;
+  }
+
+  public final boolean getSelectRandomEntry() {
+    return selectRandomEntry;
   }
 }

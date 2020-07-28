@@ -106,7 +106,7 @@ public class EntityModuleImplementation implements EntityModule {
             if (row == null) {
               throw new IllegalStateException("row not found in Firestore action");
             }
-            action = new SheetReadRowAction(sheetUrl, (int) row);
+            action = new SheetReadRowAction(sheetUrl, (int) row, (boolean) actionData.get("selectRandomEntry"));
             break;
 
           case ("Read Column Action"):
@@ -115,7 +115,7 @@ public class EntityModuleImplementation implements EntityModule {
             if (column == null) {
               throw new IllegalStateException("column not found in Firestore action");
             }
-            action = new SheetReadColumnAction(sheetUrl, (String) column);
+            action = new SheetReadColumnAction(sheetUrl, (String) column, (boolean) actionData.get("selectRandomEntry"));
             break;
 
           case ("Read Sheet Action"):
@@ -123,7 +123,7 @@ public class EntityModuleImplementation implements EntityModule {
             if (sheetName == null) {
               throw new IllegalStateException("sheetName not found in Firestore action");
             }
-            action = new SheetReadSheetAction(sheetUrl, (String) sheetName);
+            action = new SheetReadSheetAction(sheetUrl, (String) sheetName, (boolean) actionData.get("selectRandomEntry"));
             break;
 
           case ("Batch Action"):
