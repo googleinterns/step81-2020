@@ -43,19 +43,3 @@ class NewObjectPageState extends State<NewObjectPage> {
     );
   }
 }
-
-//class NewMacroPageState extends State<NewMacroPage> {
-//  @override
-//  Widget build(BuildContext context) {
-//    return SingleChildScrollView(
-//      child: Container(
-//        padding: EdgeInsets.all(40),
-//        child: Column(
-//          children: <Widget>[
-//            NewMacroForm(),
-//          ],
-//        ),
-//      ),
-//    );
-//  }
-//}
