@@ -110,7 +110,7 @@ public class Bot {
                 macroToCreator.put(macroName, macroCreatorEmail);
 
                 roomToMacro.put(event.at("/space/name").asText(), macroToCreator);
-                replyText = "The " + macroName + " macro belonging to " + macroCreatorEmail + " has been initiated for this room. All users in this room can use this macro.";
+                replyText = String.format("The %s macro belonging to %s has been initiated for this room. All users in this room can use this macro.", macroName, macroCreatorEmail);
             }
             // If someone is trying to use the macro
             else if (roomToMacro.containsKey(event.at("/space/name").asText())) {
