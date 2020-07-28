@@ -20,9 +20,6 @@ void main() => runApp(
       Provider(
         create: (_) => FirebaseAuthService(),
       ),
-      Provider(
-        create: (_) => FirestoreService(),
-      ),
       StreamProvider(
         create: (context) =>
           context.read<FirebaseAuthService>().onAuthStateChanged,

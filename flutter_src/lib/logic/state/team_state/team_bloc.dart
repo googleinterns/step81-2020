@@ -1,11 +1,13 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/logic/state/bloc_validator.dart';
 import 'package:macrobaseapp/model/adapters/team_model.dart';
 
 class TeamFormBloc extends FormBloc<String, String> {
+  final FirestoreService db;
 
   TextFieldBloc teamName = TextFieldBloc(
-    name: "Description",
+    name: "Team Name",
     validators: [
       FieldBlocValidators.required,
     ],
@@ -25,7 +27,7 @@ class TeamFormBloc extends FormBloc<String, String> {
     ],
   );
 
-  TeamFormBloc() {
+  TeamFormBloc({this.db}) {
     addFieldBlocs(fieldBlocs: [teamName, iconUrl, description]);
   }
 
@@ -37,8 +39,7 @@ class TeamFormBloc extends FormBloc<String, String> {
       description: description.value.trim(),
     );
 
-    //TODO
-    //Upload Team Object
+    db.uploadObject('teams', team.toJson());
   }
 
   @override

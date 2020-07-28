@@ -10,18 +10,11 @@ class NewMacroPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Second Route"),
+        title: Text("Creation Form"),
       ),
       body: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.all(40),
-            child: Column(
-              children: <Widget>[
-                form,
-              ],
-            ),
-          ),
-        ),
-      );
+        child: form,
+      ),
+    );
   }
 }

@@ -14,24 +14,6 @@ class WizardFormBloc extends FormBloc<String, String> {
   final User user;
   final FirestoreService db;
 
-  WizardFormBloc({this.user, this.db}) {
-    // Default Setup
-    addFieldBlocs(
-      step: 0,
-      fieldBlocs: [macroName, description, scope],
-    );
-    addFieldBlocs(
-      step: 1,
-      fieldBlocs: [],
-    );
-    addFieldBlocs(
-      step: 2,
-      fieldBlocs: [triggerCommand],
-    );
-    setupActionType();
-    setupSheetActionType();
-  }
-
   /*
    Fields that exist for all Macros
    */
@@ -114,7 +96,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     ],
     items: [BatchAction.READ_TYPE, BatchAction.DELETE_TYPE],
   );
-  
+
   BooleanFieldBloc randomOrder = BooleanFieldBloc();
 
   /*
@@ -132,6 +114,24 @@ class WizardFormBloc extends FormBloc<String, String> {
       FieldBlocValidators.required,
     ],
   );
+
+  WizardFormBloc({this.user, this.db}) {
+    // Default Setup
+    addFieldBlocs(
+      step: 0,
+      fieldBlocs: [macroName, description, scope],
+    );
+    addFieldBlocs(
+      step: 1,
+      fieldBlocs: [],
+    );
+    addFieldBlocs(
+      step: 2,
+      fieldBlocs: [triggerCommand],
+    );
+    setupActionType();
+    setupSheetActionType();
+  }
 
   void setupActionType() {
     actionType.onValueChanges(onData: (_, current) async* {
@@ -194,7 +194,7 @@ class WizardFormBloc extends FormBloc<String, String> {
       emitSuccess();
     } else if (state.currentStep == 1) {
       // Do not extract variables from message for now.
-      //preFillCommand();
+      // preFillCommand();
       emitSuccess();
     } else if (state.currentStep == 2) {
       dynamic trigger;
@@ -264,7 +264,7 @@ class WizardFormBloc extends FormBloc<String, String> {
         action: action,
       );
 
-      db.uploadMacro(macro.toJson());
+      db.uploadObject('macros', macro.toJson());
 
       emitSuccess(
         successResponse: JsonEncoder.withIndent('  ').convert(

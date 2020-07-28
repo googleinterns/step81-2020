@@ -1,4 +1,5 @@
 import 'package:macrobaseapp/logic/api/firestore_db.dart';
+import 'package:macrobaseapp/logic/state/loading_dialog.dart';
 import 'package:macrobaseapp/presentation/widgets/button/normal_button.dart';
 import 'package:macrobaseapp/presentation/widgets/form/hint_row.dart';
 
@@ -7,7 +8,6 @@ import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:macrobaseapp/logic/state/macro_state/macro_bloc.dart';
 import 'package:macrobaseapp/logic/state/macro_state/macro_bloc_template.dart';
 import 'package:macrobaseapp/model/entities/action.dart' as entity;
-import 'package:macrobaseapp/model/entities/trigger.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 import 'package:macrobaseapp/presentation/widgets/form/drop_down_menu.dart';
 import 'package:macrobaseapp/presentation/widgets/button/macro_template_button.dart';
@@ -24,7 +24,7 @@ class _NewMacroFormState extends State<NewMacroForm> {
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<User>(context);
-    final FirestoreService db = context.read<FirestoreService>();
+    final FirestoreService db = FirestoreService();
 
     return BlocProvider(
       create: (context) => WizardFormBloc(user: user, db: db),
@@ -210,36 +210,6 @@ class _NewMacroFormState extends State<NewMacroForm> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class LoadingDialog extends StatelessWidget {
-  static void show(BuildContext context, {Key key}) => showDialog<void>(
-        context: context,
-        useRootNavigator: false,
-        barrierDismissible: false,
-        builder: (_) => LoadingDialog(key: key),
-      ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
-
-  static void hide(BuildContext context) => Navigator.pop(context);
-
-  LoadingDialog({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Center(
-        child: Card(
-          child: Container(
-            width: 80,
-            height: 80,
-            padding: EdgeInsets.all(12.0),
-            child: CircularProgressIndicator(),
-          ),
-        ),
       ),
     );
   }
@@ -477,3 +447,4 @@ class _SheetBatchActionFormState extends State<SheetBatchActionForm> {
     );
   }
 }
+

@@ -16,7 +16,8 @@ class _MacroTableState extends State<MacroTable> {
   Widget build(BuildContext context) {
     final macroNotifier = Provider.of<MacroNotifier>(context, listen: true);
     final user = Provider.of<User>(context);
-    context.read<FirestoreService>().getMacros(macroNotifier, user.email);
+    final FirestoreService db = FirestoreService();
+    db.getMacros(macroNotifier, user.email);
 
     if (macroNotifier.macroList.length == 0) {
       return NoMacroIllustration();

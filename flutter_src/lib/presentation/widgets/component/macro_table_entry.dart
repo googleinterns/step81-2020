@@ -24,7 +24,8 @@ class MacroTableEntry extends StatelessWidget {
         trailing: IconButton(
           icon: Icon(Icons.delete),
           onPressed: () {
-            context.read<FirestoreService>().removeMacro(macroNotifier.macroList[index].macroId);
+            FirestoreService db = FirestoreService();
+            db.removeObject('macros', macroNotifier.macroList[index].macroId);
             macroNotifier.deleteMacro(macroNotifier.macroList[index]);
           },
         ),

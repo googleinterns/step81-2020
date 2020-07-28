@@ -4,8 +4,10 @@ import 'package:macrobaseapp/model/adapters/macro_model.dart';
 import 'package:macrobaseapp/model/entities/macro.dart';
 
 class FirestoreService {
-  final Firestore db = Firestore.instance;
+  final Firestore db;
 
+  FirestoreService({FirestoreService db})
+    : db = db ?? Firestore.instance;
 
   void getMacros(MacroNotifier macroNotifier, String creatorId) async {
     QuerySnapshot snapshot = await db.collection('macros').where("creatorId", isEqualTo: creatorId).getDocuments();
@@ -26,13 +28,13 @@ class FirestoreService {
   }
 
 
-  Future<void> removeMacro(String macroId) {
-    return db.collection('macros').document(macroId).delete();
+  Future<void> removeObject(String collectionName, String macroId) {
+    return db.collection(collectionName).document(macroId).delete();
   }
 
 
-  void uploadMacro(Map<String, dynamic> json) {
-    db.collection('macros').document()
+  void uploadObject(String collectionName, Map<String, dynamic> json) {
+    db.collection(collectionName).document()
         .setData(json);
   }
 
