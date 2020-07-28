@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:macrobaseapp/logic/state/macro_notifier.dart';
-import 'package:macrobaseapp/logic/usecases/macro_firestore/firestore_macro_operation.dart';
+import 'package:macrobaseapp/logic/api/firestore_db.dart';
+import 'package:macrobaseapp/logic/state/macro_state/macro_notifier.dart';
 import 'package:macrobaseapp/presentation/pages/macro_detail.dart';
+import 'package:provider/provider.dart';
 
 class MacroTableEntry extends StatelessWidget {
   const MacroTableEntry({
@@ -23,7 +24,8 @@ class MacroTableEntry extends StatelessWidget {
         trailing: IconButton(
           icon: Icon(Icons.delete),
           onPressed: () {
-            removeMacro(macroNotifier.macroList[index].macroId);
+            FirestoreService db = FirestoreService();
+            db.removeObject('macros', macroNotifier.macroList[index].macroId);
             macroNotifier.deleteMacro(macroNotifier.macroList[index]);
           },
         ),

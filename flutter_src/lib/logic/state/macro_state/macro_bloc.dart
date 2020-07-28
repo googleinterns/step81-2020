@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:macrobaseapp/logic/state/macro_bloc_validator.dart';
-import 'package:macrobaseapp/logic/usecases/macro_firestore/firestore_macro_operation.dart';
+import 'package:macrobaseapp/logic/state/bloc_validator.dart';
+import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/model/adapters/action_model.dart';
 import 'package:macrobaseapp/model/adapters/macro_model.dart';
 import 'package:macrobaseapp/model/adapters/trigger_model.dart';
@@ -12,11 +12,22 @@ import 'package:macrobaseapp/model/entities/user.dart';
 
 class WizardFormBloc extends FormBloc<String, String> {
   final User user;
+  final FirestoreService db;
 
+  /*
+   Fields that exist for all Macros
+   */
   TextFieldBloc macroName = TextFieldBloc(
-    asyncValidators: [CustomBlocValidator.nameValidator],
+    asyncValidators: [
+      (string) async => await CustomBlocValidator.nameValidator(string)
+          ? null
+          : "Sorry, this macro name already exist"
+    ],
     asyncValidatorDebounceTime: Duration(milliseconds: 300),
     validators: [
+      (string) => CustomBlocValidator.oneWordValidator(string)
+          ? null
+          : "Macro Name cannot have space in between.",
       FieldBlocValidators.required,
     ],
     name: 'Macro Name',
@@ -30,7 +41,9 @@ class WizardFormBloc extends FormBloc<String, String> {
   );
 
   TextFieldBloc scope = TextFieldBloc(name: 'Scope', validators: [
-    CustomBlocValidator.commaSeperatedEmailValidator,
+    (string) => CustomBlocValidator.commaSeperatedEmailValidator(string)
+        ? null
+        : "There are invalid emails in the field",
   ]);
 
   SelectFieldBloc actionType = SelectFieldBloc(
@@ -38,51 +51,8 @@ class WizardFormBloc extends FormBloc<String, String> {
     validators: [
       FieldBlocValidators.required,
     ],
-    items: [Action.SHEET_ACTION],
+    items: [Action.SHEET_ACTION, Action.ADDRESS_ACTION],
   );
-
-  SelectFieldBloc sheetActionType = SelectFieldBloc(
-    name: 'Sheet Action Type',
-    validators: [
-      FieldBlocValidators.required,
-    ],
-    items: [SheetAction.APPEND_ACTION, SheetAction.BATCH_ACTION],
-  );
-
-  SelectFieldBloc batchActionType = SelectFieldBloc(
-    name: 'Batch Action Type',
-    validators: [
-      FieldBlocValidators.required,
-    ],
-    items: [BatchAction.READ_TYPE, BatchAction.DELETE_TYPE],
-  );
-
-  TextFieldBloc row = TextFieldBloc(
-    name: "Row",
-    validators: [
-      FieldBlocValidators.required,
-    ],
-  );
-
-  TextFieldBloc column = TextFieldBloc(
-    name: "Column",
-    validators: [
-      FieldBlocValidators.required,
-    ],
-  );
-
-  BooleanFieldBloc randomOrder = BooleanFieldBloc();
-
-  TextFieldBloc actionSheetUrl = TextFieldBloc(
-    name: "Sheet URL",
-    validators: [
-      FieldBlocValidators.required,
-      CustomBlocValidator.sheetUrlValidator,
-    ],
-  );
-
-  ListFieldBloc<TextFieldBloc> actionSheetColumn =
-      ListFieldBloc<TextFieldBloc>();
 
   SelectFieldBloc triggerType = SelectFieldBloc(
     name: 'Trigger Type',
@@ -92,6 +62,62 @@ class WizardFormBloc extends FormBloc<String, String> {
     items: [Trigger.COMMAND_BASED, Trigger.TIME_BASED],
   );
 
+  /*
+   Fields for ActionType: Address
+   */
+  SelectFieldBloc addressType = SelectFieldBloc(name: '', validators: [
+    FieldBlocValidators.required,
+  ], items: [
+    AddressAction.PHYSICAL_ADDRESS,
+    AddressAction.WEB_URL
+  ]);
+
+  TextFieldBloc address = TextFieldBloc(
+      name: 'Address', validators: [FieldBlocValidators.required]);
+
+  /*
+   Fields for ActionType: Sheet
+   */
+  SelectFieldBloc sheetActionType = SelectFieldBloc(
+    name: 'Sheet Action Type',
+    validators: [
+      FieldBlocValidators.required,
+    ],
+    items: [SheetAction.APPEND_ACTION, SheetAction.BATCH_ACTION],
+  );
+
+  TextFieldBloc actionSheetUrl = TextFieldBloc(
+    name: "Sheet URL",
+    validators: [
+      FieldBlocValidators.required,
+      (string) => CustomBlocValidator.sheetUrlValidator(string)
+          ? null
+          : "Sheet URL Format - Validator Error",
+    ],
+  );
+
+  /*
+   Fields for ActionType: Sheet; SheetActionType: Batch;
+   */
+  SelectFieldBloc batchActionType = SelectFieldBloc(
+    name: 'Batch Action Type',
+    validators: [
+      FieldBlocValidators.required,
+    ],
+    items: [BatchAction.READ_TYPE, BatchAction.DELETE_TYPE],
+  );
+
+  BooleanFieldBloc randomOrder = BooleanFieldBloc();
+
+  /*
+   Fields for ActionType: Sheet; SheetActionType: Append;
+   */
+  ListFieldBloc<TextFieldBloc> actionSheetColumn =
+      ListFieldBloc<TextFieldBloc>();
+
+  /*
+   Fields for TriggerType: Command
+   */
   TextFieldBloc triggerCommand = TextFieldBloc(
     name: 'Command',
     validators: [
@@ -99,7 +125,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     ],
   );
 
-  WizardFormBloc({this.user}) {
+  WizardFormBloc({this.user, this.db}) {
     // Default Setup
     addFieldBlocs(
       step: 0,
@@ -107,16 +133,40 @@ class WizardFormBloc extends FormBloc<String, String> {
     );
     addFieldBlocs(
       step: 1,
-      fieldBlocs: [
-        sheetActionType,
-        actionSheetUrl,
-      ],
+      fieldBlocs: [],
     );
     addFieldBlocs(
       step: 2,
       fieldBlocs: [triggerCommand],
     );
+    setupActionType();
     setupSheetActionType();
+  }
+
+  void setupActionType() {
+    actionType.onValueChanges(onData: (_, current) async* {
+      removeFieldBlocs(
+        fieldBlocs: [
+          addressType,
+          address,
+          sheetActionType,
+          actionSheetUrl,
+          batchActionType,
+          randomOrder,
+          actionSheetColumn
+        ],
+      );
+      switch (current.value) {
+        case (Action.ADDRESS_ACTION):
+          addFieldBlocs(step: 1, fieldBlocs: [addressType, address]);
+          break;
+        case (Action.SHEET_ACTION):
+          addFieldBlocs(step: 1, fieldBlocs: [sheetActionType, actionSheetUrl]);
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   void setupSheetActionType() {
@@ -125,8 +175,6 @@ class WizardFormBloc extends FormBloc<String, String> {
         fieldBlocs: [
           actionSheetColumn,
           batchActionType,
-          row,
-          column,
           randomOrder,
         ],
       );
@@ -137,8 +185,6 @@ class WizardFormBloc extends FormBloc<String, String> {
       } else if (current.value == SheetAction.BATCH_ACTION) {
         addFieldBlocs(step: 1, fieldBlocs: [
           batchActionType,
-          row,
-          column,
           randomOrder,
         ]);
       }
@@ -158,13 +204,21 @@ class WizardFormBloc extends FormBloc<String, String> {
       emitSuccess();
     } else if (state.currentStep == 1) {
       // Do not extract variables from message for now.
-      //preFillCommand();
+      // preFillCommand();
       emitSuccess();
     } else if (state.currentStep == 2) {
       dynamic trigger;
       dynamic action;
 
       switch (actionType.value) {
+        case Action.ADDRESS_ACTION:
+          {
+            action = new AddressActionModel(
+              addressType: addressType.value,
+              address: address.value,
+            );
+          }
+          break;
         case Action.SHEET_ACTION:
           {
             switch (sheetActionType.value) {
@@ -179,8 +233,8 @@ class WizardFormBloc extends FormBloc<String, String> {
               case SheetAction.BATCH_ACTION:
                 action = new SheetBatchActionModel(
                   sheetUrl: actionSheetUrl.value,
-                  row: int.parse(row.value),
-                  column: int.parse(column.value),
+                  row: 0,
+                  column: 0,
                   batchType: batchActionType.value,
                   randomizeOrder: randomOrder.value,
                 );
@@ -220,7 +274,7 @@ class WizardFormBloc extends FormBloc<String, String> {
         action: action,
       );
 
-      uploadMacro(macro.toJson());
+      db.uploadObject('macros', macro.toJson());
 
       emitSuccess(
         successResponse: JsonEncoder.withIndent('  ').convert(
@@ -240,11 +294,11 @@ class WizardFormBloc extends FormBloc<String, String> {
     actionSheetUrl.close();
     actionSheetColumn.close();
     batchActionType.close();
-    row.close();
-    column.close();
     randomOrder.close();
     triggerType.close();
     triggerCommand.close();
+    addressType.close();
+    address.close();
 
     return super.close();
   }

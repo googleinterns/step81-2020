@@ -1,12 +1,13 @@
+import 'package:macrobaseapp/logic/api/firestore_db.dart';
+import 'package:macrobaseapp/logic/state/loading_dialog.dart';
 import 'package:macrobaseapp/presentation/widgets/button/normal_button.dart';
 import 'package:macrobaseapp/presentation/widgets/form/hint_row.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:macrobaseapp/logic/state/macro_bloc.dart';
-import 'package:macrobaseapp/logic/state/macro_bloc_template.dart';
+import 'package:macrobaseapp/logic/state/macro_state/macro_bloc.dart';
+import 'package:macrobaseapp/logic/state/macro_state/macro_bloc_template.dart';
 import 'package:macrobaseapp/model/entities/action.dart' as entity;
-import 'package:macrobaseapp/model/entities/trigger.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 import 'package:macrobaseapp/presentation/widgets/form/drop_down_menu.dart';
 import 'package:macrobaseapp/presentation/widgets/button/macro_template_button.dart';
@@ -23,9 +24,10 @@ class _NewMacroFormState extends State<NewMacroForm> {
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<User>(context);
+    final FirestoreService db = FirestoreService();
 
     return BlocProvider(
-      create: (context) => WizardFormBloc(user: user),
+      create: (context) => WizardFormBloc(user: user, db: db),
       child: Builder(builder: (context) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -44,7 +46,7 @@ class _NewMacroFormState extends State<NewMacroForm> {
                   content: Text(state.successResponse),
                   duration: Duration(seconds: 2),
                 ));
-                // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => MainNavigator()));
+                // pushReplacement(MaterialPageRoute(builder: (_) => MainNavigator()));
               }
             },
             onFailure: (context, state) {
@@ -146,18 +148,34 @@ class _NewMacroFormState extends State<NewMacroForm> {
         children: <Widget>[
           Row(
             children: <Widget>[
-              FlatButton(
+              MacroTemplateButton(
                 onPressed: () {
                   wizardFormBloc.actionType
                       .updateValue(entity.Action.SHEET_ACTION);
                 },
-                padding: EdgeInsets.all(0.0),
-                child: Image(
-                  image: AssetImage("sheet.png"),
-                  height: 100,
-                  width: 200,
-                ),
+                templateName: "Google Sheet API",
+                imagePath: "sheet.png",
               ),
+              MacroTemplateButton(
+                onPressed: () {
+                  wizardFormBloc.actionType
+                      .updateValue(entity.Action.ADDRESS_ACTION);
+                  wizardFormBloc.addressType
+                      .updateValue(entity.AddressAction.PHYSICAL_ADDRESS);
+                },
+                templateName: "Google Map API",
+                imagePath: "google-maps.png",
+              ),
+              MacroTemplateButton(
+                onPressed: () {
+                  wizardFormBloc.actionType
+                      .updateValue(entity.Action.ADDRESS_ACTION);
+                  wizardFormBloc.addressType
+                      .updateValue(entity.AddressAction.WEB_URL);
+                },
+                templateName: "URL Redirection",
+                imagePath: "chrome.png",
+              )
             ],
           ),
           BlocBuilder<SelectFieldBloc, SelectFieldBlocState>(
@@ -165,6 +183,8 @@ class _NewMacroFormState extends State<NewMacroForm> {
               builder: (context, state) {
                 if (state.value == entity.Action.SHEET_ACTION) {
                   return SheetActionForm(wizardFormBloc: wizardFormBloc);
+                } else if (state.value == entity.Action.ADDRESS_ACTION) {
+                  return AddressActionForm(wizardFormBloc: wizardFormBloc);
                 } else {
                   return Container();
                 }
@@ -190,36 +210,6 @@ class _NewMacroFormState extends State<NewMacroForm> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class LoadingDialog extends StatelessWidget {
-  static void show(BuildContext context, {Key key}) => showDialog<void>(
-        context: context,
-        useRootNavigator: false,
-        barrierDismissible: false,
-        builder: (_) => LoadingDialog(key: key),
-      ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
-
-  static void hide(BuildContext context) => Navigator.pop(context);
-
-  LoadingDialog({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Center(
-        child: Card(
-          child: Container(
-            width: 80,
-            height: 80,
-            padding: EdgeInsets.all(12.0),
-            child: CircularProgressIndicator(),
-          ),
-        ),
       ),
     );
   }
@@ -287,6 +277,45 @@ class _SheetActionFormState extends State<SheetActionForm> {
               }),
         ],
       ),
+    );
+  }
+}
+
+class AddressActionForm extends StatefulWidget {
+  final WizardFormBloc wizardFormBloc;
+
+  const AddressActionForm({Key key, this.wizardFormBloc}) : super(key: key);
+
+  @override
+  _AddressActionFormState createState() =>
+      _AddressActionFormState(wizardFormBloc);
+}
+
+class _AddressActionFormState extends State<AddressActionForm> {
+  final WizardFormBloc wizardFormBloc;
+
+  _AddressActionFormState(this.wizardFormBloc);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(children: [
+        RadioButtonGroupFieldBlocBuilder(
+          selectFieldBloc: wizardFormBloc.addressType,
+          itemBuilder: (context, item) => item,
+          decoration: InputDecoration(
+            labelText: 'Select Address Type',
+            prefixIcon: SizedBox(),
+          ),
+        ),
+        TextFieldBlocBuilder(
+          textFieldBloc: wizardFormBloc.address,
+          decoration: InputDecoration(
+            labelText: 'URL/Map Address',
+            prefixIcon: Icon(Icons.location_city),
+          ),
+        ),
+      ]),
     );
   }
 }
@@ -406,20 +435,6 @@ class _SheetBatchActionFormState extends State<SheetBatchActionForm> {
               prefixIcon: SizedBox(),
             ),
           ),
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.row,
-            decoration: InputDecoration(
-              labelText: 'Row',
-              prefixIcon: Icon(Icons.people),
-            ),
-          ),
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.column,
-            decoration: InputDecoration(
-              labelText: 'Column',
-              prefixIcon: Icon(Icons.people),
-            ),
-          ),
           SwitchFieldBlocBuilder(
             booleanFieldBloc: wizardFormBloc.randomOrder,
             body: Container(
@@ -432,5 +447,4 @@ class _SheetBatchActionFormState extends State<SheetBatchActionForm> {
     );
   }
 }
-
 
