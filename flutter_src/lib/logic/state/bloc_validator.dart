@@ -21,7 +21,7 @@ class CustomBlocValidator {
     return null;
   }
 
-  static String UrlValidator(String string) {
+  static String urlValidator(String string) {
     bool isValidUrl = Uri.parse(string).isAbsolute;
     if (!isValidUrl) {
       return string + " is not a valid URL to an ";

@@ -16,7 +16,7 @@ class TeamFormBloc extends FormBloc<String, String> {
   TextFieldBloc iconUrl = TextFieldBloc(
     name: "Icon URL (Optional)",
     validators: [
-      CustomBlocValidator.UrlValidator,
+      CustomBlocValidator.urlValidator,
     ],
   );
 
