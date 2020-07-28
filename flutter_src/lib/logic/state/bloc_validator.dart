@@ -2,48 +2,48 @@ import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/model/entities/macro.dart';
 
 class CustomBlocValidator {
-  static Future<String> nameValidator(String name) async {
+  static Future<bool> nameValidator(String name) async {
     FirestoreService db = FirestoreService();
 
     //Avoid too many Firestore calls
     await Future.delayed(Duration(milliseconds: 500));
     List<Macro> list = await db.queryMacro(name);
     if (list.length > 0) {
-      return "Sorry, this macro name already exist";
+      return false;
     }
-    return null;
+    return true;
   }
 
-  static String oneWordValidator(String string) {
+  static bool oneWordValidator(String string) {
     if (string.contains(" ")) {
-      return "Macro Name cannot have space in between.";
+      return false;
     }
-    return null;
+    return true;
   }
 
-  static String urlValidator(String string) {
+  static bool urlValidator(String string) {
     bool isValidUrl = Uri.parse(string).isAbsolute;
     if (!isValidUrl) {
-      return string + " is not a valid URL to an ";
+      return false;
     }
-    return null;
+    return true;
   }
 
-  static String sheetUrlValidator(String string) {
+  static bool sheetUrlValidator(String string) {
     final sheetUrlRegExp =
         RegExp("https:\/\/docs.google.com\/spreadsheets\/d\/.*\/edit#gid=.*");
 
-    if (string == null || string.isEmpty || sheetUrlRegExp.hasMatch(string)) {
-      return null;
+    if (!sheetUrlRegExp.hasMatch(string)) {
+      return false;
     }
-    return "Sheet URL Format - Validator Error";
+    return true;
   }
 
-  static String commaSeperatedEmailValidator(String string) {
+  static bool commaSeperatedEmailValidator(String string) {
     List<String> errors = [];
 
     string = string.trim();
-    if (string.length == 0) return null;
+    if (string.length == 0) return true;
 
     List<String> emails = string.split(',');
 
@@ -52,10 +52,10 @@ class CustomBlocValidator {
               r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
           .hasMatch(emails[i]);
       if (!emailValid) {
-        errors.add(emails[i] + " is not an valid email.");
+        return false;
       }
     }
 
-    return errors.isEmpty ? null : errors.join("\n");
+    return true;
   }
 }

@@ -18,10 +18,16 @@ class WizardFormBloc extends FormBloc<String, String> {
    Fields that exist for all Macros
    */
   TextFieldBloc macroName = TextFieldBloc(
-    asyncValidators: [CustomBlocValidator.nameValidator],
+    asyncValidators: [
+      (string) async => await CustomBlocValidator.nameValidator(string)
+          ? null
+          : "Sorry, this macro name already exist"
+    ],
     asyncValidatorDebounceTime: Duration(milliseconds: 300),
     validators: [
-      CustomBlocValidator.oneWordValidator,
+      (string) => CustomBlocValidator.oneWordValidator(string)
+          ? null
+          : "Macro Name cannot have space in between.",
       FieldBlocValidators.required,
     ],
     name: 'Macro Name',
@@ -35,7 +41,9 @@ class WizardFormBloc extends FormBloc<String, String> {
   );
 
   TextFieldBloc scope = TextFieldBloc(name: 'Scope', validators: [
-    CustomBlocValidator.commaSeperatedEmailValidator,
+    (string) => CustomBlocValidator.commaSeperatedEmailValidator(string)
+        ? null
+        : "There are invalid emails in the field",
   ]);
 
   SelectFieldBloc actionType = SelectFieldBloc(
@@ -82,7 +90,9 @@ class WizardFormBloc extends FormBloc<String, String> {
     name: "Sheet URL",
     validators: [
       FieldBlocValidators.required,
-      CustomBlocValidator.sheetUrlValidator,
+      (string) => CustomBlocValidator.sheetUrlValidator(string)
+          ? null
+          : "Sheet URL Format - Validator Error",
     ],
   );
 
@@ -146,7 +156,7 @@ class WizardFormBloc extends FormBloc<String, String> {
           actionSheetColumn
         ],
       );
-      switch(current.value) {
+      switch (current.value) {
         case (Action.ADDRESS_ACTION):
           addFieldBlocs(step: 1, fieldBlocs: [addressType, address]);
           break;
@@ -201,7 +211,7 @@ class WizardFormBloc extends FormBloc<String, String> {
       dynamic action;
 
       switch (actionType.value) {
-        case Action.ADDRESS_ACTION :
+        case Action.ADDRESS_ACTION:
           {
             action = new AddressActionModel(
               addressType: addressType.value,
@@ -276,7 +286,6 @@ class WizardFormBloc extends FormBloc<String, String> {
 
   @override
   Future<void> close() {
-
     macroName.close();
     description.close();
     actionType.close();

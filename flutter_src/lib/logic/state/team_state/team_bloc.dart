@@ -16,7 +16,9 @@ class TeamFormBloc extends FormBloc<String, String> {
   TextFieldBloc iconUrl = TextFieldBloc(
     name: "Icon URL (Optional)",
     validators: [
-      CustomBlocValidator.urlValidator,
+      (string) => CustomBlocValidator.urlValidator(string)
+          ? null
+          : "Icon URL is not a valid link to an logo",
     ],
   );
 
@@ -44,7 +46,6 @@ class TeamFormBloc extends FormBloc<String, String> {
 
   @override
   Future<void> close() {
-
     teamName.close();
     iconUrl.close();
     description.close();
