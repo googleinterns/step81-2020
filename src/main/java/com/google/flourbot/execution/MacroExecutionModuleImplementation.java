@@ -81,8 +81,8 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
     Action action = optionalMacro.get().getAction();
     ActionType actionType = action.getActionType();
-    String documentId = action.getSheetId();
-    String documentUrl = action.getSheetUrl();
+    String documentId = action.getDocumentId();
+    String documentUrl = action.getDocumentUrl();
     CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
 
     String replyText = "";
