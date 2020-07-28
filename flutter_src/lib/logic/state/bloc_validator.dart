@@ -15,7 +15,7 @@ class CustomBlocValidator {
   }
 
   static String oneWordValidator(String string) {
-    if (string.split(" ").length > 1) {
+    if (string.contains(" ")) {
       return "Macro Name cannot have space in between.";
     }
     return null;
