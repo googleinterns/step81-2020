@@ -40,7 +40,6 @@ public class Bot {
   private static final String ROOM_HELP_MESSAGE = "To use a room member's macro, the creator of a macro must write \"@MacroBot /share MacroName \". " + 
                                                     "Once this has been sent, any room member can use the initialized macro by writing \"@MacroBot MacroName <your message> \" " + 
                                                     "If your macro has already been used in a thread, you may omit the MacroName and can simply write \"@MacroBot <your message>\".";
-  private static String helpMessage;
   private static String replyText;
   private static MacroExecutionModule macroExecutionModule;
 
@@ -64,12 +63,10 @@ public class Bot {
         if ("ROOM".equals(spaceType)) {
           String displayName = event.at("/space/displayName").asText();
           replyText = String.format("Thanks for adding me to %s. Type \"@MacroBot /help\" at any time to see my instructions.", displayName);
-          helpMessage = ROOM_HELP_MESSAGE;
 
         } else {
           String displayName = event.at("/user/displayName").asText();
-          replyText = String.format("Thanks for adding me to a DM, %s! Type \"@MacroBot /help\" at any time to see my instructions.", displayName);
-          helpMessage = DM_HELP_MESSAGE;
+          replyText = String.format("Thanks for adding me to a DM, %s! Type \"@MacroBot /help\" at any time to see my instructions.", displayName);s
         }
         break;
 
@@ -79,6 +76,7 @@ public class Bot {
         String threadId = event.at("/message/thread/name").asText();
         String roomId = event.at("/space/name").asText();
         String messageSenderEmail = event.at("/message/sender/email").asText();
+        String helpMessage = getHelpMessage(event.at("/space/type").asText());
   
         replyText = macroExecutionModule.getReplyText(words, message, threadId, roomId, messageSenderEmail, helpMessage);
         break;
@@ -127,4 +125,14 @@ public class Bot {
     chatService.spaces().messages().create(spaceName, reply).execute();
     // [END async-response]
   }
+
+  private String getHelpMessage(String spaceType) {
+    if ("ROOM".equals(spaceType)) {
+        return ROOM_HELP_MESSAGE;
+    }
+    else {
+        return DM_HELP_MESSAGE;
+    }
+  }
+
 }

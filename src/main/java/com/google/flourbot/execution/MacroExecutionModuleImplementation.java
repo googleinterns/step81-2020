@@ -69,7 +69,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
         // Reply to the help message.
         if (words[1].equalsIgnoreCase("/help")) {  
-            return helpMessage; 
+            return helpMessage;
         }
 
         // Get the macro name from the message. 
