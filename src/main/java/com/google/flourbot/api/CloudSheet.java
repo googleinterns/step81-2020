@@ -16,7 +16,6 @@ public interface CloudSheet {
   public List<List<String>> readRange(String range);
 
   public List<String> readRow(int row);
-  public List<String> readColumn(int column);
   public List<String> readColumn(String column);
   public List<List<String>> readSheet(String sheetName);
 }
