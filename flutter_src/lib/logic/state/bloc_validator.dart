@@ -50,7 +50,7 @@ class CustomBlocValidator {
     for (int i = 0; i < emails.length; i++) {
       bool emailValid = RegExp(
               r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-          .hasMatch(emails[i]);
+          .hasMatch(emails[i].trim());
       if (!emailValid) {
         return false;
       }
