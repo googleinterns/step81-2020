@@ -4,8 +4,9 @@
 
 package com.google.flourbot.api;
 
-import com.google.api.services.sheets.v4.*;
-import com.google.api.services.sheets.v4.model.*;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.api.services.sheets.v4.model.AppendValuesResponse;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -14,9 +15,6 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class DriveCloudSheet implements CloudSheet {
   private static final String VALUE_INPUT_OPTION = "USER_ENTERED";
@@ -67,7 +65,6 @@ public class DriveCloudSheet implements CloudSheet {
     } catch (IOException e) {
       throw new IllegalArgumentException(e);
     }
-
     return (List<List<String>>)((Object)response.getValues());
   }
 

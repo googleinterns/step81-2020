@@ -3,7 +3,8 @@ package com.google.flourbot.entity;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.flourbot.datastorage.DataStorage;
 import com.google.flourbot.entity.action.Action;
-import com.google.flourbot.entity.action.sheet.SheetAppendAction;
+import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
+import com.google.flourbot.entity.action.sheet.SheetReadRowAction;
 import com.google.flourbot.entity.action.sheet.SheetEntryType;
 import com.google.flourbot.entity.trigger.CommandTrigger;
 import com.google.flourbot.entity.trigger.Trigger;
@@ -91,7 +92,23 @@ public class EntityModuleImplementation implements EntityModule {
         String sheetAction = (String) actionData.get("sheetAction");
         String sheetUrl = (String) actionData.get("sheetUrl");
 
-        Action action = new SheetAppendAction(columnValue, sheetAction, sheetUrl);
+        Action action = null;
+
+        switch(sheetAction) {
+          case ("Sheet Append Action"):
+            action = new SheetAppendRowAction(columnValue, sheetAction, sheetUrl);
+            break;
+ 
+          case ("Read Row Action"):
+            action = new SheetReadRowAction(columnValue, sheetAction, sheetUrl);
+            break;
+
+          case ("Batch Action"):
+            break;
+          default:
+            throw new IllegalStateException("Action type not recognized");
+        }
+
         return Optional.of(action);
       default:
         return Optional.empty();

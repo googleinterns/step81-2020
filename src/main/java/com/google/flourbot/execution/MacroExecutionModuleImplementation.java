@@ -10,7 +10,7 @@ import com.google.flourbot.entity.EntityModuleImplementation;
 import com.google.flourbot.entity.Macro;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.ActionType;
-import com.google.flourbot.entity.action.sheet.SheetAppendAction;
+import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
 import com.google.flourbot.entity.action.sheet.SheetEntryType;
 
 import java.io.IOException;
@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 // The Logic class of the server
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
@@ -44,8 +45,8 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
   private String getMacroName(String message, String threadId) {
     // Retrieve macroname based on threadId
-    if (this.threadMacroMap.containsKey(threadId)) {
-      return this.threadMacroMap.get(threadId);
+    if (threadMacroMap.containsKey(threadId)) {
+      return threadMacroMap.get(threadId);
     }
 
     // If not yet stored, add threadId and macroName to hashmap
@@ -56,34 +57,36 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
       throw new IllegalStateException(e);
     }
 
-    this.threadMacroMap.put(threadId, macroName);
+    threadMacroMap.put(threadId, macroName);
     return macroName;
   }
 
-
-  public String execute(String userEmail, String message, String threadId) throws IOException, GeneralSecurityException {
+  public ChatResponse execute(String userEmail, String message, String threadId) throws IOException, GeneralSecurityException {
+    
     //Check if the message is a help message
     String[] words = message.split(" ", 2);
     if (words[1].equalsIgnoreCase("help")) {
-        return "To use your macro, please type \"@MacroBot MacroName <your message>\". If your macro has already been used in a room's thread, you may omit the MacroName and can simply write \"@MacroBot <your message>\". ";
+        return new ChatResponse("To use your macro, please type \"@MacroBot MacroName <your message>\". If your macro has already been used in a room's thread, you may omit the MacroName and can simply write \"@MacroBot <your message>\". ");
     }
-    
-    String macroName = this.getMacroName(message, threadId);
 
+    String macroName = getMacroName(message, threadId);
+    
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
-      return "No macro of name: " + macroName + " found";
+      return new ChatResponse(String.format("No macro of name: %s found", macroName));
     }
 
     Action action = optionalMacro.get().getAction();
     ActionType actionType = action.getActionType();
     String documentId = action.getSheetId();
+    String documentUrl = action.getSheetUrl();
     CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
 
-    String replyText = "Action not recognized";
+    String replyText = "";
+    ChatResponse chatResponse = null;
 
     switch (actionType) {
-      case SHEET_APPEND:
+      case SHEET_APPEND_ROW:
         // Read instructions on what to write
 
         // If the message contains the macroName, remove "@Macrobot macroName" from message 
@@ -97,13 +100,13 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         // Otherwise if the message uses the threadId instead of explicitly stating the macroName, remove only "@Macrobot"
         else {
             String[] messages = message.split(" ", 2);
-            if (messages.length!= 2) {
+            if (messages.length != 2) {
                 throw new IllegalArgumentException();
             }
             message = messages[1];
         }
 
-        SheetEntryType[] columns = ((SheetAppendAction) action).getColumnValue();
+        SheetEntryType[] columns = ((SheetAppendRowAction) action).getColumnValue();
         // Prepare values to write into the sheet
         ArrayList<String> values = new ArrayList<String>();
 
@@ -134,23 +137,31 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
         // Append values to first free bottom row of sheet
         cloudSheet.appendRow(values);
-        replyText = "Appended row to " + action.getSheetUrl();
+        chatResponse = ChatResponse.createChatResponseWithList(values, actionType, documentUrl);
         break;
+
       case SHEET_READ_ROW:
         List<String> rowData = cloudSheet.readRow(2); //TODO: Replace hardcoded
-        replyText = rowData.get(0);
+        chatResponse = ChatResponse.createChatResponseWithList(rowData, actionType, documentUrl);
         break;
+
       case SHEET_READ_COLUMN:
         List<String> columnData = cloudSheet.readColumn("B");//TODO: Replace hardcoded
-        replyText = columnData.get(0);
+        chatResponse = ChatResponse.createChatResponseWithList(columnData, actionType, documentUrl);
         break;
+
+      case SHEET_READ_SHEET:
+        List<List<String>> sheetData = cloudSheet.readSheet("Sheet1");
+        chatResponse = ChatResponse.createChatResponseWithListList(sheetData, actionType, documentUrl);
+        break;
+      
+      // TODO: Add random option that uses function selectRandomFromData(data);
       default:
         throw new IllegalStateException(
             "Action type named: " + actionType.toString() + "is not implemented yet!");
     }
 
-    // TODO: Return a response object
-    return replyText;
+    return chatResponse;
   }
 
   private String getDate(String pattern) {
@@ -158,5 +169,10 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     LocalDateTime myDateObj = LocalDateTime.now();
     DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(pattern);
     return myDateObj.format(myFormatObj);
+  }
+
+  private String selectRandomFromData(List<String> data) {
+    Random rand = new Random();
+    return data.get(rand.nextInt(data.size()));
   }
 }
