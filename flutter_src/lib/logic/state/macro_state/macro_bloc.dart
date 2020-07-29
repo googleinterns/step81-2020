@@ -40,12 +40,6 @@ class WizardFormBloc extends FormBloc<String, String> {
     ],
   );
 
-  TextFieldBloc scope = TextFieldBloc(name: 'Scope', validators: [
-    (string) => CustomBlocValidator.commaSeperatedEmailValidator(string)
-        ? null
-        : "There are invalid emails in the field",
-  ]);
-
   SelectFieldBloc actionType = SelectFieldBloc(
     name: 'Action Type',
     validators: [
@@ -129,7 +123,7 @@ class WizardFormBloc extends FormBloc<String, String> {
     // Default Setup
     addFieldBlocs(
       step: 0,
-      fieldBlocs: [macroName, description, scope],
+      fieldBlocs: [macroName, description],
     );
     addFieldBlocs(
       step: 1,
@@ -269,7 +263,6 @@ class WizardFormBloc extends FormBloc<String, String> {
         macroName: macroName.value.trim(),
         description: description.value.trim(),
         creatorId: this.user.email,
-        scope: scope.value.split(",") + [this.user.email],
         trigger: trigger,
         action: action,
       );
@@ -290,7 +283,6 @@ class WizardFormBloc extends FormBloc<String, String> {
     description.close();
     actionType.close();
     sheetActionType.close();
-    scope.close();
     actionSheetUrl.close();
     actionSheetColumn.close();
     batchActionType.close();

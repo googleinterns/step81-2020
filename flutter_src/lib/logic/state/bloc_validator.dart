@@ -38,24 +38,4 @@ class CustomBlocValidator {
     }
     return true;
   }
-
-  static bool commaSeperatedEmailValidator(String string) {
-    List<String> errors = [];
-
-    string = string.trim();
-    if (string.length == 0) return true;
-
-    List<String> emails = string.split(',');
-
-    for (int i = 0; i < emails.length; i++) {
-      bool emailValid = RegExp(
-              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-          .hasMatch(emails[i].trim());
-      if (!emailValid) {
-        return false;
-      }
-    }
-
-    return true;
-  }
 }
