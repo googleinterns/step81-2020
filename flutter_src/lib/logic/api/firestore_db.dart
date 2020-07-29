@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:macrobaseapp/logic/state/macro_state/macro_notifier.dart';
+import 'package:macrobaseapp/logic/state/team_state/team_notifier.dart';
 import 'package:macrobaseapp/model/adapters/macro_model.dart';
+import 'package:macrobaseapp/model/adapters/team_model.dart';
 import 'package:macrobaseapp/model/entities/macro.dart';
+import 'package:macrobaseapp/model/entities/team.dart';
 
 class FirestoreService {
   final Firestore db;
@@ -9,17 +12,23 @@ class FirestoreService {
   FirestoreService({FirestoreService db})
     : db = db ?? Firestore.instance;
 
-  void getMacros(MacroNotifier macroNotifier, String creatorId) async {
-    QuerySnapshot snapshot = await db.collection('macros').where("creatorId", isEqualTo: creatorId).getDocuments();
+  void getEntries(TeamNotifier teamNotifier, MacroNotifier macroNotifier, String creatorId) {
+    _getMacros(macroNotifier, creatorId);
+    _getTeams(teamNotifier, creatorId);
+  }
+
+  void _getMacros(MacroNotifier macroNotifier, String creatorId) async {
+    QuerySnapshot snapshot = await db.collection('macros').where(
+        "creatorId", isEqualTo: creatorId).getDocuments();
 
     List<Macro> _macroList = [];
 
     snapshot.documents.forEach((element) {
-      try{
+      try {
         Macro macro = MacroModel.fromJson(element.data);
         macro.macroId = element.documentID;
         _macroList.add(macro);
-      } catch(e) {
+      } catch (e) {
         print(element.data);
       }
     });
@@ -27,6 +36,23 @@ class FirestoreService {
     macroNotifier.macroList = _macroList;
   }
 
+  void _getTeams(TeamNotifier teamNotifier, String creatorId) async {
+    QuerySnapshot snapshot = await db.collection('teams').where("creatorId", isEqualTo: creatorId).getDocuments();
+
+    List<Team> _teamList = [];
+
+    snapshot.documents.forEach((element) {
+      try{
+        Team team = TeamModel.fromJson(element.data);
+        team.teamId = element.documentID;
+        _teamList.add(team);
+      } catch(e) {
+        print(element.data);
+      }
+    });
+
+    teamNotifier.teamList = _teamList;
+  }
 
   Future<void> removeObject(String collectionName, String macroId) {
     return db.collection(collectionName).document(macroId).delete();

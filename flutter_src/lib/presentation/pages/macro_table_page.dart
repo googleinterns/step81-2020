@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:macrobaseapp/logic/api/firestore_db.dart';
+import 'package:macrobaseapp/logic/state/team_state/team_notifier.dart';
 import 'package:macrobaseapp/presentation/widgets/misc/no_macro_illustration.dart';
 import 'package:macrobaseapp/presentation/widgets/component/macro_table_entry.dart';
 import 'package:macrobaseapp/logic/state/macro_state/macro_notifier.dart';
@@ -15,9 +16,10 @@ class _MacroTableState extends State<MacroTable> {
   @override
   Widget build(BuildContext context) {
     final macroNotifier = Provider.of<MacroNotifier>(context, listen: true);
+    final teamNotifier = Provider.of<TeamNotifier>(context, listen: true);
     final user = Provider.of<User>(context);
     final FirestoreService db = FirestoreService();
-    db.getMacros(macroNotifier, user.email);
+    db.getEntries(teamNotifier, macroNotifier, user.email);
 
     if (macroNotifier.macroList.length == 0) {
       return NoMacroIllustration();
