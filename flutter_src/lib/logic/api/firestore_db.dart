@@ -24,13 +24,9 @@ class FirestoreService {
     List<Macro> _macroList = [];
 
     snapshot.documents.forEach((element) {
-      try {
         Macro macro = MacroModel.fromJson(element.data);
         macro.macroId = element.documentID;
         _macroList.add(macro);
-      } catch (e) {
-        print(element.data);
-      }
     });
 
     macroNotifier.macroList = _macroList;
@@ -42,13 +38,9 @@ class FirestoreService {
     List<Team> _teamList = [];
 
     snapshot.documents.forEach((element) {
-      try{
         Team team = TeamModel.fromJson(element.data);
         team.teamId = element.documentID;
         _teamList.add(team);
-      } catch(e) {
-        print(element.data);
-      }
     });
 
     teamNotifier.teamList = _teamList;
