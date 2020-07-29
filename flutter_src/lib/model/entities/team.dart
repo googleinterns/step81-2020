@@ -6,10 +6,11 @@ class Team extends Equatable {
   final String name;
   final String iconUrl;
   final String description;
+  final String creatorId;
 
   final List<Macro> macros;
 
-  Team(this.name, this.iconUrl, this.description, this.macros);
+  Team(this.name, this.iconUrl, this.description, this.macros, this.creatorId);
 
   @override
   List<Object> get props => [name, iconUrl, description];

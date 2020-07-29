@@ -3,6 +3,7 @@ import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/logic/state/loading_dialog.dart';
 import 'package:macrobaseapp/logic/state/team_state/team_bloc.dart';
+import 'package:macrobaseapp/model/entities/user.dart';
 import 'package:macrobaseapp/presentation/navigation/main_navigator.dart';
 import 'package:provider/provider.dart';
 
@@ -14,10 +15,11 @@ class NewTeamForm extends StatefulWidget {
 class _NewTeamFormState extends State<NewTeamForm> {
   @override
   Widget build(BuildContext context) {
+    final User user = Provider.of<User>(context);
     final FirestoreService db = FirestoreService();
 
     return BlocProvider(
-        create: (context) => TeamFormBloc(db: db),
+        create: (context) => TeamFormBloc(user: user, db: db),
         child: Builder(builder: (context) {
           final teamFormBloc = context.bloc<TeamFormBloc>();
 
