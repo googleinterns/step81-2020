@@ -43,7 +43,7 @@ class _MacroTableState extends State<MacroTable> {
             children:
             teamNotifier.teamList.length == 0 ? Center(child: Text("No Team has been built yet")) :
             teamNotifier.teamList
-                .map((emoji) => _buildDragTarget(emoji))
+                .map((team) => _buildDragTarget(team))
                 .toList(),
           ),
         ),
@@ -84,14 +84,14 @@ class _MacroTableState extends State<MacroTable> {
     );
   }
 
-  Widget _buildDragTarget(Team emoji) {
+  Widget _buildDragTarget(Team team) {
     return DragTarget<Macro>(
       builder: (BuildContext context, List<Macro> incoming, List rejected) {
         return Card(
           child: ListTile(
             leading: FlutterLogo(size: 56.0),
-            title: Text(emoji.name),
-            subtitle: Text(emoji.description),
+            title: Text(team.name),
+            subtitle: Text(team.description),
             trailing: Icon(Icons.more_vert),
           ),
         );
@@ -99,7 +99,7 @@ class _MacroTableState extends State<MacroTable> {
       onWillAccept: (data) => true,
       onAccept: (data) {
         Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text(data.macroName + " added to " + emoji.name + "!")));
+            content: Text(data.macroName + " added to " + team.name + "!")));
       },
       onLeave: (data) {},
     );
