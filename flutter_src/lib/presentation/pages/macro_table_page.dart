@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/logic/state/team_state/team_notifier.dart';
+import 'package:macrobaseapp/model/entities/macro.dart';
 import 'package:macrobaseapp/model/entities/team.dart';
 import 'package:macrobaseapp/presentation/widgets/misc/no_macro_illustration.dart';
 import 'package:macrobaseapp/presentation/widgets/component/macro_table_entry.dart';
@@ -16,20 +17,7 @@ class MacroTable extends StatefulWidget {
   _MacroTableState createState() => _MacroTableState();
 }
 
-class Item {
-  Item({
-    this.team,
-    this.isExpanded = true,
-  });
-
-  Team team;
-  bool isExpanded;
-}
-
 class _MacroTableState extends State<MacroTable> {
-  List<Item> _data =
-      TeamNotifier().teamList.map((team) => Item(team: team)).toList();
-
   @override
   Widget build(BuildContext context) {
     MacroNotifier macroNotifier =
@@ -42,50 +30,100 @@ class _MacroTableState extends State<MacroTable> {
     final FirestoreService db = FirestoreService();
     db.getEntries(teamNotifier, macroNotifier, user.email);
 
-    return Column(
-        children: [_teamList(), _macroList(macroNotifier)]);
-  }
-
-  Widget _macroList(MacroNotifier macroNotifier) {
-    if (macroNotifier.macroList.length == 0) {
-      return NoMacroIllustration();
-    } else {
-      return Expanded(
-        child: ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            return MacroTableEntry(macro: macroNotifier.macroList[index]);
-          },
-          itemCount: macroNotifier.macroList.length,
+    return ListView(
+      children: [
+        Text(
+          "Teams: ",
+          style: Theme.of(context).textTheme.headline4,
         ),
-      );
-    }
+        Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:
+            teamNotifier.teamList.length == 0 ? Center(child: Text("No Team has been built yet")) :
+            teamNotifier.teamList
+                .map((emoji) => _buildDragTarget(emoji))
+                .toList(),
+          ),
+        ),
+        Text(
+          "Stand-alone Macros: ",
+          style: Theme.of(context).textTheme.headline4,
+        ),
+        Container(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children:
+              macroNotifier.macroList.length == 0 ? NoMacroIllustration() :
+              macroNotifier.macroList.map((macro) {
+                return Draggable<Macro>(
+                  data: macro,
+                  child: Material(
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width),
+                        child: MacroTableEntry(
+                          macro: macro,
+                        )),
+                  ),
+                  feedback: Material(
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width),
+                        child: MacroTableEntry(
+                          macro: macro,
+                        )),
+                  ),
+                  childWhenDragging: Container(),
+                );
+              }).toList()),
+        ),
+      ],
+    );
   }
 
-  Widget _teamList() {
-    return ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          _data[index].isExpanded = !isExpanded;
-        });
-      },
-      children: _data.map<ExpansionPanel>((Item item) {
-        return ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              title: Text(item.team.name),
-            );
-          },
-          body: item.team.macros.length == 0
-              ? Text("No Macros for this Team yet...")
-              : Column(
-                  children: item.team.macros
-                      .map((macro) => new MacroTableEntry(
-                            macro: macro,
-                          ))
-                      .toList()),
-          isExpanded: item.isExpanded,
+  Widget _buildDragTarget(Team emoji) {
+    return DragTarget<Macro>(
+      builder: (BuildContext context, List<Macro> incoming, List rejected) {
+        return Card(
+          child: ListTile(
+            leading: FlutterLogo(size: 56.0),
+            title: Text(emoji.name),
+            subtitle: Text(emoji.description),
+            trailing: Icon(Icons.more_vert),
+          ),
         );
-      }).toList(),
+      },
+      onWillAccept: (data) => true,
+      onAccept: (data) {
+        Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text(data.macroName + " added to " + emoji.name + "!")));
+      },
+      onLeave: (data) {},
+    );
+  }
+}
+
+class Emoji extends StatelessWidget {
+  Emoji({Key key, this.emoji}) : super(key: key);
+
+  final String emoji;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        alignment: Alignment.center,
+        height: 50,
+        padding: EdgeInsets.all(10),
+        child: Text(
+          emoji,
+          style: TextStyle(color: Colors.black, fontSize: 50),
+        ),
+      ),
     );
   }
 }
