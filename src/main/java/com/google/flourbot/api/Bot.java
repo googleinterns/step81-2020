@@ -41,9 +41,9 @@ public class Bot {
   private static final String SERVICE_ACCOUNT = "/service-acct.json";
   private static final Logger logger = Logger.getLogger(Bot.class.getName());
   private static final String DM_HELP_MESSAGE = "To use one of your macros, simply write \"@MacroBot MacroName <your message> \".";
-  private static final String ROOM_HELP_MESSAGE = "To use a room member's macro, the creator of a macro must write \"@MacroBot /share MacroName \". " + 
+  private static final String ROOM_HELP_MESSAGE = "To use your macro, write \"@MacroBot MacroName <your message> \" at any time. To use a room member's macro, the creator of a macro must write \"@MacroBot /share MacroName \". " + 
                                                     "Once this has been sent, any room member can use the initialized macro by writing \"@MacroBot MacroName <your message> \" " + 
-                                                    "If your macro has already been used in a thread, you may omit the MacroName and can simply write \"@MacroBot <your message>\".";
+                                                    "If a macro has already been used in a thread, you may omit the MacroName and can simply write \"@MacroBot <your message>\".";
   private static String replyText;
   private static MacroExecutionModule macroExecutionModule;
 
