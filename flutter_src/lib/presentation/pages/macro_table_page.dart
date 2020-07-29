@@ -21,17 +21,29 @@ class _MacroTableState extends State<MacroTable> {
     final FirestoreService db = FirestoreService();
     db.getEntries(teamNotifier, macroNotifier, user.email);
 
-    if (macroNotifier.macroList.length == 0) {
+    if (teamNotifier.teamList.length == 0 &&
+        macroNotifier.macroList.length == 0) {
       return NoMacroIllustration();
     } else {
-      return Container(
-        child: ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            return MacroTableEntry(macroNotifier: macroNotifier, index: index);
-          },
-          itemCount: macroNotifier.macroList.length,
+      return Column(children: [
+        Container(
+          child: ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return Text(teamNotifier.teamList[index].name);
+            },
+            itemCount: teamNotifier.teamList.length,
+          ),
         ),
-      );
+        Container(
+          child: ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return MacroTableEntry(
+                  macroNotifier: macroNotifier, index: index);
+            },
+            itemCount: macroNotifier.macroList.length,
+          ),
+        )
+      ]);
     }
   }
 }
