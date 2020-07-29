@@ -1,5 +1,6 @@
 package com.google.flourbot.api;
 
+import com.google.flourbot.execution.ChatResponse;
 import com.google.flourbot.execution.MacroExecutionModule;
 import com.google.flourbot.execution.MacroExecutionModuleImplementation;
 
@@ -12,6 +13,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.chat.v1.HangoutsChat;
+import com.google.api.services.chat.v1.model.Card;
 import com.google.api.services.chat.v1.model.Message;
 import com.google.api.services.chat.v1.model.Thread;
 import com.google.auth.http.HttpCredentialsAdapter;
@@ -56,6 +58,8 @@ public class Bot {
     */
   @PostMapping("/")
   public void onEvent(@RequestBody JsonNode event) throws IOException, GeneralSecurityException {
+    Message reply = new Message();
+
     switch (event.at("/type").asText()) {
 
       case "ADDED_TO_SPACE":
@@ -73,11 +77,18 @@ public class Bot {
       case "MESSAGE":
         String message = event.at("/message/text").asText();
         String threadId = event.at("/message/thread/name").asText();
+
         String roomId = event.at("/space/name").asText();
         String messageSenderEmail = event.at("/message/sender/email").asText();
         String helpMessage = getHelpMessage(event.at("/space/type").asText());
   
-        replyText = macroExecutionModule.getReplyText(message, threadId, roomId, messageSenderEmail, helpMessage);
+        //replyText = macroExecutionModule.getReplyText(message, threadId, roomId, messageSenderEmail, helpMessage);
+        
+        ChatResponse chatResponse = macroExecutionModule.getReplyText(message, threadId, roomId, messageSenderEmail, helpMessage);
+        replyText = chatResponse.getReplyText();
+        Card card = CardResponse.createCardResponse(replyText);
+        reply.setCards(Collections.singletonList(card));
+
         break;
 
       case "REMOVED_FROM_SPACE":
@@ -90,11 +101,9 @@ public class Bot {
     }
 
     if (replyText.isEmpty()) {
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("No reply text received.");
     }
-
-    // [START async-response]
-    
+   
     // Set up credentials
     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
     NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -113,7 +122,6 @@ public class Bot {
 
     // Generate and send request to post in chat room
     String spaceName = event.at("/space/name").asText();
-    Message reply = new Message().setText(replyText);
     // If replying to a message, set thread name to keep conversation together
     if (event.has("message")) {
       String threadName = event.at("/message/thread/name").asText();
@@ -122,7 +130,6 @@ public class Bot {
     }
 
     chatService.spaces().messages().create(spaceName, reply).execute();
-    // [END async-response]
   }
 
   private String getHelpMessage(String spaceType) {

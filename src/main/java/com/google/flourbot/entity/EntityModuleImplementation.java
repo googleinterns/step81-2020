@@ -3,7 +3,10 @@ package com.google.flourbot.entity;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.flourbot.datastorage.DataStorage;
 import com.google.flourbot.entity.action.Action;
-import com.google.flourbot.entity.action.sheet.SheetAppendAction;
+import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
+import com.google.flourbot.entity.action.sheet.SheetReadColumnAction;
+import com.google.flourbot.entity.action.sheet.SheetReadRowAction;
+import com.google.flourbot.entity.action.sheet.SheetReadSheetAction;
 import com.google.flourbot.entity.action.sheet.SheetEntryType;
 import com.google.flourbot.entity.trigger.CommandTrigger;
 import com.google.flourbot.entity.trigger.Trigger;
@@ -91,7 +94,45 @@ public class EntityModuleImplementation implements EntityModule {
         String sheetAction = (String) actionData.get("sheetAction");
         String sheetUrl = (String) actionData.get("sheetUrl");
 
-        Action action = new SheetAppendAction(columnValue, sheetAction, sheetUrl);
+        Action action = null;
+
+        switch(sheetAction) {
+          case ("Sheet Append Action"):
+            action = new SheetAppendRowAction(sheetUrl, columnValue);
+            break;
+ 
+          case ("Read Row Action"):
+            Object row = actionData.get("row");
+            if (row == null) {
+              throw new IllegalStateException("row not found in Firestore action");
+            }
+            action = new SheetReadRowAction(sheetUrl, (int) row);
+            break;
+
+          case ("Read Column Action"):
+            // TODO: also handle column as an integer, or just completely remove that logic
+            Object column = actionData.get("column");
+            if (column == null) {
+              throw new IllegalStateException("column not found in Firestore action");
+            }
+            action = new SheetReadColumnAction(sheetUrl, (String) column);
+            break;
+
+          case ("Read Sheet Action"):
+            Object sheetName = actionData.get("sheetName");
+            if (sheetName == null) {
+              throw new IllegalStateException("sheetName not found in Firestore action");
+            }
+            action = new SheetReadSheetAction(sheetUrl, (String) sheetName);
+            break;
+
+          case ("Batch Action"):
+            break;
+
+          default:
+            throw new IllegalStateException("Action type not recognized");
+        }
+
         return Optional.of(action);
       default:
         return Optional.empty();

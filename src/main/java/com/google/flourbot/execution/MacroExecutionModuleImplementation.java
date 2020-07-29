@@ -10,7 +10,10 @@ import com.google.flourbot.entity.EntityModuleImplementation;
 import com.google.flourbot.entity.Macro;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.ActionType;
-import com.google.flourbot.entity.action.sheet.SheetAppendAction;
+import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
+import com.google.flourbot.entity.action.sheet.SheetReadColumnAction;
+import com.google.flourbot.entity.action.sheet.SheetReadRowAction;
+import com.google.flourbot.entity.action.sheet.SheetReadSheetAction;
 import com.google.flourbot.entity.action.sheet.SheetEntryType;
 
 import java.io.IOException;
@@ -25,6 +28,7 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 // The Logic class of the server
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
@@ -59,19 +63,19 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     return macroName;
   }
 
-  public String getReplyText(String message, String threadId, String roomId, String messageSenderEmail, String helpMessage) throws IOException, GeneralSecurityException{
+  public ChatResponse getReplyText(String message, String threadId, String roomId, String messageSenderEmail, String helpMessage) throws IOException, GeneralSecurityException{
         String macroName;
         String[] words = message.split(" ");
         Boolean isShareCommand = false;
 
         // Check that a message was written.
         if (words.length <= 1) {
-            return "You must type a message when you message me. Please type \"@MacroBot /help\" for more instructions.";
+            return new ChatResponse("You must type a message when you message me. Please type \"@MacroBot /help\" for more instructions.");
         }    
 
         // Reply to the help message.
         if (words[1].equalsIgnoreCase("/help")) {  
-            return helpMessage;
+            return new ChatResponse(helpMessage);
         }
 
         // Get the macro name from the message. 
@@ -94,7 +98,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         else {
             Optional<Macro> optionalMacro = entityModule.getMacro(messageSenderEmail, macroName);
             if (!optionalMacro.isPresent()) {
-                return "You do not own/have access to this macro.";
+                return new ChatResponse("You do not own/have access to this macro.");
             }
             else {
                 // Share the macro if the creator writes "/share".
@@ -104,7 +108,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
                     macroToCreator.put(macroName, macroCreatorEmail);
 
                     roomToMacro.put(roomId, macroToCreator);
-                    return String.format("The %s macro belonging to %s has been shared to this room. All users in this room can use this macro.", macroName, macroCreatorEmail);
+                    return new ChatResponse(String.format("The %s macro belonging to %s has been shared to this room. All users in this room can use this macro.", macroName, macroCreatorEmail));
                 }
                 // Execute the macro if the creator just wants to use it instead of share it.
                 else {
@@ -123,22 +127,25 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     this.cloudDocClient = cloudDocClient;
   }
 
-  private String execute(String userEmail, String macroCreatorEmail, String message, String threadId, String macroName) throws IOException, GeneralSecurityException {
+  private ChatResponse execute(String userEmail, String macroCreatorEmail, String message, String threadId, String macroName) throws IOException, GeneralSecurityException {
 
-    Optional<Macro> optionalMacro = entityModule.getMacro(macroCreatorEmail, macroName);
+    
+    Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
-      return "No macro of name: " + macroName + " found for " + macroCreatorEmail;
+      return new ChatResponse(String.format("No macro of name: %s found for %s", macroName, macroCreatorEmail));
     }
 
     Action action = optionalMacro.get().getAction();
     ActionType actionType = action.getActionType();
-    String documentId = action.getSheetId();
+    String documentId = action.getDocumentId();
+    String documentUrl = action.getDocumentUrl();
     CloudSheet cloudSheet = cloudDocClient.getCloudSheet(documentId);
 
-    String replyText = "Action not recognized";
+    String replyText = "";
+    ChatResponse chatResponse = null;
 
     switch (actionType) {
-      case SHEET_APPEND:
+      case SHEET_APPEND_ROW:
         // Read instructions on what to write
 
         // If the message contains the macroName, remove "@Macrobot macroName" from message 
@@ -152,13 +159,13 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         // Otherwise if the message uses the threadId instead of explicitly stating the macroName, remove only "@Macrobot"
         else {
             String[] messages = message.split(" ", 2);
-            if (messages.length!= 2) {
+            if (messages.length != 2) {
                 throw new IllegalArgumentException();
             }
             message = messages[1];
         }
 
-        SheetEntryType[] columns = ((SheetAppendAction) action).getColumnValue();
+        SheetEntryType[] columns = ((SheetAppendRowAction) action).getColumnValue();
         // Prepare values to write into the sheet
         ArrayList<String> values = new ArrayList<String>();
 
@@ -189,23 +196,34 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
         // Append values to first free bottom row of sheet
         cloudSheet.appendRow(values);
-        replyText = "Appended row to " + action.getSheetUrl();
+        chatResponse = ChatResponse.createChatResponseWithList(values, actionType, documentUrl);
         break;
+
       case SHEET_READ_ROW:
-        List<String> rowData = cloudSheet.readRow(2); //TODO: Replace hardcoded
-        replyText = rowData.get(0);
+        int row = ((SheetReadRowAction) action).getRow();
+        List<String> rowData = cloudSheet.readRow(row);
+        chatResponse = ChatResponse.createChatResponseWithList(rowData, actionType, documentUrl);
         break;
+
       case SHEET_READ_COLUMN:
-        List<String> columnData = cloudSheet.readColumn("B");//TODO: Replace hardcoded
-        replyText = columnData.get(0);
+        String column = ((SheetReadColumnAction) action).getColumn();
+        List<String> columnData = cloudSheet.readColumn(column);
+        chatResponse = ChatResponse.createChatResponseWithList(columnData, actionType, documentUrl);
         break;
+
+      case SHEET_READ_SHEET:
+        String sheetName = ((SheetReadSheetAction) action).getSheetName();
+        List<List<String>> sheetData = cloudSheet.readSheet(sheetName);
+        chatResponse = ChatResponse.createChatResponseWithListList(sheetData, actionType, documentUrl);
+        break;
+      
+      // TODO: Add random option that uses function selectRandomFromData(data);
       default:
         throw new IllegalStateException(
             "Action type named: " + actionType.toString() + "is not implemented yet!");
     }
 
-    // TODO: Return a response object
-    return replyText;
+    return chatResponse;
   }
 
   private String getDate(String pattern) {
@@ -219,5 +237,9 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
       List<String> wordsWithoutShare = new LinkedList(Arrays.asList(words));
       wordsWithoutShare.remove("/share");
       return String.join(" ", wordsWithoutShare);
+
+  private String selectRandomFromData(List<String> data) {
+    Random rand = new Random();
+    return data.get(rand.nextInt(data.size()));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:macrobaseapp/logic/state/macro_notifier.dart';
-import 'package:macrobaseapp/logic/usecases/login/firebase_auth.dart';
+import 'package:macrobaseapp/logic/api/firestore_db.dart';
+import 'package:macrobaseapp/logic/state/macro_state/macro_notifier.dart';
+import 'package:macrobaseapp/logic/api/firebase_auth.dart';
 import 'package:macrobaseapp/presentation/app.dart';
 import 'package:provider/provider.dart';
 

@@ -1,6 +1,6 @@
 // Button Adapted from: https://medium.com/flutter-community/flutter-implementing-google-sign-in-71888bca24ed
 import 'package:flutter/material.dart';
-import 'package:macrobaseapp/logic/usecases/login/firebase_auth.dart';
+import 'package:macrobaseapp/logic/api/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 

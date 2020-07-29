@@ -4,8 +4,9 @@
 
 package com.google.flourbot.api;
 
-import com.google.api.services.sheets.v4.*;
-import com.google.api.services.sheets.v4.model.*;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.api.services.sheets.v4.model.AppendValuesResponse;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -14,9 +15,6 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class DriveCloudSheet implements CloudSheet {
   private static final String VALUE_INPUT_OPTION = "USER_ENTERED";
@@ -38,7 +36,7 @@ public class DriveCloudSheet implements CloudSheet {
     return String.format("Sheet1!%s:%s", startColumn, endColumn);
   }
 
-  private String toAlphabetic(int i) {
+  public static String toAlphabetic(int i) {
     // Recursive strategy to build a string that represents the alphabetic name
     // of a column based on column number i
     // e.g. 0 -> A, 1 -> B... 25 -> Z, 26 -> AA...
@@ -67,7 +65,6 @@ public class DriveCloudSheet implements CloudSheet {
     } catch (IOException e) {
       throw new IllegalArgumentException(e);
     }
-
     return (List<List<String>>)((Object)response.getValues());
   }
 
@@ -79,11 +76,6 @@ public class DriveCloudSheet implements CloudSheet {
     } else {
       return Collections.emptyList();
     }
-  }
-
-  public List<String> readColumn(int column) {
-    // Overload readCol to take a number
-    return readColumn(toAlphabetic(column));
   }
 
   public List<String> readColumn(String column) {
