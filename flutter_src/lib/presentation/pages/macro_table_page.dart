@@ -8,6 +8,11 @@ import 'package:macrobaseapp/logic/state/macro_state/macro_notifier.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 import 'package:provider/provider.dart';
 
+import '../../logic/state/macro_state/macro_notifier.dart';
+import '../../logic/state/macro_state/macro_notifier.dart';
+import '../../logic/state/macro_state/macro_notifier.dart';
+import '../../model/entities/team.dart';
+
 class MacroTable extends StatefulWidget {
   @override
   _MacroTableState createState() => _MacroTableState();
@@ -28,69 +33,83 @@ class _MacroTableState extends State<MacroTable> {
   Widget build(BuildContext context) {
     final macroNotifier = Provider.of<MacroNotifier>(context, listen: false);
     final teamNotifier = Provider.of<TeamNotifier>(context, listen: false);
+
     final user = Provider.of<User>(context);
+
     final FirestoreService db = FirestoreService();
     db.getEntries(teamNotifier, macroNotifier, user.email);
 
-    print(teamNotifier.teamList);
+    List<Item> _data =
+        teamNotifier.teamList.map((team) => Item(team: team)).toList();
 
-    return SingleChildScrollView(
-      child: Container(
-        child: TeamList(
-          teamNotifier: teamNotifier,
-        ),
-      ),
-    );
-  }
-}
-
-class TeamList extends StatefulWidget {
-  final TeamNotifier teamNotifier;
-
-  const TeamList({Key key, this.teamNotifier}) : super(key: key);
-
-  @override
-  _TeamListState createState() => _TeamListState(teamNotifier);
-}
-
-class _TeamListState extends State<TeamList> {
-  @override
-  void initState() {
-    super.initState();
-    _data = teamNotifier.teamList.map((team) => Item(team: team)).toList();
-  }
-
-  List<Item> _data;
-  final TeamNotifier teamNotifier;
-
-  _TeamListState(this.teamNotifier);
-
-  @override
-  Widget build(BuildContext context) {
-    return ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          _data[index].isExpanded = !isExpanded;
-        });
-      },
-      children: _data.map<ExpansionPanel>((Item item) {
-        return ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              title: Text(item.team.name),
-            );
-          },
-          body: Container(
-            child: item.team.macros.length == 0 ? Container() : ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                return MacroTableEntry(macro: item.team.macros[index],);
-              },
-              itemCount: item.team.macros.length,
+    return Column(children: [
+      ExpansionPanelList(
+        expansionCallback: (int index, bool isExpanded) {
+          setState(() {
+            _data[index].isExpanded = !isExpanded;
+          });
+        },
+        children: _data.map<ExpansionPanel>((Item item) {
+          return ExpansionPanel(
+            headerBuilder: (BuildContext context, bool isExpanded) {
+              return ListTile(
+                title: Text(item.team.name),
+              );
+            },
+            body: Container(
+              child: item.team.macros.length == 0
+                  ? Container()
+                  : ListView.builder(
+                      itemBuilder: (BuildContext context, int index) {
+                        return Text(item.team.macros[index].macroName);
+                      },
+                      itemCount: item.team.macros.length,
+                    ),
             ),
-          ),
-          isExpanded: item.isExpanded,
-        );
-      }).toList(),
-    );
+            isExpanded: item.isExpanded,
+          );
+        }).toList(),
+      ),
+      _macroList(macroNotifier)
+    ]);
+
+//    return SingleChildScrollView(
+//      child: Column(
+//        children: [
+//          _macroList(macroNotifier),
+//        ],
+//      ),
+//    );
+
+//    return macroNotifier.macroList.length == 0
+//          ? NoMacroIllustration()
+//          : Container(
+//              child: ListView.builder(
+//                itemBuilder: (BuildContext context, int index) {
+//                  return MacroTableEntry(
+//                      macroNotifier: macroNotifier, index: index);
+//                },
+//                itemCount: macroNotifier.macroList.length,
+//              ),
+//            ),
+//      Container(
+//        child:
+  }
+
+  Widget _macroList(MacroNotifier macroNotifer) {
+    MacroNotifier macroNotifier = macroNotifer;
+
+    if (macroNotifier.macroList.length == 0) {
+      return NoMacroIllustration();
+    } else {
+      return Expanded(
+        child: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return MacroTableEntry(macroNotifier: macroNotifier, index: index);
+          },
+          itemCount: macroNotifier.macroList.length,
+        ),
+      );
+    }
   }
 }
