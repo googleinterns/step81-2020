@@ -98,7 +98,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         else {
             Optional<Macro> optionalMacro = entityModule.getMacro(messageSenderEmail, macroName);
             if (!optionalMacro.isPresent()) {
-                return new ChatResponse("You do not own/have access to this macro.");
+                return new ChatResponse(String.format("You do not own/have access to %s.", macroName));
             }
             else {
                 // Share the macro if the creator writes "/share".
