@@ -4,6 +4,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 public interface MacroExecutionModule {
-  String getReplyText(String[] words, String message, String threadId, String roomId, String messageSenderEmail, String helpMessage) throws IOException, GeneralSecurityException;
+  String getReplyText(String message, String threadId, String roomId, String messageSenderEmail, String helpMessage) throws IOException, GeneralSecurityException;
   void removeMacro(String roomId);
 }

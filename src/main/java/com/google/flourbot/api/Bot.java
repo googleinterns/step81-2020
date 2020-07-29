@@ -66,19 +66,18 @@ public class Bot {
 
         } else {
           String displayName = event.at("/user/displayName").asText();
-          replyText = String.format("Thanks for adding me to a DM, %s! Type \"@MacroBot /help\" at any time to see my instructions.", displayName);s
+          replyText = String.format("Thanks for adding me to a DM, %s! Type \"@MacroBot /help\" at any time to see my instructions.", displayName);
         }
         break;
 
       case "MESSAGE":
         String message = event.at("/message/text").asText();
-        String[] words = message.split(" ");
         String threadId = event.at("/message/thread/name").asText();
         String roomId = event.at("/space/name").asText();
         String messageSenderEmail = event.at("/message/sender/email").asText();
         String helpMessage = getHelpMessage(event.at("/space/type").asText());
   
-        replyText = macroExecutionModule.getReplyText(words, message, threadId, roomId, messageSenderEmail, helpMessage);
+        replyText = macroExecutionModule.getReplyText(message, threadId, roomId, messageSenderEmail, helpMessage);
         break;
 
       case "REMOVED_FROM_SPACE":

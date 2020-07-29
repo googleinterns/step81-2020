@@ -59,8 +59,10 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     return macroName;
   }
 
-  public String getReplyText(String[] words, String message, String threadId, String roomId, String messageSenderEmail, String helpMessage) throws IOException, GeneralSecurityException{
+  public String getReplyText(String message, String threadId, String roomId, String messageSenderEmail, String helpMessage) throws IOException, GeneralSecurityException{
         String macroName;
+        String[] words = message.split(" ");
+        Boolean isShareCommand = false;
 
         // Check that a message was written.
         if (words.length <= 1) {
@@ -76,6 +78,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         if (words[1].equalsIgnoreCase("/share")) {
             String modifiedMessage = removeShareFromMessage(words);
             macroName = getMacroName(modifiedMessage, threadId);
+            isShareCommand = true;
         }  
         else {
             macroName = getMacroName(message, threadId);
@@ -95,7 +98,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
             }
             else {
                 // Share the macro if the creator writes "/share".
-                if (words[1].equalsIgnoreCase("/share")) {
+                if (isShareCommand == true) {
                     String macroCreatorEmail = messageSenderEmail;
                     Map<String, String> macroToCreator = new HashMap<String, String> ();
                     macroToCreator.put(macroName, macroCreatorEmail);
