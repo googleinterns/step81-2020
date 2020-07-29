@@ -23,7 +23,7 @@ class TeamModel extends Team {
         description: json["description"],
         macros: json["macros"]
             .map((macroJson) => MacroModel.fromJson(macroJson))
-            .toList(),
+            .toList().cast<MacroModel>(),
         creatorId: json["creatorId"]);
   }
 
