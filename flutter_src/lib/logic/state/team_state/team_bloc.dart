@@ -1,15 +1,9 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/logic/state/bloc_validator.dart';
-import 'package:macrobaseapp/model/adapters/action_model.dart';
-import 'package:macrobaseapp/model/adapters/macro_model.dart';
 import 'package:macrobaseapp/model/adapters/team_model.dart';
-import 'package:macrobaseapp/model/adapters/trigger_model.dart';
-import 'package:macrobaseapp/model/entities/action.dart';
-import 'package:macrobaseapp/model/entities/trigger.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 
 class TeamFormBloc extends FormBloc<String, String> {
