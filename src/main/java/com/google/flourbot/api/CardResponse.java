@@ -57,13 +57,12 @@ public class CardResponse {
     // HEADER
     CardHeader header = new CardHeader()
                   .setTitle(BOT_NAME)
-                  .setSubtitle("Card header")
                   .setImageUrl(HEADER_IMAGE)
                   .setImageStyle("IMAGE");
     card.setHeader(header);
 
     // TEXT PARAGRAPH
-    TextParagraph textParagraphWidget = new TextParagraph().setText("<b>The reply text we got:</b> is <br></br>" + message);
+    TextParagraph textParagraphWidget = new TextParagraph().setText("<b>The reply text we got is:</b> " + message);
     widgets.add(new WidgetMarkup().setTextParagraph(textParagraphWidget));
 
     // TODO: Add cute image if CongraBot (do this after we make a response object)
@@ -72,7 +71,7 @@ public class CardResponse {
     OpenLink openLink = new OpenLink().setUrl(documentUrl);
     OnClick onClick = new OnClick().setOpenLink(openLink);
     TextButton button = new TextButton()
-                  .setText("TODO: OPEN SHEET")
+                  .setText("OPEN SHEET")
                   .setOnClick(onClick);
     Button buttonWidget = new Button().setTextButton(button);
     widgets.add(new WidgetMarkup().setButtons(Collections.singletonList((buttonWidget))));
