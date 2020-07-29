@@ -9,8 +9,6 @@ import 'package:macrobaseapp/model/entities/user.dart';
 import 'package:provider/provider.dart';
 
 import '../../logic/state/macro_state/macro_notifier.dart';
-import '../../logic/state/macro_state/macro_notifier.dart';
-import '../../logic/state/macro_state/macro_notifier.dart';
 import '../../model/entities/team.dart';
 
 class MacroTable extends StatefulWidget {
@@ -21,7 +19,7 @@ class MacroTable extends StatefulWidget {
 class Item {
   Item({
     this.team,
-    this.isExpanded = false,
+    this.isExpanded = true,
   });
 
   Team team;
@@ -29,87 +27,65 @@ class Item {
 }
 
 class _MacroTableState extends State<MacroTable> {
+  List<Item> _data =
+      TeamNotifier().teamList.map((team) => Item(team: team)).toList();
+
   @override
   Widget build(BuildContext context) {
-    final macroNotifier = Provider.of<MacroNotifier>(context, listen: false);
-    final teamNotifier = Provider.of<TeamNotifier>(context, listen: false);
+    MacroNotifier macroNotifier =
+        Provider.of<MacroNotifier>(context, listen: true);
+    TeamNotifier teamNotifier =
+        Provider.of<TeamNotifier>(context, listen: true);
 
     final user = Provider.of<User>(context);
 
     final FirestoreService db = FirestoreService();
     db.getEntries(teamNotifier, macroNotifier, user.email);
 
-    List<Item> _data =
-        teamNotifier.teamList.map((team) => Item(team: team)).toList();
-
-    return Column(children: [
-      ExpansionPanelList(
-        expansionCallback: (int index, bool isExpanded) {
-          setState(() {
-            _data[index].isExpanded = !isExpanded;
-          });
-        },
-        children: _data.map<ExpansionPanel>((Item item) {
-          return ExpansionPanel(
-            headerBuilder: (BuildContext context, bool isExpanded) {
-              return ListTile(
-                title: Text(item.team.name),
-              );
-            },
-            body: Container(
-              child: item.team.macros.length == 0
-                  ? Container()
-                  : ListView.builder(
-                      itemBuilder: (BuildContext context, int index) {
-                        return Text(item.team.macros[index].macroName);
-                      },
-                      itemCount: item.team.macros.length,
-                    ),
-            ),
-            isExpanded: item.isExpanded,
-          );
-        }).toList(),
-      ),
-      _macroList(macroNotifier)
-    ]);
-
-//    return SingleChildScrollView(
-//      child: Column(
-//        children: [
-//          _macroList(macroNotifier),
-//        ],
-//      ),
-//    );
-
-//    return macroNotifier.macroList.length == 0
-//          ? NoMacroIllustration()
-//          : Container(
-//              child: ListView.builder(
-//                itemBuilder: (BuildContext context, int index) {
-//                  return MacroTableEntry(
-//                      macroNotifier: macroNotifier, index: index);
-//                },
-//                itemCount: macroNotifier.macroList.length,
-//              ),
-//            ),
-//      Container(
-//        child:
+    return Column(
+        children: [_teamList(), _macroList(macroNotifier)]);
   }
 
-  Widget _macroList(MacroNotifier macroNotifer) {
-    MacroNotifier macroNotifier = macroNotifer;
-
+  Widget _macroList(MacroNotifier macroNotifier) {
     if (macroNotifier.macroList.length == 0) {
       return NoMacroIllustration();
     } else {
       return Expanded(
         child: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
-            return MacroTableEntry(macroNotifier: macroNotifier, index: index);
+            return MacroTableEntry(macro: macroNotifier.macroList[index]);
           },
           itemCount: macroNotifier.macroList.length,
         ),
       );
     }
+  }
+
+  Widget _teamList() {
+    return ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          _data[index].isExpanded = !isExpanded;
+        });
+      },
+      children: _data.map<ExpansionPanel>((Item item) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              title: Text(item.team.name),
+            );
+          },
+          body: item.team.macros.length == 0
+              ? Text("No Macros for this Team yet...")
+              : Column(
+                  children: item.team.macros
+                      .map((macro) => new MacroTableEntry(
+                            macro: macro,
+                          ))
+                      .toList()),
+          isExpanded: item.isExpanded,
+        );
+      }).toList(),
+    );
   }
 }
