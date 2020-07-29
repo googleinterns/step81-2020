@@ -3,6 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:macrobaseapp/model/entities/macro.dart';
 
 class MacroNotifier with ChangeNotifier {
+  static final MacroNotifier _teamNotifier = MacroNotifier._internal();
+
+  factory MacroNotifier() {
+    return _teamNotifier;
+  }
+
+  MacroNotifier._internal();
+
   List<Macro> _macroList = [];
 
   String userEmail;

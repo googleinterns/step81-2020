@@ -3,6 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:macrobaseapp/model/entities/team.dart';
 
 class TeamNotifier with ChangeNotifier {
+  static final TeamNotifier _teamNotifier = TeamNotifier._internal();
+
+  factory TeamNotifier() {
+    return _teamNotifier;
+  }
+
+  TeamNotifier._internal();
+
   List<Team> _teamList = [];
 
   String userEmail;
