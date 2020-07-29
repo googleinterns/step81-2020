@@ -31,19 +31,19 @@ import java.util.logging.Logger;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @SpringBootApplication
 @RestController
 public class Bot {
+
   static final String CHAT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
   private static final String SERVICE_ACCOUNT = "/service-acct.json";
   private static final Logger logger = Logger.getLogger(Bot.class.getName());
-  private String replyText;
-
+  private static final String DM_HELP_MESSAGE = "To use one of your macros, simply write \"@MacroBot MacroName <your message> \".";
+  private static final String ROOM_HELP_MESSAGE = "To use a room member's macro, the creator of a macro must write \"@MacroBot /share MacroName \". " + 
+                                                    "Once this has been sent, any room member can use the initialized macro by writing \"@MacroBot MacroName <your message> \" " + 
+                                                    "If your macro has already been used in a thread, you may omit the MacroName and can simply write \"@MacroBot <your message>\".";
+  private static String replyText;
   private static MacroExecutionModule macroExecutionModule;
 
   public static void main(String[] args) {
@@ -62,38 +62,45 @@ public class Bot {
     Message reply = new Message();
 
     switch (event.at("/type").asText()) {
+
       case "ADDED_TO_SPACE":
         String spaceType = event.at("/space/type").asText();
         if ("ROOM".equals(spaceType)) {
           String displayName = event.at("/space/displayName").asText();
-          replyText = String.format("Thanks for adding me to %s. Type \"@MacroBot help\" at any time to see my instructions.", displayName);
+          replyText = String.format("Thanks for adding me to %s. Type \"@MacroBot /help\" at any time to see my instructions.", displayName);
+
         } else {
           String displayName = event.at("/user/displayName").asText();
-          replyText = String.format("Thanks for adding me to a DM, %s!", displayName);
+          replyText = String.format("Thanks for adding me to a DM, %s! Type \"@MacroBot /help\" at any time to see my instructions.", displayName);
         }
         break;
 
       case "MESSAGE":
-        // Sends request to execution module
-        String email = event.at("/message/sender/email").asText();
         String message = event.at("/message/text").asText();
         String threadId = event.at("/message/thread/name").asText();
+
+        String roomId = event.at("/space/name").asText();
+        String messageSenderEmail = event.at("/message/sender/email").asText();
+        String helpMessage = getHelpMessage(event.at("/space/type").asText());
         
-        ChatResponse chatResponse = macroExecutionModule.execute(email, message, threadId);
-        
+        ChatResponse chatResponse = macroExecutionModule.getReplyText(message, threadId, roomId, messageSenderEmail, helpMessage);
         replyText = chatResponse.getReplyText();
         ActionType actionType = chatResponse.getActionType();
         String documentUrl = chatResponse.getDocumentUrl();
-
+        
         // Create card if appropriate
         if (actionType != null && documentUrl != null) {
           Card card = CardResponse.createCardResponse(replyText, actionType, documentUrl);
           reply.setCards(Collections.singletonList(card));
         }
+        else {
+          reply.setText(replyText);
+        }
 
         break;
 
       case "REMOVED_FROM_SPACE":
+        macroExecutionModule.removeMacro(event.at("/space/name").asText());
         logger.info("Bot removed from space.");
         break;
 
@@ -132,4 +139,14 @@ public class Bot {
 
     chatService.spaces().messages().create(spaceName, reply).execute();
   }
+
+  private String getHelpMessage(String spaceType) {
+    if ("ROOM".equals(spaceType)) {
+        return ROOM_HELP_MESSAGE;
+    }
+    else {
+        return DM_HELP_MESSAGE;
+    }
+  }
+
 }

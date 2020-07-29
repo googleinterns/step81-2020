@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:macrobaseapp/presentation/widgets/component/macro_detail_header.dart';
 
 import 'package:flutter/material.dart';
-import 'package:macrobaseapp/logic/state/macro_notifier.dart';
+import 'package:macrobaseapp/logic/state/macro_state/macro_notifier.dart';
 import 'package:macrobaseapp/model/adapters/macro_model.dart';
 import 'package:provider/provider.dart';
 

@@ -37,7 +37,7 @@ public class DriveCloudSheet implements CloudSheet {
     return String.format("%s!%s:%s", SHEET_NAME, startColumn, endColumn);
   }
 
-  private String toAlphabetic(int i) {
+  public static String toAlphabetic(int i) {
     // Recursive strategy to build a string that represents the alphabetic name
     // of a column based on column number i
     // e.g. 0 -> A, 1 -> B... 25 -> Z, 26 -> AA...
@@ -77,11 +77,6 @@ public class DriveCloudSheet implements CloudSheet {
     } else {
       return Collections.emptyList();
     }
-  }
-
-  public List<String> readColumn(int column) {
-    // Overload readCol to take a number
-    return readColumn(toAlphabetic(column));
   }
 
   public List<String> readColumn(String column) {

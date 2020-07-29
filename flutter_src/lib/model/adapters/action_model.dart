@@ -7,8 +7,17 @@ abstract class ActionModel extends Action {
   }) : super(actionType);
 
   static fromJson(Map<String, dynamic> json) {
-    if (json['type'] == Action.SHEET_ACTION) {
-      return SheetActionModel.fromJson(json);
+    String actionType = json['type'];
+
+    switch (actionType) {
+      case Action.SHEET_ACTION:
+        return SheetActionModel.fromJson(json);
+        break;
+      case Action.ADDRESS_ACTION:
+        return AddressActionModel.fromJson(json);
+        break;
+      default:
+        throw new Exception("Action type: " + actionType + " is unknown");
     }
   }
 }
@@ -22,10 +31,27 @@ abstract class SheetActionModel extends SheetAction {
   static fromJson(Map<String, dynamic> json) {
     if (json['sheetAction'] == SheetAction.APPEND_ACTION) {
       return SheetAppendActionModel.fromJson(json);
-    }
-    else if (json['sheetAction'] == SheetAction.BATCH_ACTION) {
+    } else if (json['sheetAction'] == SheetAction.BATCH_ACTION) {
       return SheetBatchActionModel.fromJson(json);
     }
+  }
+}
+
+class AddressActionModel extends AddressAction {
+  AddressActionModel({@required addressType, @required address})
+      : super(addressType, address);
+
+  factory AddressActionModel.fromJson(Map<String, dynamic> json) {
+    return AddressActionModel(
+        addressType: json["addressType"], address: json["address"]);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "type": type,
+      "addressType": addressType,
+      "address": address,
+    };
   }
 }
 
@@ -63,12 +89,11 @@ class SheetBatchActionModel extends BatchAction {
 
   factory SheetBatchActionModel.fromJson(Map<String, dynamic> json) {
     return SheetBatchActionModel(
-      sheetUrl: json["sheetUrl"],
-      row: json["row"],
-      column: json["column"],
-      batchType: json["batchType"],
-      randomizeOrder: json["randomizeOrder"]
-    );
+        sheetUrl: json["sheetUrl"],
+        row: json["row"],
+        column: json["column"],
+        batchType: json["batchType"],
+        randomizeOrder: json["randomizeOrder"]);
   }
 
   Map<String, dynamic> toJson() {
