@@ -4,6 +4,8 @@
 
 package com.google.flourbot.api;
 
+import com.google.flourbot.entity.action.ActionType;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.services.chat.v1.model.ActionParameter;
 import com.google.api.services.chat.v1.model.Button;
@@ -35,12 +37,9 @@ import java.util.stream.Stream;
 
 public class CardResponse {
 
-  private static final String INTERACTIVE_TEXT_BUTTON_ACTION = "doTextButtonAction";
-  private static final String INTERACTIVE_IMAGE_BUTTON_ACTION = "doImageButtonAction";
   private static final String INTERACTIVE_BUTTON_KEY = "originalMessage";
   private static final String HEADER_IMAGE = "https://shop.googlemerchandisestore.com/store/20160512512/assets/items/largeimages/GGOEACBA116699.jpg";
   private static final String BOT_NAME = "MacroBot";
-  private static final String REDIRECT_URL = "https://goo.gl/kwhSNz"; // TODO: Change to spreadsheet link
 
   /**
     * Creates a card-formatted response based on the message sent in Hangouts Chat.
@@ -48,7 +47,7 @@ public class CardResponse {
     * @param message the event object sent from Hangouts Chat
     * @return a card instance
     */
-  public static Card createCardResponse(String message) {
+  public static Card createCardResponse(String message, ActionType actionType, String documentUrl) {
     Card card = new Card();
     List<WidgetMarkup> widgets = new ArrayList<>();
     List<ActionParameter> customParameters = Collections.singletonList(
@@ -69,16 +68,8 @@ public class CardResponse {
 
     // TODO: Add cute image if CongraBot (do this after we make a response object)
 
-    // KEY VALUE
-    KeyValue keyValueWidget = new KeyValue()
-                  .setTopLabel("KeyValue widget")
-                  .setContent("This is a KeyValue widget")
-                  .setBottomLabel("The bottom label")
-                  .setIcon("DESCRIPTION");
-    widgets.add(new WidgetMarkup().setKeyValue(keyValueWidget));
-
     // TEXT BUTTON
-    OpenLink openLink = new OpenLink().setUrl(REDIRECT_URL);
+    OpenLink openLink = new OpenLink().setUrl(documentUrl);
     OnClick onClick = new OnClick().setOpenLink(openLink);
     TextButton button = new TextButton()
                   .setText("TODO: OPEN SHEET")

@@ -3,6 +3,7 @@ package com.google.flourbot.api;
 import com.google.flourbot.execution.ChatResponse;
 import com.google.flourbot.execution.MacroExecutionModule;
 import com.google.flourbot.execution.MacroExecutionModuleImplementation;
+import com.google.flourbot.entity.action.ActionType;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -81,13 +82,20 @@ public class Bot {
         String roomId = event.at("/space/name").asText();
         String messageSenderEmail = event.at("/message/sender/email").asText();
         String helpMessage = getHelpMessage(event.at("/space/type").asText());
-  
-        //replyText = macroExecutionModule.getReplyText(message, threadId, roomId, messageSenderEmail, helpMessage);
         
         ChatResponse chatResponse = macroExecutionModule.getReplyText(message, threadId, roomId, messageSenderEmail, helpMessage);
         replyText = chatResponse.getReplyText();
-        Card card = CardResponse.createCardResponse(replyText);
-        reply.setCards(Collections.singletonList(card));
+        ActionType actionType = chatResponse.getActionType();
+        String documentUrl = chatResponse.getDocumentUrl();
+        
+        // Create card if appropriate
+        if (actionType != null && documentUrl != null) {
+          Card card = CardResponse.createCardResponse(replyText, actionType, documentUrl);
+          reply.setCards(Collections.singletonList(card));
+        }
+        else {
+          reply.setText(replyText);
+        }
 
         break;
 
