@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collections;
 
 @SpringBootApplication
 @RestController
@@ -73,6 +74,7 @@ public class Bot {
           String displayName = event.at("/user/displayName").asText();
           replyText = String.format("Thanks for adding me to a DM, %s! Type \"@MacroBot /help\" at any time to see my instructions.", displayName);
         }
+        reply.setText(replyText);
         break;
 
       case "MESSAGE":
@@ -87,7 +89,7 @@ public class Bot {
         replyText = chatResponse.getReplyText();
         ActionType actionType = chatResponse.getActionType();
         String documentUrl = chatResponse.getDocumentUrl();
-        
+
         // Create card if appropriate
         if (actionType != null && documentUrl != null) {
           Card card = CardResponse.createCardResponse(replyText, actionType, documentUrl);
@@ -96,7 +98,7 @@ public class Bot {
         else {
           reply.setText(replyText);
         }
-
+        
         break;
 
       case "REMOVED_FROM_SPACE":
@@ -148,5 +150,4 @@ public class Bot {
         return DM_HELP_MESSAGE;
     }
   }
-
 }

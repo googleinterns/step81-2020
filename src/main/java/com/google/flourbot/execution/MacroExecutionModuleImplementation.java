@@ -237,6 +237,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
       List<String> wordsWithoutShare = new LinkedList(Arrays.asList(words));
       wordsWithoutShare.remove("/share");
       return String.join(" ", wordsWithoutShare);
+  }
 
   private String selectRandomFromData(List<String> data) {
     Random rand = new Random();
