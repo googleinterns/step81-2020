@@ -1,9 +1,15 @@
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/logic/state/bloc_validator.dart';
+import 'package:macrobaseapp/model/adapters/action_model.dart';
+import 'package:macrobaseapp/model/adapters/macro_model.dart';
 import 'package:macrobaseapp/model/adapters/team_model.dart';
+import 'package:macrobaseapp/model/adapters/trigger_model.dart';
+import 'package:macrobaseapp/model/entities/action.dart';
+import 'package:macrobaseapp/model/entities/trigger.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 
 class TeamFormBloc extends FormBloc<String, String> {
@@ -40,11 +46,11 @@ class TeamFormBloc extends FormBloc<String, String> {
   @override
   void onSubmitting() async {
     final team = TeamModel(
-      name: teamName.value.trim(),
-      iconUrl: iconUrl.value.trim(),
-      description: description.value.trim(),
-      creatorId: this.user.email,
-    );
+        name: teamName.value.trim(),
+        iconUrl: iconUrl.value.trim(),
+        description: description.value.trim(),
+        creatorId: this.user.email,
+        macros: []);
 
     db.uploadObject('teams', team.toJson());
 
