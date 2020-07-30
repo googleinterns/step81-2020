@@ -13,12 +13,6 @@ public final class SheetReadColumnAction extends SheetAction {
     this.column = column;
   }
 
-  public SheetReadColumnAction(String sheetUrl, int column) {
-    // Overload
-    super(sheetUrl);
-    this.column = DriveCloudSheet.toAlphabetic(column + 1);
-  }
-
   public final ActionType getActionType() {
     return actionType;
   }
@@ -27,3 +21,4 @@ public final class SheetReadColumnAction extends SheetAction {
     return column;
   }
 }
+
