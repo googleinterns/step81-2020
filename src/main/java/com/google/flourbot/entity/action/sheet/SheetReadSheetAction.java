@@ -7,12 +7,10 @@ public final class SheetReadSheetAction extends SheetAction {
 
   private final ActionType actionType = ActionType.SHEET_READ_SHEET;
   private final String sheetName;
-  private final boolean selectRandomEntry;
 
-  public SheetReadSheetAction(String sheetUrl, String sheetName, boolean selectRandomEntry) {
+  public SheetReadSheetAction(String sheetUrl, String sheetName) {
     super(sheetUrl);
     this.sheetName = sheetName;
-    this.selectRandomEntry = selectRandomEntry;
   }
 
   public final ActionType getActionType() {

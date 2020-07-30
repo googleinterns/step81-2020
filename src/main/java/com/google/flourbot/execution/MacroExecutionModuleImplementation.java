@@ -167,12 +167,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
       case SHEET_READ_SHEET:
         String sheetName = ((SheetReadSheetAction) action).getSheetName();
         List<List<String>> sheetData = cloudSheet.readSheet(sheetName);
-
-        if (((SheetReadSheetAction) action).getSelectRandomEntry()) {
-          chatResponse = new ChatResponse(selectRandomFromListList(sheetData), actionType, documentUrl);
-        } else {
-          chatResponse = ChatResponse.createChatResponseWithListList(sheetData, actionType, documentUrl);
-        }
+        chatResponse = ChatResponse.createChatResponseWithListList(sheetData, actionType, documentUrl);
         break;
       
       // TODO: Add random option that uses function selectRandomFromData(data);
@@ -194,11 +189,5 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
   private String selectRandomFromList(List<String> data) {
     Random rand = new Random();
     return data.get(rand.nextInt(data.size()));
-  }
-
-  private String selectRandomFromListList(List<List<String>> data) {
-    Random rand = new Random();
-    List<String> sublist = data.get(rand.nextInt(data.size()));
-    return sublist.get(rand.nextInt(sublist.size()));
   }
 }

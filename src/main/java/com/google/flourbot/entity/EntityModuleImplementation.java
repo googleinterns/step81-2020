@@ -123,7 +123,7 @@ public class EntityModuleImplementation implements EntityModule {
             if (sheetName == null) {
               throw new IllegalStateException("sheetName not found in Firestore action");
             }
-            action = new SheetReadSheetAction(sheetUrl, (String) sheetName, (boolean) actionData.get("selectRandomEntry"));
+            action = new SheetReadSheetAction(sheetUrl, (String) sheetName);
             break;
 
           case ("Batch Action"):
