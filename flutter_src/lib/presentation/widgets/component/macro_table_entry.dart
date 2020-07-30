@@ -11,17 +11,19 @@ import 'package:provider/provider.dart';
 
 class MacroTableEntry extends StatefulWidget {
   final Macro macro;
+  final Function onDelete;
 
-  const MacroTableEntry({Key key, this.macro})
+  const MacroTableEntry({Key key, @required this.macro, @required this.onDelete})
       : super(key: key);
   @override
   _MacroTableEntryState createState() =>
-      _MacroTableEntryState(macro);
+      _MacroTableEntryState(macro, onDelete);
 }
 
 class _MacroTableEntryState extends State<MacroTableEntry> {
   final Macro macro;
-  _MacroTableEntryState(this.macro);
+  final Function onDelete;
+  _MacroTableEntryState(this.macro, this.onDelete);
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +32,7 @@ class _MacroTableEntryState extends State<MacroTableEntry> {
         leading: FlutterLogo(size: 72.0),
         title: Text(macro.macroName),
         subtitle: Text(macro.description),
-        trailing: IconButton(icon: Icon(Icons.delete), onPressed: () {
-          FirestoreService db = FirestoreService();
-          db.removeObject('macros', macro.macroId);
-          MacroNotifier().macroList.remove(macro);
-        }),
+        trailing: IconButton(icon: Icon(Icons.delete), onPressed: onDelete),
         onTap: () {
           MacroNotifier().currentMacro = macro;
           Navigator.of(context).push(
