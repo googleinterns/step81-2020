@@ -8,10 +8,6 @@
   "creatorId": "tonyshen@google.com",
   "description": "Daily Check-in Bot records your teams' daily updates in a Google sheet",
   "macroName": "Daily",
-  "scope": [
-    "",
-    "tonyshen@google.com"
-  ],
   "trigger": {
     "command": "123",
     "type": "Command Trigger"
