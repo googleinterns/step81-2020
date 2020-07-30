@@ -4,7 +4,7 @@ import 'package:macrobaseapp/model/entities/macro.dart';
 
 void main() {
   test(
-    'Setting current team changes current team',
+    'Setting current Macro changes current Macro',
     () async {
       MacroNotifier macroNotifier = MacroNotifier();
       Macro macro = Macro();
@@ -12,6 +12,19 @@ void main() {
       macroNotifier.currentMacro = macro;
 
       expect(macroNotifier.currentMacro, equals(macro));
+    },
+  );
+
+  test(
+    'Deleting Macro deletes the macro from Notifier',
+    () async {
+      MacroNotifier macroNotifier = MacroNotifier();
+      Macro macro = Macro();
+
+      macroNotifier.macroList = [macro];
+      macroNotifier.deleteMacro(macro);
+
+      expect(macroNotifier.macroList, equals([]));
     },
   );
 }
