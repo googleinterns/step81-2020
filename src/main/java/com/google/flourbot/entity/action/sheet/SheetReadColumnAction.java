@@ -7,16 +7,19 @@ public final class SheetReadColumnAction extends SheetAction {
 
   private final ActionType actionType = ActionType.SHEET_READ_COLUMN;
   private final String column;
+  private final SelectionMethod selectionMethod;
 
-  public SheetReadColumnAction(String sheetUrl, String column) {
+  public SheetReadColumnAction(String sheetUrl, String column, SelectionMethod selectionMethod) {
     super(sheetUrl);
     this.column = column;
+    this.selectionMethod = selectionMethod;
   }
 
-  public SheetReadColumnAction(String sheetUrl, int column) {
+  public SheetReadColumnAction(String sheetUrl, int column, SelectionMethod selectionMethod) {
     // Overload
     super(sheetUrl);
     this.column = DriveCloudSheet.toAlphabetic(column + 1);
+    this.selectionMethod = selectionMethod;
   }
 
   public final ActionType getActionType() {
@@ -25,5 +28,9 @@ public final class SheetReadColumnAction extends SheetAction {
 
   public final String getColumn() {
     return column;
+  }
+
+  public final SelectionMethod getSelectionMethod() {
+    return selectionMethod;
   }
 }

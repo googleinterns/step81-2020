@@ -3,6 +3,8 @@
  */
 package com.google.flourbot.api;
 
+import com.google.flourbot.entity.action.sheet.SelectionMethod;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
@@ -15,7 +17,7 @@ public interface CloudSheet {
 
   public List<List<String>> readRange(String range);
 
-  public List<String> readRow(int row);
-  public List<String> readColumn(String column);
+  public List<String> readRow(int row, SelectionMethod selectionMethod);
+  public List<String> readColumn(String column, SelectionMethod selectionMethod);
   public List<List<String>> readSheet(String sheetName);
 }

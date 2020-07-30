@@ -4,12 +4,15 @@
 
 package com.google.flourbot.api;
 
+import com.google.flourbot.entity.action.sheet.SelectionMethod;
+
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.google.api.services.sheets.v4.model.AppendValuesResponse;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Random;
 import java.util.logging.Logger;
 import java.util.Collections;
 import java.util.ArrayList;
@@ -69,21 +72,57 @@ public class DriveCloudSheet implements CloudSheet {
     return (List<List<String>>)((Object)response.getValues());
   }
 
-  public List<String> readRow(int row) {
+  public List<String> readRow(int row, SelectionMethod selectionMethod) {
     List<List<String>> values = readRange(String.format("%s!%d:%d", SHEET_NAME, row, row));
+    List<String> result;
 
     if (values != null || !values.isEmpty()) {
-      return (List<String>) values.get(0);
+      
+       // TODO: change away from hardcoded 1 value
+      switch(selectionMethod) {
+        case FIRST:
+          result = selectFirstFromList((List<String>) values.get(0));
+          break;
+
+        case LAST:
+          result = selectLastFromList((List<String>) values.get(0));
+          break;
+
+        case RANDOM:
+          result = selectRandomFromList((List<String>) values.get(0));
+          break;
+
+        default:
+          throw new IllegalStateException("Selection Method not recognized");
+      }
+      return result;
     } else {
       return Collections.emptyList();
     }
   }
 
-  public List<String> readColumn(String column) {
+  public List<String> readColumn(String column, SelectionMethod selectionMethod) {
     List<List<String>> values = readRange(String.format("%s!%s:%s", SHEET_NAME, column, column));
-
+    List<String> result;
     if (values != null || !values.isEmpty()) {
-      return (List<String>) values.get(0);
+       // TODO: change away from hardcoded 1 value
+      switch(selectionMethod) {
+        case FIRST:
+          result = selectFirstFromList((List<String>) values.get(0));
+          break;
+
+        case LAST:
+          result = selectLastFromList((List<String>) values.get(0));
+          break;
+
+        case RANDOM:
+          result = selectRandomFromList((List<String>) values.get(0));
+          break;
+
+        default:
+          throw new IllegalStateException("Selection Method not recognized");
+      }
+      return result;
     } else {
       return Collections.emptyList();
     }
@@ -114,5 +153,18 @@ public class DriveCloudSheet implements CloudSheet {
     request.setInsertDataOption(INSERT_DATA_OPTION);
     
     AppendValuesResponse response = request.execute();
+  }
+
+  private final List<String> selectRandomFromList(List<String> values) {
+    Random rand = new Random();
+    return Arrays.asList(values.get(rand.nextInt(values.size())));
+  }
+
+  private final List<String> selectFirstFromList(List<String> values) {
+    return Arrays.asList(values.get(0));
+  }
+
+  private final List<String> selectLastFromList(List<String> values) {
+    return Arrays.asList(values.get(values.size() - 1));
   }
 }
