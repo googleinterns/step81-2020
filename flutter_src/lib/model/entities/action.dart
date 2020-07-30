@@ -47,7 +47,7 @@ class AddressAction extends Action {
 class BatchAction extends SheetAction {
   static const String READ_TYPE = "Read";
   static const String DELETE_TYPE = "Delete";
-  
+
   String batchType;
   bool randomizeOrder = false;
 
@@ -62,11 +62,11 @@ class BatchAction extends SheetAction {
 }
 
 class AppendAction extends SheetAction {
+  static const String VALUE_EMPTY = "EMPTY";
+  static const String VALUE_TIME = "TIME";
+  static const String VALUE_EMAIL = "EMAIL";
+  static const String VALUE_CONTENT = "CONTENT";
   static const List<String> VALUE_LIST = [VALUE_EMPTY, VALUE_TIME, VALUE_EMAIL, VALUE_CONTENT];
-  static const VALUE_EMPTY = "EMPTY";
-  static const VALUE_TIME = "TIME";
-  static const VALUE_EMAIL = "EMAIL";
-  static const VALUE_CONTENT = "CONTENT";
 
   final List<String> columnValue;
 
