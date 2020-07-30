@@ -7,18 +7,24 @@ class TeamModel extends Team {
       {@required name,
       @required iconUrl,
       @required description,
-      @required macros})
-      : super(name, iconUrl, description, macros);
+      @required macros,
+      @required creatorId})
+      : super(
+            name: name,
+            iconUrl: iconUrl,
+            description: description,
+            macros: macros,
+            creatorId: creatorId);
 
   factory TeamModel.fromJson(Map<String, dynamic> json) {
     return TeamModel(
-      name: json["name"],
-      iconUrl: json["iconUrl"],
-      description: json["description"],
-      macros: json["macros"]
-          .map((macroJson) => MacroModel.fromJson(macroJson))
-          .toList(),
-    );
+        name: json["name"],
+        iconUrl: json["iconUrl"],
+        description: json["description"],
+        macros: json["macros"]
+            .map((macroJson) => MacroModel.fromJson(macroJson))
+            .toList().cast<MacroModel>(),
+        creatorId: json["creatorId"]);
   }
 
   Map<String, dynamic> toJson() {
@@ -26,9 +32,13 @@ class TeamModel extends Team {
       "name": name,
       "iconUrl": iconUrl,
       "description": description,
-      "macros": macros == null ? [] : macros.cast<MacroModel>()
-          .map((macroObject) => macroObject.toJson())
-          .toList()
+      "macros": macros == null
+          ? []
+          : macros
+              .cast<MacroModel>()
+              .map((macroObject) => macroObject.toJson())
+              .toList(),
+      "creatorId": creatorId,
     };
   }
 }

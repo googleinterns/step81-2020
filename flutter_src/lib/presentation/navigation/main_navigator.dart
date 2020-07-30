@@ -42,8 +42,8 @@ class _MainNavigatorState extends State<MainNavigator> {
                 text: 'Macro Instances',
               ),
               Tab(
-                icon: Icon(Icons.settings),
-                text: 'Setting',
+                icon: Icon(Icons.question_answer),
+                text: 'Tutorial',
               ),
             ],
           ),
@@ -54,7 +54,7 @@ class _MainNavigatorState extends State<MainNavigator> {
           children: [
             NewObjectPage(),
             MacroTable(),
-            SettingPage(),
+            TutorialPage(),
           ],
         ),
       ),

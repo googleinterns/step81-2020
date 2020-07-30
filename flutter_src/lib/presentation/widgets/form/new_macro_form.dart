@@ -126,13 +126,6 @@ class _NewMacroFormState extends State<NewMacroForm> {
               prefixIcon: Icon(Icons.book),
             ),
           ),
-          TextFieldBlocBuilder(
-            textFieldBloc: wizardFormBloc.scope,
-            decoration: InputDecoration(
-              labelText: 'An Email list of people who can use this macro',
-              prefixIcon: Icon(Icons.people),
-            ),
-          )
         ],
       ),
     );

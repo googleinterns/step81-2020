@@ -8,14 +8,12 @@ class MacroModel extends Macro {
     @required String macroName,
     @required String description,
     @required String creatorId,
-    @required List<String> scope,
     @required dynamic trigger,
     @required dynamic action
   }) : super(
       macroName: macroName,
       description: description,
       creatorId: creatorId,
-      scope: scope,
       trigger: trigger,
       action: action
   );
@@ -25,7 +23,6 @@ class MacroModel extends Macro {
       macroName: json['macroName'],
       description: json['description'],
       creatorId: json['creatorId'],
-      scope: json['scope']?.cast<String>(),
       trigger: TriggerModel.fromJson(json['trigger']),
       action: ActionModel.fromJson(json['action'])
     );
@@ -36,7 +33,6 @@ class MacroModel extends Macro {
       'macroName': macroName,
       'description': description,
       'creatorId': creatorId,
-      'scope': scope,
       'trigger': trigger.toJson(),
       'action': action.toJson(),
     };
