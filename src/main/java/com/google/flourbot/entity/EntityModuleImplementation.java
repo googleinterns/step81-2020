@@ -7,6 +7,7 @@ import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
 import com.google.flourbot.entity.action.sheet.SheetReadColumnAction;
 import com.google.flourbot.entity.action.sheet.SheetReadRowAction;
 import com.google.flourbot.entity.action.sheet.SheetReadSheetAction;
+import com.google.flourbot.entity.action.sheet.SelectionMethod;
 import com.google.flourbot.entity.action.sheet.SheetEntryType;
 import com.google.flourbot.entity.trigger.CommandTrigger;
 import com.google.flourbot.entity.trigger.Trigger;
@@ -106,7 +107,7 @@ public class EntityModuleImplementation implements EntityModule {
             if (row == null) {
               throw new IllegalStateException("row not found in Firestore action");
             }
-            action = new SheetReadRowAction(sheetUrl, (int) row);
+            action = new SheetReadRowAction(sheetUrl, (int) row, (SelectionMethod) actionData.get("Selection Method"));
             break;
 
           case ("Read Column Action"):
@@ -115,7 +116,7 @@ public class EntityModuleImplementation implements EntityModule {
             if (column == null) {
               throw new IllegalStateException("column not found in Firestore action");
             }
-            action = new SheetReadColumnAction(sheetUrl, (String) column);
+            action = new SheetReadColumnAction(sheetUrl, (String) column, (SelectionMethod) actionData.get("Selection Method"));
             break;
 
           case ("Read Sheet Action"):

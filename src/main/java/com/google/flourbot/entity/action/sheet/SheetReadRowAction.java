@@ -6,10 +6,12 @@ public final class SheetReadRowAction extends SheetAction {
 
   private final ActionType actionType = ActionType.SHEET_READ_ROW;
   private final int row;
+  private final SelectionMethod selectionMethod;
 
-  public SheetReadRowAction(String sheetUrl, int row) {
+  public SheetReadRowAction(String sheetUrl, int row, SelectionMethod selectionMethod) {
     super(sheetUrl);
     this.row = row;
+    this.selectionMethod = selectionMethod;
   }
 
   public final ActionType getActionType() {
@@ -20,7 +22,7 @@ public final class SheetReadRowAction extends SheetAction {
     return row;
   }
 
-  public final boolean getSelectRandomEntry() {
-    return selectRandomEntry;
+  public final SelectionMethod getSelectionMethod() {
+    return selectionMethod;
   }
 }

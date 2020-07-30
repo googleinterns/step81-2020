@@ -14,6 +14,7 @@ import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
 import com.google.flourbot.entity.action.sheet.SheetReadColumnAction;
 import com.google.flourbot.entity.action.sheet.SheetReadRowAction;
 import com.google.flourbot.entity.action.sheet.SheetReadSheetAction;
+import com.google.flourbot.entity.action.sheet.SelectionMethod;
 import com.google.flourbot.entity.action.sheet.SheetEntryType;
 
 import java.io.IOException;
@@ -25,7 +26,6 @@ import java.util.Optional;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 // The Logic class of the server
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
@@ -145,13 +145,15 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
       case SHEET_READ_ROW:
         int row = ((SheetReadRowAction) action).getRow();
-        List<String> rowData = cloudSheet.readRow(row);
+        List<String> rowData = cloudSheet.readRow(
+                                row, ((SheetReadRowAction) action).getSelectionMethod());
         chatResponse = ChatResponse.createChatResponseWithList(rowData, actionType, documentUrl);
         break;
 
       case SHEET_READ_COLUMN:
         String column = ((SheetReadColumnAction) action).getColumn();
-        List<String> columnData = cloudSheet.readColumn(column);
+        List<String> columnData = cloudSheet.readColumn(
+                                column, ((SheetReadColumnAction) action).getSelectionMethod());
         chatResponse = ChatResponse.createChatResponseWithList(columnData, actionType, documentUrl);
         break;
 

@@ -20,8 +20,4 @@ public final class SheetReadSheetAction extends SheetAction {
   public final String getSheetName() {
     return sheetName;
   }
-
-  public final boolean getSelectRandomEntry() {
-    return selectRandomEntry;
-  }
 }
