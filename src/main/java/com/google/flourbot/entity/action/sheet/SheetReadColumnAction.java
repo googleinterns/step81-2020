@@ -1,6 +1,5 @@
 package com.google.flourbot.entity.action.sheet;
 
-import com.google.flourbot.api.DriveCloudSheet;
 import com.google.flourbot.entity.action.ActionType;
 
 public final class SheetReadColumnAction extends SheetAction {
