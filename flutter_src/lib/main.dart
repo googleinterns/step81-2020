@@ -5,6 +5,8 @@ import 'package:macrobaseapp/logic/api/firebase_auth.dart';
 import 'package:macrobaseapp/presentation/app.dart';
 import 'package:provider/provider.dart';
 
+import 'logic/state/team_state/team_notifier.dart';
+
 void main() => runApp(
   /// Inject the [FirebaseAuthService]
   /// and provide a stream of [User]
@@ -16,6 +18,9 @@ void main() => runApp(
     providers: [
       ChangeNotifierProvider(
         create: (context) => MacroNotifier(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => TeamNotifier(),
       ),
       Provider(
         create: (_) => FirebaseAuthService(),

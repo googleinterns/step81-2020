@@ -67,7 +67,11 @@ class BatchAction extends SheetAction {
 }
 
 class AppendAction extends SheetAction {
-  static const List<String> VALUE_LIST = ["EMPTY", "TIME", "EMAIL", "CONTENT"];
+  static const List<String> VALUE_LIST = [VALUE_EMPTY, VALUE_TIME, VALUE_EMAIL, VALUE_CONTENT];
+  static const VALUE_EMPTY = "EMPTY";
+  static const VALUE_TIME = "TIME";
+  static const VALUE_EMAIL = "EMAIL";
+  static const VALUE_CONTENT = "CONTENT";
 
   final List<String> columnValue;
 
