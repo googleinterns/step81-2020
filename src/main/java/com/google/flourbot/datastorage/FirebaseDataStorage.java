@@ -18,7 +18,7 @@ public class FirebaseDataStorage implements DataStorage {
   private static final String PROJECT_ID = "stepladder-2020";
   private static final String SERVICE_ACCOUNT = "/key.json";
   private static final String COLLECTION_NAME = "macros";
-  private static final String SCOPE_IDENTIFIER =  "scope";
+  private static final String CREATOR_IDENTIFIER = "creatorId";
   private static final String MACRO_IDENTIFIER = "macroName";
 
   public FirebaseDataStorage() {
@@ -46,7 +46,7 @@ public class FirebaseDataStorage implements DataStorage {
     Query query =
         db.collection(COLLECTION_NAME)
             .whereEqualTo(MACRO_IDENTIFIER, macroName)
-            .whereArrayContains(SCOPE_IDENTIFIER, userEmail);
+            .whereEqualTo(CREATOR_IDENTIFIER, userEmail);
     // Retrieve  query results asynchronously using query.get()
     ApiFuture<QuerySnapshot> querySnapshot = query.get();
 

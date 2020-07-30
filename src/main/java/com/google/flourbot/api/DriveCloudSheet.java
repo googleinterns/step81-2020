@@ -22,6 +22,7 @@ import java.util.List;
 public class DriveCloudSheet implements CloudSheet {
   private static final String VALUE_INPUT_OPTION = "USER_ENTERED";
   private static final String INSERT_DATA_OPTION = "INSERT_ROWS";
+  private static final String SHEET_NAME = "Sheet1"; // Stretch goal: allow user specified
   private Sheets sheetsService;
   private String spreadsheetId;
 
@@ -36,7 +37,7 @@ public class DriveCloudSheet implements CloudSheet {
 
     String startColumn = toAlphabetic(numSkipColumns);
     String endColumn = toAlphabetic(numSkipColumns + numEntryColumns - 1);
-    return String.format("Sheet1!%s:%s", startColumn, endColumn);
+    return String.format("%s!%s:%s", SHEET_NAME, startColumn, endColumn);
   }
 
   public static String toAlphabetic(int i) {
@@ -72,7 +73,7 @@ public class DriveCloudSheet implements CloudSheet {
   }
 
   public List<String> readRow(int row, SelectionMethod selectionMethod) {
-    List<List<String>> values = readRange(String.format("Sheet1!%d:%d", row, row));
+    List<List<String>> values = readRange(String.format("%s!%d:%d", SHEET_NAME, row, row));
     List<String> result;
 
     if (values != null || !values.isEmpty()) {
@@ -101,9 +102,8 @@ public class DriveCloudSheet implements CloudSheet {
   }
 
   public List<String> readColumn(String column, SelectionMethod selectionMethod) {
-    List<List<String>> values = readRange(String.format("Sheet1!%s:%s", column, column));
+    List<List<String>> values = readRange(String.format("%s!%s:%s", SHEET_NAME, column, column));
     List<String> result;
-    
     if (values != null || !values.isEmpty()) {
        // TODO: change away from hardcoded 1 value
       switch(selectionMethod) {
