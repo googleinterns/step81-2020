@@ -130,7 +130,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
   private ChatResponse execute(String userEmail, String macroCreatorEmail, String message, String threadId, String macroName) throws IOException, GeneralSecurityException {
 
     
-    Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
+    Optional<Macro> optionalMacro = entityModule.getMacro(macroCreatorEmail, macroName);
     if (!optionalMacro.isPresent()) {
       return new ChatResponse(String.format("No macro of name: %s found for %s", macroName, macroCreatorEmail));
     }
