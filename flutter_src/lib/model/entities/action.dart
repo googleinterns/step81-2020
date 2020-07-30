@@ -47,23 +47,18 @@ class AddressAction extends Action {
 class BatchAction extends SheetAction {
   static const String READ_TYPE = "Read";
   static const String DELETE_TYPE = "Delete";
-
-  int row = null;
-  int column = null;
-
+  
   String batchType;
   bool randomizeOrder = false;
 
   BatchAction(
     sheetUrl,
-    this.row,
-    this.column,
     this.batchType,
     this.randomizeOrder,
   ) : super(sheetUrl: sheetUrl, sheetAction: SheetAction.BATCH_ACTION);
 
   @override
-  List<Object> get props => super.props..addAll([row, column, randomizeOrder]);
+  List<Object> get props => super.props..addAll([randomizeOrder]);
 }
 
 class AppendAction extends SheetAction {

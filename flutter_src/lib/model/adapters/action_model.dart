@@ -81,17 +81,13 @@ class SheetAppendActionModel extends AppendAction {
 class SheetBatchActionModel extends BatchAction {
   SheetBatchActionModel({
     @required sheetUrl,
-    row,
-    column,
     batchType,
     randomizeOrder,
-  }) : super(sheetUrl, row, column, batchType, randomizeOrder);
+  }) : super(sheetUrl, batchType, randomizeOrder);
 
   factory SheetBatchActionModel.fromJson(Map<String, dynamic> json) {
     return SheetBatchActionModel(
         sheetUrl: json["sheetUrl"],
-        row: json["row"],
-        column: json["column"],
         batchType: json["batchType"],
         randomizeOrder: json["randomizeOrder"]);
   }
@@ -101,8 +97,6 @@ class SheetBatchActionModel extends BatchAction {
       "type": type,
       "sheetAction": sheetAction,
       "sheetUrl": sheetUrl,
-      "row": row,
-      "column": column,
       "batchType": batchType,
       "randomizeOrder": randomizeOrder
     };
