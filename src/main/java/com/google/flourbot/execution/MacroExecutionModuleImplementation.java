@@ -146,22 +146,13 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
       case SHEET_READ_ROW:
         int row = ((SheetReadRowAction) action).getRow();
         List<String> rowData = cloudSheet.readRow(row);
-        if (((SheetReadRowAction) action).getSelectRandomEntry()) {
-          chatResponse = new ChatResponse(selectRandomFromList(rowData), actionType, documentUrl);
-        } else {
-          chatResponse = ChatResponse.createChatResponseWithList(rowData, actionType, documentUrl);
-        }
+        chatResponse = ChatResponse.createChatResponseWithList(rowData, actionType, documentUrl);
         break;
 
       case SHEET_READ_COLUMN:
         String column = ((SheetReadColumnAction) action).getColumn();
         List<String> columnData = cloudSheet.readColumn(column);
-
-        if (((SheetReadColumnAction) action).getSelectRandomEntry()) {
-          chatResponse = new ChatResponse(selectRandomFromList(columnData), actionType, documentUrl);
-        } else {
-          chatResponse = ChatResponse.createChatResponseWithList(columnData, actionType, documentUrl);
-        }
+        chatResponse = ChatResponse.createChatResponseWithList(columnData, actionType, documentUrl);
         break;
 
       case SHEET_READ_SHEET:
@@ -184,10 +175,5 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     LocalDateTime myDateObj = LocalDateTime.now();
     DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(pattern);
     return myDateObj.format(myFormatObj);
-  }
-
-  private String selectRandomFromList(List<String> data) {
-    Random rand = new Random();
-    return data.get(rand.nextInt(data.size()));
   }
 }
