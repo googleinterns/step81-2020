@@ -65,8 +65,6 @@ public class CardResponse {
     TextParagraph textParagraphWidget = new TextParagraph().setText(message);
     widgets.add(new WidgetMarkup().setTextParagraph(textParagraphWidget));
 
-    // TODO: Add cute image if CongraBot (do this after we make a response object)
-
     // TEXT BUTTON
     OpenLink openLink = new OpenLink().setUrl(documentUrl);
     OnClick onClick = new OnClick().setOpenLink(openLink);
