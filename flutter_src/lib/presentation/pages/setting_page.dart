@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class SettingPage extends StatelessWidget {
-  const SettingPage({
+class TutorialPage extends StatelessWidget {
+  const TutorialPage({
     Key key,
   }) : super(key: key);
 
