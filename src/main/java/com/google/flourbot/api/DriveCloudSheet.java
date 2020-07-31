@@ -66,6 +66,7 @@ public class DriveCloudSheet implements CloudSheet {
     } catch (IOException e) {
       throw new IllegalArgumentException(e);
     }
+
     return (List<List<String>>)((Object)response.getValues());
   }
 
@@ -74,9 +75,8 @@ public class DriveCloudSheet implements CloudSheet {
 
     if (values != null || !values.isEmpty()) {
       return (List<String>) values.get(0);
-    } else {
-      return Collections.emptyList();
     }
+    return Collections.emptyList();
   }
 
   public List<String> readColumn(String column) {
