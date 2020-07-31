@@ -20,7 +20,7 @@ public final class DriveCloudSheetTest {
   // Create a sheet where in every cell A1:E5, the cell contents is the location
   // Ex: The top left cell at A1 will contain the string "A1"
   // Remember to give the bot permission to edit the sheet
-  private static final String SPREADSHEET_ID = "1ruk-1_izE0iiOWqf5mgyHkOcW2dCNI09uy28kuceJtQ";
+  private static final String SPREADSHEET_ID = "";
   private static final String SHEET_NAME = "Sheet1";
 
   private static final String RANGE_SINGLE = "B1:B1";
@@ -89,4 +89,6 @@ public final class DriveCloudSheetTest {
         String.format("%s!%s", SHEET_NAME, RANGE_BLOCK_EMPTY));
     Assert.assertEquals(null, response);
   }
+
+  
 }
