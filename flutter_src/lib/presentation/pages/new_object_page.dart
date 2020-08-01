@@ -21,7 +21,7 @@ class NewObjectPageState extends State<NewObjectPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           WideButton(
-              templateName: "Create a New Team",
+              templateName: "Create a New Assistant",
               imagePath: "data-exchange.png",
               onPressed: () {
                 Navigator.push(

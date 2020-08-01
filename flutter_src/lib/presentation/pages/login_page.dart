@@ -23,11 +23,11 @@ class LoginPageBody extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                "Macrobase",
+                "Macrobot",
                 style: Theme.of(context).textTheme.headline4,
               ),
               Text(
-                "Automate the boring stuff.",
+                "Your Hangout Chatbot Maker",
                 style: Theme.of(context).textTheme.subtitle1,
               ),
               Image(
