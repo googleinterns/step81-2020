@@ -1,6 +1,5 @@
 package com.google.flourbot.entity;
 
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.flourbot.datastorage.DataStorage;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
@@ -14,11 +13,7 @@ import com.google.flourbot.entity.trigger.Trigger;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Stream;
+
 
 public class EntityModuleImplementation implements EntityModule {
 
@@ -29,7 +24,7 @@ public class EntityModuleImplementation implements EntityModule {
   }
 
   public Optional<Macro> getMacro(String userEmail, String macroName) {
-    Optional<QueryDocumentSnapshot> optionalDocument =
+    Optional<Map<String, Object>> optionalDocument =
         datastorage.getDocument(userEmail, macroName);
 
     if (!optionalDocument.isPresent()) {
@@ -38,9 +33,7 @@ public class EntityModuleImplementation implements EntityModule {
     }
 
     // Retrieve value from optional if it's not empty
-    QueryDocumentSnapshot document = optionalDocument.get();
-
-    Map<String, Object> macroData = document.getData();
+    Map<String, Object> macroData = optionalDocument.get();
 
     Map<String, Object> triggerData = (Map<String, Object>) macroData.get("trigger");
     Map<String, Object> actionData = (Map<String, Object>) macroData.get("action");
