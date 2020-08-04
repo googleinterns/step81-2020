@@ -38,7 +38,7 @@ class EntityModuleImplementationTest {
 
   @Test
   void getMacro() throws IOException {
-    String mockJson = loadTestJson("mock_macro");
+    String mockJson = loadTestJson("mock_macro.json");
     Map<String, Object> mockMap =
         new ObjectMapper().readValue(mockJson, Map.class);
     dataStorage.setMap(mockMap);
