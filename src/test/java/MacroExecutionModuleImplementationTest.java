@@ -64,7 +64,7 @@ public final class MacroExecutionModuleImplementationTest {
     public void testRemoveMacro() {
         Map<String, Map<String, String>> actual = execution.getRoomToMacro();
         Map<String, String> macro = new HashMap<String, String>();
-        macro.put(MACRO_NAME, "scaulfeild@google.com");
+        macro.put(MACRO_NAME, USER_EMAIL);
         actual.put(ROOM1, macro);
 
         execution.removeMacro(ROOM1);
@@ -92,7 +92,7 @@ public final class MacroExecutionModuleImplementationTest {
     // Test the help message
     @Test
     public void testHelpMessage() throws IOException, GeneralSecurityException {
-        ChatResponse chatResponse = execution.getReplyText("@MacroBot /help", THREAD1, ROOM1, "scaulfeild@google.com", HELP_MESSAGE);
+        ChatResponse chatResponse = execution.getReplyText("@MacroBot /help", THREAD1, ROOM1, USER_EMAIL, HELP_MESSAGE);
         String actual = chatResponse.getReplyText();
         Assert.assertEquals(HELP_MESSAGE, actual);
     }
@@ -100,10 +100,11 @@ public final class MacroExecutionModuleImplementationTest {
     // Test an empty message
     @Test
     public void testEmptyMessage() throws IOException, GeneralSecurityException {
-        ChatResponse chatResponse = execution.getReplyText("@MacroBot", THREAD1, ROOM1, "scaulfeild@google.com", HELP_MESSAGE);
+        ChatResponse chatResponse = execution.getReplyText("@MacroBot", THREAD1, ROOM1, USER_EMAIL, HELP_MESSAGE);
         String actual = chatResponse.getReplyText();
         Assert.assertEquals(EMPTY_MESSAGE_RESPONSE, actual);
     }
+
 
     private void addToThreadMacroMap(String thread, String macroName) {
         execution.getThreadMacroMap().put(thread, macroName);
