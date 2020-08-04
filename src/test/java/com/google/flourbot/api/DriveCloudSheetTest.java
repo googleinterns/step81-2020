@@ -107,9 +107,17 @@ public final class DriveCloudSheetTest {
     List<List<String>> response = cloudSheet.readRange(
         String.format("%s!%s", SHEET_NAME, RANGE_COLUMN));
 
-    String[] array = {"C1", "C2", "C3", "C4", "C5"};
+    String[] array1 = {"C1"};
+    String[] array2 = {"C2"};
+    String[] array3 = {"C3"};
+    String[] array4 = {"C4"};
+    String[] array5 = {"C5"};
     List<List<String>> expected = Arrays.asList(
-      Arrays.asList(array)
+      Arrays.asList(array1),
+      Arrays.asList(array2),
+      Arrays.asList(array3),
+      Arrays.asList(array4),
+      Arrays.asList(array5)
     );
 
     Assert.assertEquals(expected, response);
