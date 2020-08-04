@@ -27,9 +27,8 @@ public final class DriveCloudSheetTest {
   private static final String RANGE_SINGLE_EMPTY = "F1:F1";
   private static final String RANGE_BLOCK = "A1:C3";
   private static final String RANGE_BLOCK_EMPTY = "G2:H4";
-  private static final String RANGE_ROW = "2";
-  private static final String RANGE_COLUMN = "C";
-  //TODO: add invalid range options
+  private static final String RANGE_ROW = "2:2";
+  private static final String RANGE_COLUMN = "C:C";
   
   private CloudDocClient cloudDocClient;
   private CloudSheet cloudSheet;
@@ -90,5 +89,29 @@ public final class DriveCloudSheetTest {
     Assert.assertEquals(null, response);
   }
 
-  
+  @Test
+  public void testReadRangeRow() {
+    List<List<String>> response = cloudSheet.readRange(
+        String.format("%s!%s", SHEET_NAME, RANGE_ROW));
+
+    String[] array = {"A2", "B2", "C2", "D2", "E2"};
+    List<List<String>> expected = Arrays.asList(
+      Arrays.asList(array)
+    );
+
+    Assert.assertEquals(expected, response);
+  }
+
+  @Test
+  public void testReadRangeColumn() {
+    List<List<String>> response = cloudSheet.readRange(
+        String.format("%s!%s", SHEET_NAME, RANGE_COLUMN));
+
+    String[] array = {"C1", "C2", "C3", "C4", "C5"};
+    List<List<String>> expected = Arrays.asList(
+      Arrays.asList(array)
+    );
+
+    Assert.assertEquals(expected, response);
+  }
 }
