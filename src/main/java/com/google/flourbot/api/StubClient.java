@@ -11,6 +11,4 @@ public class StubClient implements CloudDocClient{
   public CloudSheet getCloudSheet(String documentId){
     return this.stubSheet;
   }
-
-
 }
