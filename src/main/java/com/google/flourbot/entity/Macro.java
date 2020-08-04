@@ -27,4 +27,23 @@ public final class Macro {
   public String getMacroName() {
     return macroName;
   }
+
+  @Override
+  public boolean equals(Object object) {
+    if (object == this) {
+      return true;
+    }
+
+    if (!(object instanceof Macro)) {
+      return false;
+    }
+
+    Macro macro = (Macro) object;
+
+    // Compare the data members and return accordingly
+    return macro.creatorId == creatorId &&
+        macro.macroName == macroName &&
+        macro.macroTrigger == macroTrigger &&
+        macro.macroAction == macroAction;
+  }
 }
