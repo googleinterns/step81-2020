@@ -6,6 +6,7 @@ import com.google.flourbot.execution.ChatResponse;
 import com.google.flourbot.entity.EntityModule;
 import com.google.flourbot.entity.Macro;
 import com.google.flourbot.entity.action.sheet.SheetReadSheetAction;
+import com.google.flourbot.entity.action.sheet.SheetEntryType;
 import com.google.flourbot.entity.trigger.CommandTrigger;
 import com.google.flourbot.api.CloudDocClient;
 
@@ -44,7 +45,10 @@ public final class MacroExecutionModuleImplementationTest {
     private static final String MESSAGE_WITHOUT_MACRO_NAME = "@MacroBot this is my message";
     private static final String EMPTY_MESSAGE_RESPONSE = "You must type a message when you message me. Please type \"@MacroBot /help\" for more instructions.";
     private static final String HELP_MESSAGE = "This is your help message";
-    private static final Macro DEFAULT_MACRO = new Macro("scaulfeild@google.com", MACRO_NAME, new CommandTrigger("Command Trigger"), new SheetReadSheetAction("SheetUrl", "SheetName")); 
+
+    // TODO: use global vars to initialize DEFAULT_MACRO 
+    SheetEntryType[] columnHeaders = {SheetEntryType.TIME, SheetEntryType.EMAIL, SheetEntryType.CONTENT};
+    private static final Macro DEFAULT_MACRO = new Macro("scaulfeild@google.com", "DailyBot", new CommandTrigger("Command Trigger"), new SheetReadSheetAction("SheetUrl", "SheetName")); 
 
     private static MacroExecutionModuleImplementation execution;
     private static EntityModule mockEntityModule;
@@ -76,6 +80,7 @@ public final class MacroExecutionModuleImplementationTest {
     // Get macro name from the message when the macro has not yet been used in the thread
     @Test
     public void getMacroNameFromMessage() {
+        emptyThreadMacroMap();
         String actual = execution.getMacroName(MESSAGE_WITH_MACRO_NAME, THREAD1);
         Assert.assertEquals(MACRO_NAME, actual);
     }
@@ -84,7 +89,6 @@ public final class MacroExecutionModuleImplementationTest {
     @Test
     public void getMacroNameFromThread() {
         addToThreadMacroMap(THREAD1, MACRO_NAME);
-
         String actual = execution.getMacroName(MESSAGE_WITHOUT_MACRO_NAME, THREAD1);
         Assert.assertEquals(MACRO_NAME, actual);
     }
@@ -105,9 +109,40 @@ public final class MacroExecutionModuleImplementationTest {
         Assert.assertEquals(EMPTY_MESSAGE_RESPONSE, actual);
     }
 
+    // Test using a macro for the first time when you are the creator. In this case, scaulfeild@google.com created DailyBot
+    @Test
+    public void useYourMacroInNewRoom() throws IOException, GeneralSecurityException, Exception {
+        
+        //when(mockEntityModule.getMacro("scaulfeild@google.com", "DailyBot")).thenReturn(Optional.of(DEFAULT_MACRO));
+    
+        ChatResponse chatResponse = execution.getReplyText("@MacroBot DailyBot please log my message", THREAD1, ROOM1, "scaulfeild@google.com", HELP_MESSAGE);
+        String actual = chatResponse.getReplyText();
+        Assert.assertEquals("successfully executed", actual);
+    }
+
+/*
+    // Test using a macro for the first time when you are not the creator and it hasn't been shared (should be denied access)
+    @Test
+    public void usingAPrivateMacro() throws IOException, GeneralSecurityException {
+        ChatResponse chatResponse = execution.getReplyText("@MacroBot CongraBot hi", "spaces/AAAAAAAAAAA/threads/BBBBBBBBBBB", "spaces/AAAAAAAAAAA", "scaulfeild@google.com", HELP_MESSAGE);
+        String actual = chatResponse.getReplyText();
+        String macroName = execution.getMacroName("@MacroBot CongraBot hi", "spaces/AAAAAAAAAAA/threads/BBBBBBBBBBB");
+        String expected = (new ChatResponse(String.format("You do not own/have access to %s.", macroName))).getReplyText();
+
+        Assert.assertEquals(expected, actual);
+    }*/
+
+    // Test using someone else's macro after it has been shared
+
+    // Test sending a message in thread where a macro has already been used
+
 
     private void addToThreadMacroMap(String thread, String macroName) {
         execution.getThreadMacroMap().put(thread, macroName);
+    }
+
+    private void emptyThreadMacroMap() {
+        execution.getThreadMacroMap().clear();
     }
 
     private void addToMacroToRoom(String room) {
