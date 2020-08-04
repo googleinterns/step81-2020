@@ -1,13 +1,16 @@
 package com.google.flourbot.datastorage;
 
-import com.google.cloud.firestore.QueryDocumentSnapshot;
+import java.util.Map;
 import java.util.Optional;
 
 public class StubDataStorage implements DataStorage{
-  private QueryDocumentSnapshot queryDocumentSnapshot;
+  private Map<String, Object> map;
 
-  @Override
-  public Optional<QueryDocumentSnapshot> getDocument(String userEmail, String macroName) {
-    return Optional.ofNullable(this.queryDocumentSnapshot);
+  public Optional<Map<String, Object>> getDocument(String userEmail, String macroName) {
+    return Optional.ofNullable(this.map);
+  }
+
+  public void setMap(Map<String, Object> map) {
+    this.map = map;
   }
 }
