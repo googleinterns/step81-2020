@@ -29,7 +29,7 @@ public class EntityModuleImplementation implements EntityModule {
   }
 
   public Optional<Macro> getMacro(String userEmail, String macroName) {
-    Optional<QueryDocumentSnapshot> optionalDocument =
+    Optional<Map<String, Object>> optionalDocument =
         datastorage.getDocument(userEmail, macroName);
 
     if (!optionalDocument.isPresent()) {
@@ -38,9 +38,7 @@ public class EntityModuleImplementation implements EntityModule {
     }
 
     // Retrieve value from optional if it's not empty
-    QueryDocumentSnapshot document = optionalDocument.get();
-
-    Map<String, Object> macroData = document.getData();
+    Map<String, Object> macroData = optionalDocument.get();
 
     Map<String, Object> triggerData = (Map<String, Object>) macroData.get("trigger");
     Map<String, Object> actionData = (Map<String, Object>) macroData.get("action");
