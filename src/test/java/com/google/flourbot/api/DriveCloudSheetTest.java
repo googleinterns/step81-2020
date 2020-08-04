@@ -29,6 +29,10 @@ public final class DriveCloudSheetTest {
   private static final String RANGE_BLOCK_EMPTY = "G2:H4";
   private static final String RANGE_ROW = "2:2";
   private static final String RANGE_COLUMN = "C:C";
+
+  private static final int ROW = 3;
+  private static final String COLUMN = "D";
+
   
   private CloudDocClient cloudDocClient;
   private CloudSheet cloudSheet;
@@ -112,6 +116,7 @@ public final class DriveCloudSheetTest {
     String[] array3 = {"C3"};
     String[] array4 = {"C4"};
     String[] array5 = {"C5"};
+
     List<List<String>> expected = Arrays.asList(
       Arrays.asList(array1),
       Arrays.asList(array2),
@@ -122,4 +127,42 @@ public final class DriveCloudSheetTest {
 
     Assert.assertEquals(expected, response);
   }
+
+  @Test
+  public void testReadRow() {
+    List<String> response = cloudSheet.readRow(ROW);
+    String[] array = {"A3", "B3", "C3", "D3", "E3"};
+    List<String> expected = Arrays.asList(array);
+    Assert.assertEquals(expected, response);
+  }
+
+  @Test
+  public void testReadColumn() {
+    List<String> response = cloudSheet.readColumn(COLUMN);
+    String[] array = {"D1", "D2", "D3", "D4", "D5"};
+    List<String> expected = Arrays.asList(array);
+    Assert.assertEquals(expected, response);
+  }
+
+  @Test
+  public void testReadSheet() {
+    List<List<String>> response = cloudSheet.readSheet(SHEET_NAME);
+    String[] array1 = {"A1", "B1", "C1", "D1", "E1"};
+    String[] array2 = {"A2", "B2", "C2", "D2", "E2"};
+    String[] array3 = {"A3", "B3", "C3", "D3", "E3"};
+    String[] array4 = {"A4", "B4", "C4", "D4", "E4"};
+    String[] array5 = {"A5", "B5", "C5", "D5", "E5"};
+
+    List<List<String>> expected = Arrays.asList(
+      Arrays.asList(array1),
+      Arrays.asList(array2),
+      Arrays.asList(array3),
+      Arrays.asList(array4),
+      Arrays.asList(array5)
+    );
+
+    Assert.assertEquals(expected, response);
+  }
+
+
 }
