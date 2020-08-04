@@ -35,13 +35,17 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
 
   private final EntityModule entityModule;
   private final CloudDocClient cloudDocClient;
-  private static HashMap<String, String> threadMacroMap = new HashMap<String, String>();
+  private static Map<String, String> threadMacroMap = new HashMap<String, String>();
   private static Map<String, Map<String, String>> roomToMacro = new HashMap<String, Map<String, String>>();
 
   public static MacroExecutionModuleImplementation initializeServer() {
     DataStorage dataStorage = new FirebaseDataStorage();
     EntityModule entityModule = new EntityModuleImplementation(dataStorage);
     CloudDocClient cloudDocClient = new DriveClient();
+    return initializeServer(entityModule, cloudDocClient);
+  }
+
+  public static MacroExecutionModuleImplementation initializeServer(EntityModule entityModule, CloudDocClient cloudDocClient) {
     return new MacroExecutionModuleImplementation(entityModule, cloudDocClient);
   }
 
@@ -122,13 +126,20 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
       roomToMacro.remove(roomId);
   }
 
+  // Used for testing
+  public Map<String, Map<String, String>> getRoomToMacro() {
+      return this.roomToMacro;
+  }
+  public Map<String, String> getThreadMacroMap() {
+      return this.threadMacroMap;
+  }
+
   private MacroExecutionModuleImplementation(EntityModule entityModule, CloudDocClient cloudDocClient) {
     this.entityModule = entityModule;
     this.cloudDocClient = cloudDocClient;
   }
 
   private ChatResponse execute(String userEmail, String macroCreatorEmail, String message, String threadId, String macroName) throws IOException, GeneralSecurityException {
-
     
     Optional<Macro> optionalMacro = entityModule.getMacro(userEmail, macroName);
     if (!optionalMacro.isPresent()) {
@@ -190,14 +201,13 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
             default:
               values.add("");
               break;
-
           }
         }
 
         // Append values to first free bottom row of sheet
         cloudSheet.appendRow(values);
         chatResponse = ChatResponse.createChatResponseWithList(values, actionType, documentUrl);
-        break;
+        break; 
 
       case SHEET_READ_ROW:
         int row = ((SheetReadRowAction) action).getRow();
