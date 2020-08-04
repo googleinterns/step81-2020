@@ -51,9 +51,9 @@ class EntityModuleImplementationTest {
             "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE/edit#gid=0", new SheetEntryType[0])
     );
 
-    Macro actualMacro = entityModuleImplementation.getMacro("", "").get();
+    Macro actualMacro = entityModuleImplementation.getMacro("tonyshen@google.com", "Daily").get();
 
-    assertEquals(expectedMacro, actualMacro);
+    assertEquals(actualMacro, expectedMacro);
   }
 
   @org.junit.jupiter.api.AfterEach
