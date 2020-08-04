@@ -33,6 +33,8 @@ public final class DriveCloudSheetTest {
   private static final int ROW = 3;
   private static final String COLUMN = "D";
 
+  private static final int NUM_SMALL = 5;
+  private static final int NUM_BIG = 88;
   
   private CloudDocClient cloudDocClient;
   private CloudSheet cloudSheet;
@@ -164,5 +166,17 @@ public final class DriveCloudSheetTest {
     Assert.assertEquals(expected, response);
   }
 
+  @Test
+  public void testToAlphabeticSmall() {
+    String response = DriveCloudSheet.toAlphabetic(NUM_SMALL);
+    String expected = "F";
+    Assert.assertEquals(expected, response);
+  }
 
+  @Test
+  public void testToAlphabeticBig() {
+    String response = DriveCloudSheet.toAlphabetic(NUM_BIG);
+    String expected = "CK";
+    Assert.assertEquals(expected, response);
+  }
 }
