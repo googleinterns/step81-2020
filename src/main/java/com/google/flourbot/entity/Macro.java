@@ -3,6 +3,8 @@ package com.google.flourbot.entity;
 import com.google.flourbot.entity.action.Action;
 import com.google.flourbot.entity.trigger.Trigger;
 
+import java.util.Objects;
+
 public final class Macro {
   private final String creatorId;
   private final String macroName;
@@ -29,21 +31,28 @@ public final class Macro {
   }
 
   @Override
-  public boolean equals(Object object) {
-    if (object == this) {
-      return true;
-    }
+  public String toString() {
+    return "Macro{" +
+        "creatorId='" + creatorId + '\'' +
+        ", macroName='" + macroName + '\'' +
+        ", macroTrigger=" + macroTrigger +
+        ", macroAction=" + macroAction +
+        '}';
+  }
 
-    if (!(object instanceof Macro)) {
-      return false;
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Macro macro = (Macro) o;
+    return creatorId.equals(macro.creatorId) &&
+        macroName.equals(macro.macroName) &&
+        macroTrigger.equals(macro.macroTrigger) &&
+        macroAction.equals(macro.macroAction);
+  }
 
-    Macro macro = (Macro) object;
-
-    // Compare the data members and return accordingly
-    return macro.creatorId == creatorId &&
-        macro.macroName == macroName &&
-        macro.macroTrigger == macroTrigger &&
-        macro.macroAction == macroAction;
+  @Override
+  public int hashCode() {
+    return Objects.hash(creatorId, macroName, macroTrigger, macroAction);
   }
 }
