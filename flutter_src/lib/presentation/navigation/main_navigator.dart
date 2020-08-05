@@ -35,11 +35,11 @@ class _MainNavigatorState extends State<MainNavigator> {
             tabs: [
               Tab(
                 icon: Icon(Icons.add),
-                text: 'New Chatbots',
+                text: 'New Bots',
               ),
               Tab(
                 icon: Icon(Icons.view_list),
-                text: 'Your Chatbots',
+                text: 'Your Bots',
               ),
               Tab(
                 icon: Icon(Icons.question_answer),
