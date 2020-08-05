@@ -27,7 +27,7 @@ class LoginPageBody extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline4,
               ),
               Text(
-                "Your Hangout Chatbot Maker",
+                "Automate the Boring Stuff",
                 style: Theme.of(context).textTheme.subtitle1,
               ),
               Image(
