@@ -5,10 +5,12 @@ import com.google.flourbot.execution.MacroExecutionModuleImplementation;
 import com.google.flourbot.execution.ChatResponse;
 import com.google.flourbot.entity.EntityModule;
 import com.google.flourbot.entity.Macro;
-import com.google.flourbot.entity.action.sheet.SheetReadSheetAction;
+import com.google.flourbot.entity.action.sheet.SheetAppendRowAction;
 import com.google.flourbot.entity.action.sheet.SheetEntryType;
 import com.google.flourbot.entity.trigger.CommandTrigger;
 import com.google.flourbot.api.CloudDocClient;
+import com.google.flourbot.api.CloudSheet;
+import com.google.flourbot.api.DriveCloudSheet;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +26,7 @@ import java.util.List;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import static org.mockito.BDDMockito.doNothing;
 import static org.mockito.BDDMockito.when;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -32,6 +35,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -45,21 +49,29 @@ public final class MacroExecutionModuleImplementationTest {
     private static final String MESSAGE_WITHOUT_MACRO_NAME = "@MacroBot this is my message";
     private static final String EMPTY_MESSAGE_RESPONSE = "You must type a message when you message me. Please type \"@MacroBot /help\" for more instructions.";
     private static final String HELP_MESSAGE = "This is your help message";
+    private static final String SHEET_URL = "sheetURL";
+    private static final String SHEET_ID = "sheetId";
 
     // TODO: use global vars to initialize DEFAULT_MACRO 
-    SheetEntryType[] columnHeaders = {SheetEntryType.TIME, SheetEntryType.EMAIL, SheetEntryType.CONTENT};
-    private static final Macro DEFAULT_MACRO = new Macro("scaulfeild@google.com", "DailyBot", new CommandTrigger("Command Trigger"), new SheetReadSheetAction("SheetUrl", "SheetName")); 
+    private static SheetEntryType[] columnHeaders = {SheetEntryType.TIME, SheetEntryType.EMAIL, SheetEntryType.CONTENT};
+    private static final Macro DEFAULT_MACRO = new Macro(USER_EMAIL, MACRO_NAME, new CommandTrigger("Command Trigger"), new SheetAppendRowAction(SHEET_URL, columnHeaders)); 
 
     private static MacroExecutionModuleImplementation execution;
     private static EntityModule mockEntityModule;
     private static CloudDocClient mockCloudDocClient;
+    private static CloudSheet mockCloudSheet;
+    private static DriveCloudSheet mockDriveCloudSheet;
     private static MacroExecutionModuleImplementation mockMacroExecutionModuleImplementation;
+    private static Action mockAction;
 
     @Before
     public void setUpForAllTests() {
         mockEntityModule = Mockito.mock(EntityModule.class);
         mockMacroExecutionModuleImplementation = Mockito.mock(MacroExecutionModuleImplementation.class);
         mockCloudDocClient = Mockito.mock(CloudDocClient.class);
+        mockCloudSheet = Mockito.mock(CloudSheet.class);
+        mockDriveCloudSheet = Mockito.mock(DriveCloudSheet.class);
+        mockAction = Mockito.mock(Action.class);    
         execution  = MacroExecutionModuleImplementation.initializeServer(mockEntityModule, mockCloudDocClient);
     }
     
@@ -109,28 +121,33 @@ public final class MacroExecutionModuleImplementationTest {
         Assert.assertEquals(EMPTY_MESSAGE_RESPONSE, actual);
     }
 
-    // Test using a macro for the first time when you are the creator. In this case, scaulfeild@google.com created DailyBot
+    // Test using a macro for the first time when you are the creator. Testing with SheetAppendRow as action type. 
     @Test
     public void useYourMacroInNewRoom() throws IOException, GeneralSecurityException, Exception {
+        List<String> values = new ArrayList<String>();
+        values.add(getDate("dd-MM-yyyy HH:mm:ss"));
+        values.add(USER_EMAIL);
+        //TODO: change this message to use a var instead of hardcoded
+        values.add("please log my message");
         
-        //when(mockEntityModule.getMacro("scaulfeild@google.com", "DailyBot")).thenReturn(Optional.of(DEFAULT_MACRO));
-    
-        ChatResponse chatResponse = execution.getReplyText("@MacroBot DailyBot please log my message", THREAD1, ROOM1, "scaulfeild@google.com", HELP_MESSAGE);
+        when(mockEntityModule.getMacro(USER_EMAIL, MACRO_NAME)).thenReturn(Optional.of(DEFAULT_MACRO));
+        when(mockAction.getDocumentId()).thenReturn(SHEET_ID);
+        when(mockAction.getDocumentUrl()).thenReturn(SHEET_URL);
+
+        when(mockCloudDocClient.getCloudSheet(SHEET_ID)).thenReturn(mockCloudSheet);
+        //when(mockDriveCloudSheet.appendRow(ArgumentMatchers.anyList())).thenReturn();
+        doNothing().when(mockCloudSheet).appendRow(values);
+
+        ChatResponse expectedChatResponse = createDefaultChatResponse();
+        String expectedText = expectedChatResponse.getReplyText();
+
+        ChatResponse chatResponse = execution.getReplyText(MESSAGE_WITH_MACRO_NAME, THREAD1, ROOM1, USER_EMAIL, HELP_MESSAGE);
         String actual = chatResponse.getReplyText();
-        Assert.assertEquals("successfully executed", actual);
+        Assert.assertEquals(expectedText, actual);
     }
 
-/*
-    // Test using a macro for the first time when you are not the creator and it hasn't been shared (should be denied access)
-    @Test
-    public void usingAPrivateMacro() throws IOException, GeneralSecurityException {
-        ChatResponse chatResponse = execution.getReplyText("@MacroBot CongraBot hi", "spaces/AAAAAAAAAAA/threads/BBBBBBBBBBB", "spaces/AAAAAAAAAAA", "scaulfeild@google.com", HELP_MESSAGE);
-        String actual = chatResponse.getReplyText();
-        String macroName = execution.getMacroName("@MacroBot CongraBot hi", "spaces/AAAAAAAAAAA/threads/BBBBBBBBBBB");
-        String expected = (new ChatResponse(String.format("You do not own/have access to %s.", macroName))).getReplyText();
 
-        Assert.assertEquals(expected, actual);
-    }*/
+    // Test using a macro for the first time when you are not the creator and it hasn't been shared (should be denied access)
 
     // Test using someone else's macro after it has been shared
 
@@ -149,6 +166,22 @@ public final class MacroExecutionModuleImplementationTest {
         Map<String, String> macroToCreator = new HashMap<String, String> ();
         macroToCreator.put(DEFAULT_MACRO.getMacroName(), DEFAULT_MACRO.getCreatorId());
         execution.getRoomToMacro().put(room, macroToCreator);
+    }
+
+    private String getDate(String pattern) {
+        // Create timestamp based on pattern provided
+        LocalDateTime myDateObj = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(pattern);
+        return myDateObj.format(myFormatObj);
+    }
+
+    private ChatResponse createDefaultChatResponse() {
+        List<String> values = new ArrayList<String>();
+        values.add(getDate("dd-MM-yyyy HH:mm:ss"));
+        values.add(USER_EMAIL);
+        //TODO: change this message to use a var instead of hardcoded
+        values.add("please log my message");
+        return ChatResponse.createChatResponseWithList(values, DEFAULT_MACRO.getAction().getActionType(), DEFAULT_MACRO.getAction().getDocumentUrl());
     }
 
 }

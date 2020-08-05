@@ -159,22 +159,7 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
       case SHEET_APPEND_ROW:
         // Read instructions on what to write
 
-        // If the message contains the macroName, remove "@Macrobot macroName" from message 
-        if (message.contains(macroName)) {
-            String[] messages = message.split(" ", 3);
-            if (messages.length != 3) {
-                throw new IllegalArgumentException();
-            }
-            message = messages[2];
-        }
-        // Otherwise if the message uses the threadId instead of explicitly stating the macroName, remove only "@Macrobot"
-        else {
-            String[] messages = message.split(" ", 2);
-            if (messages.length != 2) {
-                throw new IllegalArgumentException();
-            }
-            message = messages[1];
-        }
+        message = getMessageContent(message, macroName);
 
         SheetEntryType[] columns = ((SheetAppendRowAction) action).getColumnValue();
         // Prepare values to write into the sheet
@@ -232,8 +217,26 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         throw new IllegalStateException(
             "Action type named: " + actionType.toString() + "is not implemented yet!");
     }
-
     return chatResponse;
+  }
+
+  public static String getMessageContent(String message, String macroName) {
+      // If the message contains the macroName, remove "@Macrobot macroName" from message 
+        if (message.contains(macroName)) {
+            String[] messages = message.split(" ", 3);
+            if (messages.length != 3) {
+                throw new IllegalArgumentException();
+            }
+            return messages[2];
+        }
+        // Otherwise if the message uses the threadId instead of explicitly stating the macroName, remove only "@Macrobot"
+        else {
+            String[] messages = message.split(" ", 2);
+            if (messages.length != 2) {
+                throw new IllegalArgumentException();
+            }
+            return messages[1];
+        }
   }
 
   private String getDate(String pattern) {
