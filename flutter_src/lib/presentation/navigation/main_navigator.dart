@@ -35,11 +35,11 @@ class _MainNavigatorState extends State<MainNavigator> {
             tabs: [
               Tab(
                 icon: Icon(Icons.add),
-                text: 'New Macro',
+                text: 'New Bots',
               ),
               Tab(
                 icon: Icon(Icons.view_list),
-                text: 'Macro Instances',
+                text: 'Your Bots',
               ),
               Tab(
                 icon: Icon(Icons.question_answer),

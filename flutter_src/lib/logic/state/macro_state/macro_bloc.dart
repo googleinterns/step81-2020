@@ -227,8 +227,6 @@ class WizardFormBloc extends FormBloc<String, String> {
               case SheetAction.BATCH_ACTION:
                 action = new SheetBatchActionModel(
                   sheetUrl: actionSheetUrl.value,
-                  row: 0,
-                  column: 0,
                   batchType: batchActionType.value,
                   randomizeOrder: randomOrder.value,
                 );

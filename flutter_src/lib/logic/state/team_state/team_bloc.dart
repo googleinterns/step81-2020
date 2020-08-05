@@ -4,6 +4,7 @@ import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:macrobaseapp/logic/api/firestore_db.dart';
 import 'package:macrobaseapp/logic/state/bloc_validator.dart';
 import 'package:macrobaseapp/model/adapters/team_model.dart';
+import 'package:macrobaseapp/model/entities/macro.dart';
 import 'package:macrobaseapp/model/entities/user.dart';
 
 class TeamFormBloc extends FormBloc<String, String> {
@@ -44,7 +45,7 @@ class TeamFormBloc extends FormBloc<String, String> {
         iconUrl: iconUrl.value.trim(),
         description: description.value.trim(),
         creatorId: this.user.email,
-        macros: []);
+        macros: <Macro>[]);
 
     db.uploadObject('teams', team.toJson());
 

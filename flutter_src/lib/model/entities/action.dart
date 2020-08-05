@@ -48,30 +48,25 @@ class BatchAction extends SheetAction {
   static const String READ_TYPE = "Read";
   static const String DELETE_TYPE = "Delete";
 
-  int row = null;
-  int column = null;
-
   String batchType;
   bool randomizeOrder = false;
 
   BatchAction(
     sheetUrl,
-    this.row,
-    this.column,
     this.batchType,
     this.randomizeOrder,
   ) : super(sheetUrl: sheetUrl, sheetAction: SheetAction.BATCH_ACTION);
 
   @override
-  List<Object> get props => super.props..addAll([row, column, randomizeOrder]);
+  List<Object> get props => super.props..addAll([randomizeOrder]);
 }
 
 class AppendAction extends SheetAction {
+  static const String VALUE_EMPTY = "EMPTY";
+  static const String VALUE_TIME = "TIME";
+  static const String VALUE_EMAIL = "EMAIL";
+  static const String VALUE_CONTENT = "CONTENT";
   static const List<String> VALUE_LIST = [VALUE_EMPTY, VALUE_TIME, VALUE_EMAIL, VALUE_CONTENT];
-  static const VALUE_EMPTY = "EMPTY";
-  static const VALUE_TIME = "TIME";
-  static const VALUE_EMAIL = "EMAIL";
-  static const VALUE_CONTENT = "CONTENT";
 
   final List<String> columnValue;
 
