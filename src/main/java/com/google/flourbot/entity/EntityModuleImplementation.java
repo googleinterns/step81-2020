@@ -10,6 +10,7 @@ import com.google.flourbot.entity.action.sheet.SheetEntryType;
 import com.google.flourbot.entity.trigger.CommandTrigger;
 import com.google.flourbot.entity.trigger.Trigger;
 
+import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
@@ -55,80 +56,86 @@ public class EntityModuleImplementation implements EntityModule {
   }
 
   private Optional<Trigger> getTrigger(Map<String, Object> triggerData) {
+    try {
+      String triggerType = (String) triggerData.get("type");
 
-    String triggerType = (String) triggerData.get("type");
+      switch (triggerType) {
+        case ("Command Trigger"):
+          String command = (String) triggerData.get("command");
+          Trigger trigger = new CommandTrigger(command);
 
-    switch (triggerType) {
-      case ("Command Trigger"):
-        String command = (String) triggerData.get("command");
-        Trigger trigger = new CommandTrigger(command);
+          return Optional.of(trigger);
 
-        return Optional.of(trigger);
-
-      default:
-        return Optional.empty();
+        default:
+          return Optional.empty();
+        }
+    } catch (NullPointerException e) {
+      return Optional.empty();
     }
   }
 
   private Optional<Action> getAction(Map<String, Object> actionData) {
+    try {
+      String actionType = (String) actionData.get("type");
 
-    String actionType = (String) actionData.get("type");
-
-    switch (actionType) {
-      case ("Sheet Action"):
-        ArrayList<String> columnStringList = (ArrayList<String>) actionData.get("columnValue");
-        // Converts into ENUM type
-        ArrayList<SheetEntryType> columnTypeList = new ArrayList<>();
-        for (String type : columnStringList) {
+      switch (actionType) {
+        case ("Sheet Action"):
+          ArrayList<String> columnStringList = (ArrayList<String>) actionData.get("columnValue");
+          // Converts into ENUM type
+          ArrayList<SheetEntryType> columnTypeList = new ArrayList<>();
+          for (String type : columnStringList) {
             columnTypeList.add(SheetEntryType.valueOf(type));
-        }
-        SheetEntryType[] columnValue = columnTypeList.stream().toArray(SheetEntryType[]::new);
+          }
+          SheetEntryType[] columnValue = columnTypeList.stream().toArray(SheetEntryType[]::new);
 
-        String sheetAction = (String) actionData.get("sheetAction");
-        String sheetUrl = (String) actionData.get("sheetUrl");
+          String sheetAction = (String) actionData.get("sheetAction");
+          String sheetUrl = (String) actionData.get("sheetUrl");
 
-        Action action = null;
+          Action action = null;
 
-        switch(sheetAction) {
-          case ("Sheet Append Action"):
-            action = new SheetAppendRowAction(sheetUrl, columnValue);
-            break;
- 
-          case ("Read Row Action"):
-            Object row = actionData.get("row");
-            if (row == null) {
-              throw new IllegalStateException("row not found in Firestore action");
-            }
-            action = new SheetReadRowAction(sheetUrl, (int) row);
-            break;
+          switch(sheetAction) {
+            case ("Sheet Append Action"):
+              action = new SheetAppendRowAction(sheetUrl, columnValue);
+              break;
 
-          case ("Read Column Action"):
-            // TODO: also handle column as an integer, or just completely remove that logic
-            Object column = actionData.get("column");
-            if (column == null) {
-              throw new IllegalStateException("column not found in Firestore action");
-            }
-            action = new SheetReadColumnAction(sheetUrl, (String) column);
-            break;
+            case ("Read Row Action"):
+              Object row = actionData.get("row");
+              if (row == null) {
+                throw new IllegalStateException("row not found in Firestore action");
+              }
+              action = new SheetReadRowAction(sheetUrl, (int) row);
+              break;
 
-          case ("Read Sheet Action"):
-            Object sheetName = actionData.get("sheetName");
-            if (sheetName == null) {
-              throw new IllegalStateException("sheetName not found in Firestore action");
-            }
-            action = new SheetReadSheetAction(sheetUrl, (String) sheetName);
-            break;
+            case ("Read Column Action"):
+              // TODO: also handle column as an integer, or just completely remove that logic
+              Object column = actionData.get("column");
+              if (column == null) {
+                throw new IllegalStateException("column not found in Firestore action");
+              }
+              action = new SheetReadColumnAction(sheetUrl, (String) column);
+              break;
 
-          case ("Batch Action"):
-            break;
+            case ("Read Sheet Action"):
+              Object sheetName = actionData.get("sheetName");
+              if (sheetName == null) {
+                throw new IllegalStateException("sheetName not found in Firestore action");
+              }
+              action = new SheetReadSheetAction(sheetUrl, (String) sheetName);
+              break;
 
-          default:
-            throw new IllegalStateException("Action type not recognized");
-        }
+            case ("Batch Action"):
+              break;
 
-        return Optional.of(action);
-      default:
-        return Optional.empty();
+            default:
+              throw new IllegalStateException("Action type not recognized");
+          }
+
+          return Optional.of(action);
+        default:
+          return Optional.empty();
+      }
+    } catch (NullPointerException e) {
+      return Optional.empty();
     }
   }
 
