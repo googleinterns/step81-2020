@@ -75,6 +75,7 @@ public class EntityModuleImplementation implements EntityModule {
   }
 
   private Optional<Action> getAction(Map<String, Object> actionData) {
+    
     try {
       String actionType = (String) actionData.get("type");
 

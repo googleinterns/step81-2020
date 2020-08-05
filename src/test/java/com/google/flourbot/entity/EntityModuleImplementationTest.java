@@ -65,7 +65,6 @@ class EntityModuleImplementationTest {
     assertTrue(!optionalMacro.isPresent());
   }
 
-  // Test scenario where Action is null.
   @Test
   void getMacroEmptyAction() throws IOException {
     String mockJson = loadTestJson("mock_macro_no_action.json");
@@ -77,22 +76,11 @@ class EntityModuleImplementationTest {
     assertTrue(!optionalMacro.isPresent());
   }
 
-  // Test  scenario where Trigger received is null.
   @Test
   void getMacroEmptyTrigger() throws IOException {
     String mockJson = loadTestJson("mock_macro_no_trigger.json");
     Map<String, Object> mockMap =
         new ObjectMapper().readValue(mockJson, Map.class);
-    dataStorage.setMap(mockMap);
-
-    Optional<Macro> optionalMacro = entityModuleImplementation.getMacro("tonyshen@google.com", "Daily");
-    assertTrue(!optionalMacro.isPresent());
-  }
-
-  @Test
-  void getMacroNonExistentType() throws IOException {
-    String mockJson = loadTestJson("mock_macro_no_trigger.json");
-    Map<String, Object> mockMap = new ObjectMapper().readValue(mockJson, Map.class);
     dataStorage.setMap(mockMap);
 
     Optional<Macro> optionalMacro = entityModuleImplementation.getMacro("tonyshen@google.com", "Daily");
