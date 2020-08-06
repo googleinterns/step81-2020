@@ -54,10 +54,11 @@ public class ChatResponse {
             return false; 
       }
 
-      ChatResponse chatResponse = (ChatResponse) object;  
+      ChatResponse chatResponse = (ChatResponse) object;
+
       return (this.getReplyText().equals(chatResponse.getReplyText())) && (this.getActionType().equals(chatResponse.getActionType())) && (this.getDocumentUrl().equals(chatResponse.getDocumentUrl()));
   }
-
+  
   private static String listToString (List<String> values, ActionType actionType) {
     // Retrieves appropriate HTML string to display values in card response
     String replyText = "";
