@@ -66,14 +66,12 @@ public final class MacroExecutionModuleImplementationTest {
     private static EntityModule mockEntityModule;
     private static CloudDocClient mockCloudDocClient;
     private static CloudSheet mockCloudSheet;
-    private static Action mockAction;
 
     @BeforeClass
     public static void setUpOnce() {
         mockEntityModule = Mockito.mock(EntityModule.class);
         mockCloudDocClient = Mockito.mock(CloudDocClient.class);
-        mockCloudSheet = Mockito.mock(CloudSheet.class);
-        mockAction = Mockito.mock(Action.class);    
+        mockCloudSheet = Mockito.mock(CloudSheet.class);   
         execution  = MacroExecutionModuleImplementation.initializeServer(mockEntityModule, mockCloudDocClient);
     }
 
@@ -231,9 +229,6 @@ public final class MacroExecutionModuleImplementationTest {
 
     private void setUpMocks() throws IOException, GeneralSecurityException {
         when(mockEntityModule.getMacro(USER_EMAIL1, MACRO_NAME)).thenReturn(Optional.of(DEFAULT_MACRO));
-        when(mockAction.getDocumentId()).thenReturn(SHEET_ID);
-        when(mockAction.getDocumentUrl()).thenReturn(SHEET_URL);
-
         when(mockCloudDocClient.getCloudSheet(SHEET_ID)).thenReturn(mockCloudSheet);
         doNothing().when(mockCloudSheet).appendRow(ArgumentMatchers.anyList());
     }
