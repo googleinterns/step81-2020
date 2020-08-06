@@ -42,6 +42,7 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public final class MacroExecutionModuleImplementationTest {
     private static final String MACRO_NAME = "TestBot";
+    private static final String BOT_NAME = "@MacroBot";
     private static final String ROOM1 = "spaces/AAAAAAAAAAA";
     private static final String THREAD1 = "spaces/AAAAAAAAAAA/threads/BBBBBBBBBBB";
     private static final String USER_EMAIL1 = "testemail1@google.com";
@@ -50,7 +51,8 @@ public final class MacroExecutionModuleImplementationTest {
     private static final String MESSAGE_WITHOUT_MACRO_NAME = "@MacroBot this is my message";
     private static final String MESSAGE_CONTENT_ONLY = "this is my message";
     private static final String EMPTY_MESSAGE_RESPONSE = "You must type a message when you message me. Please type \"@MacroBot /help\" for more instructions.";
-    private static final String HELP_MESSAGE = "This is your help message";
+    private static final String HELP_MESSAGE_REPLY = "This is your help message";
+    private static final String HELP_MESSAGE = "@MacroBot /help";
     private static final String NO_ACCESS_MESSAGE = String.format("You do not own/have access to %s.", MACRO_NAME);
     private static final String SHARE_MESSAGE_REPLY = String.format("The %s macro belonging to %s has been shared to this room. All users in this room can use this macro.", MACRO_NAME, USER_EMAIL1);
     private static final String SHARE_MESSAGE = String.format("@MacroBot /share %s", MACRO_NAME);
@@ -110,15 +112,15 @@ public final class MacroExecutionModuleImplementationTest {
     // Test the help message.
     @Test
     public void testHelpMessage() throws IOException, GeneralSecurityException {
-        ChatResponse chatResponse = execution.getReplyText("@MacroBot /help", THREAD1, ROOM1, USER_EMAIL1, HELP_MESSAGE);
+        ChatResponse chatResponse = execution.getReplyText(HELP_MESSAGE, THREAD1, ROOM1, USER_EMAIL1, HELP_MESSAGE_REPLY);
         String actual = chatResponse.getReplyText();
-        Assert.assertEquals(HELP_MESSAGE, actual);
+        Assert.assertEquals(HELP_MESSAGE_REPLY, actual);
     }
 
     // Test an empty message.
     @Test
     public void testEmptyMessage() throws IOException, GeneralSecurityException {
-        ChatResponse chatResponse = execution.getReplyText("@MacroBot", THREAD1, ROOM1, USER_EMAIL1, HELP_MESSAGE);
+        ChatResponse chatResponse = execution.getReplyText(BOT_NAME, THREAD1, ROOM1, USER_EMAIL1, HELP_MESSAGE);
         String actual = chatResponse.getReplyText();
         Assert.assertEquals(EMPTY_MESSAGE_RESPONSE, actual);
     }
