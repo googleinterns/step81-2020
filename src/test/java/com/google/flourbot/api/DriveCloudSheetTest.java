@@ -73,13 +73,14 @@ public final class DriveCloudSheetTest {
     try {
       when(valuesMock.get(SPREADSHEET_ID, String.format("%s!%s", SHEET_NAME, RANGE_SINGLE))).thenReturn(getMock);
       when(getMock.execute()).thenReturn(valueRangeMock);
-    } catch (IOException e) {}
+    } catch (IOException e) {
+      Assert.fail(e.toString());
+    }
 
     when(valueRangeMock.getValues()).thenReturn(values);
 
     List<List<String>> response = cloudSheet.readRange(
         String.format("%s!%s", SHEET_NAME, RANGE_SINGLE));
-
 
     List<List<String>> expected = Arrays.asList(
       Arrays.asList(array)
@@ -120,7 +121,9 @@ public final class DriveCloudSheetTest {
     try {
       when(valuesMock.get(SPREADSHEET_ID, String.format("%s!%s", SHEET_NAME, RANGE_BLOCK))).thenReturn(getMock);
       when(getMock.execute()).thenReturn(valueRangeMock);
-    } catch (IOException e) {}
+    } catch (IOException e) {
+      Assert.fail(e.toString());
+    }
 
     when(valueRangeMock.getValues()).thenReturn(values);
 
@@ -146,7 +149,9 @@ public final class DriveCloudSheetTest {
     try {
       when(valuesMock.get(SPREADSHEET_ID, String.format("%s!%s", SHEET_NAME, RANGE_BLOCK_EMPTY))).thenReturn(getMock);
       when(getMock.execute()).thenReturn(valueRangeMock);
-    } catch (IOException e) {}
+    } catch (IOException e) {
+      Assert.fail(e.toString());
+    }
 
     when(valueRangeMock.getValues()).thenReturn(null);
 
@@ -167,7 +172,9 @@ public final class DriveCloudSheetTest {
     try {
       when(valuesMock.get(SPREADSHEET_ID, String.format("%s!%s", SHEET_NAME, RANGE_ROW))).thenReturn(getMock);
       when(getMock.execute()).thenReturn(valueRangeMock);
-    } catch (IOException e) {}
+    } catch (IOException e) {
+      Assert.fail(e.toString());
+    }
 
     when(valueRangeMock.getValues()).thenReturn(values);
 
@@ -202,7 +209,9 @@ public final class DriveCloudSheetTest {
     try {
       when(valuesMock.get(SPREADSHEET_ID, String.format("%s!%s", SHEET_NAME, RANGE_COLUMN))).thenReturn(getMock);
       when(getMock.execute()).thenReturn(valueRangeMock);
-    } catch (IOException e) {}
+    } catch (IOException e) {
+      Assert.fail(e.toString());
+    }
 
     when(valueRangeMock.getValues()).thenReturn(values);
 
@@ -232,7 +241,9 @@ public final class DriveCloudSheetTest {
     try {
       when(valuesMock.get(SPREADSHEET_ID, String.format("%s!%s:%s", SHEET_NAME, ROW, ROW))).thenReturn(getMock);
       when(getMock.execute()).thenReturn(valueRangeMock);
-    } catch (IOException e) {}
+    } catch (IOException e) {
+      Assert.fail(e.toString());
+    }
 
     when(valueRangeMock.getValues()).thenReturn(values);
 
@@ -263,7 +274,9 @@ public final class DriveCloudSheetTest {
     try {
       when(valuesMock.get(SPREADSHEET_ID, String.format("%s!%s:%s", SHEET_NAME, COLUMN, COLUMN))).thenReturn(getMock);
       when(getMock.execute()).thenReturn(valueRangeMock);
-    } catch (IOException e) {}
+    } catch (IOException e) {
+      Assert.fail(e.toString());
+    }
 
     when(valueRangeMock.getValues()).thenReturn(values);
 
@@ -294,7 +307,9 @@ public final class DriveCloudSheetTest {
     try {
       when(valuesMock.get(SPREADSHEET_ID, String.format("%s", SHEET_NAME))).thenReturn(getMock);
       when(getMock.execute()).thenReturn(valueRangeMock);
-    } catch (IOException e) {}
+    } catch (IOException e) {
+      Assert.fail(e.toString());
+    }
 
     when(valueRangeMock.getValues()).thenReturn(values);
 
