@@ -2,27 +2,47 @@
 Platform for non-technical users to customize automation bots with G-Suite APIs
 
 ## Getting Started
-[1] Enable Flutter Web Support
+[1] Install Flutter and Create a Firebase Project with Web Support\
+[2] Set up Firebase User Authentication and Cloud Firestore\
+[3] Enable Flutter Web Support
 ```
 flutter channel beta
 flutter upgrade
 flutter config --enable-web
 ```
-[2] Install all dependencies
+[4] Install all Dependencies
 ```
 flutter pub get
 ```
-[3] Run the Dev Server
+[5] Run the Local Development Server
 ```
 flutter run -d web-server --web-port=5000
 ```
-[4] (Optional for Android Login) Download [googler-service.json](https://firebase.corp.google.com/project/stepladder-2020/settings/general/android:com.example.macro_base_app) and place the file in macro-base/android/app folder.
+[6] (Optional for Android Login) Download [googler-service.json](https://firebase.corp.google.com/project/stepladder-2020/settings/general/android:com.example.macro_base_app) and place the file in macro-base/android/app folder.
 
 ## Development
 Run all the unit tests
 ```
 flutter test test/
 ```
+## Depolyment
+[1] Set up Firebase CLI [Firebase Hosting guide](https://firebase.google.com/docs/hosting)
+*Make sure you have Firebase project set up already*
+```
+curl -sL https://firebase.tools | bash
+firebase login
+```
+[2] Build Flutter Web App
+```
+flutter web build
+```
+[3] Deploy using Firebase
+```
+firebase deploy --only hosting
+```
+[4] Whitelist Hosting URL in Web Client GCP OAuth 2.0 Client IDs\
+[5] You're done!
+
 ## Project Structure 
 #### Lib/
 * #### Presentation/
