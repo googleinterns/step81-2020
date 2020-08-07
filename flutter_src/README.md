@@ -44,15 +44,15 @@ firebase deploy --only hosting
 [5] You're done!
 
 ## Project Structure 
-App
-├── Lib/
-│   ├── Presentation/
-│   │   ├── Widgets: Contains reuseable widgets used by pages
-│   │   └── Pages: Contains UI code for each page
-│   ├── Logic/
-│   │   ├── Blocs: Contains the state of the current app
-│   │   └── Usecases: Contains the logic
-│   └── Model/
-│       ├── Entities: Contains the pure defintion of model classes
-│       └── Adapter: Code that converts external data to entity classes
-└── Test: Each file tests the production code. 
+App\
+├── Lib/\
+│   ├── Presentation/\
+│   │   ├── Widgets: Contains reuseable widgets used by pages\
+│   │   └── Pages: Contains UI code for each page\
+│   ├── Logic/\
+│   │   ├── Blocs: Contains the state of the current app\
+│   │   └── Usecases: Contains the logic\
+│   └── Model/\
+│       ├── Entities: Contains the pure defintion of model classes\
+│       └── Adapter: Code that converts external data to entity classes\
+└── Test: Each file tests the production code.\
