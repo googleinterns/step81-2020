@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
-
 public class EntityModuleImplementation implements EntityModule {
 
   private final DataStorage datastorage;
@@ -81,6 +80,7 @@ public class EntityModuleImplementation implements EntityModule {
       switch (actionType) {
         case ("Sheet Action"):
           ArrayList<String> columnStringList = (ArrayList<String>) actionData.get("columnValue");
+          
           // Converts into ENUM type
           ArrayList<SheetEntryType> columnTypeList = new ArrayList<>();
           for (String type : columnStringList) {
@@ -107,7 +107,6 @@ public class EntityModuleImplementation implements EntityModule {
               break;
 
             case ("Read Column Action"):
-              // TODO: also handle column as an integer, or just completely remove that logic
               Object column = actionData.get("column");
               if (column == null) {
                 throw new IllegalStateException("column not found in Firestore action");
@@ -138,5 +137,4 @@ public class EntityModuleImplementation implements EntityModule {
       return Optional.empty();
     }
   }
-
 }

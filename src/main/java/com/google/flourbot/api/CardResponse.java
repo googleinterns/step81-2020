@@ -1,7 +1,3 @@
-/*
- * Creates card response for bot
- */
-
 package com.google.flourbot.api;
 
 import com.google.flourbot.entity.action.ActionType;
@@ -34,7 +30,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-
+/**
+ * Creates card response for bot
+ */
 public class CardResponse {
 
   private static final String INTERACTIVE_BUTTON_KEY = "originalMessage";
