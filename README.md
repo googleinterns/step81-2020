@@ -7,6 +7,14 @@ Add example from: https://github.com/gsuitedevs/hangouts-chat-samples/tree/maste
 
 * Remember to add your own GCP service account key --> Make a folder under src/main called "resources" then add your key to the folder as a file called "service-acct.json"
 
+## Demo
+<p float="left">
+    <img src="readme_resources/new_macro.png" width="300" height="300">
+    <img src="readme_resources/macro_list.png" width="300" height="300">
+</p>
+
+## Program Architecture
+<img src="readme_resources/macrobot_architecture.png" width="400">
 
 ## Maven Setup
 ### Running locally
