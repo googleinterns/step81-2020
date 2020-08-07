@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:macrobaseapp/model/adapters/action_model.dart';
 import 'package:macrobaseapp/model/adapters/macro_model.dart';
 import 'package:macrobaseapp/model/adapters/trigger_model.dart';
+import 'package:macrobaseapp/model/entities/action.dart';
 import 'package:macrobaseapp/model/entities/macro.dart';
 
 import '../../fixtures/fixture_reader.dart';
@@ -11,18 +12,16 @@ import '../../fixtures/fixture_reader.dart';
 void main() {
 
   final tMacroCommandPollModel = MacroModel(
-    macroName: "Weekly Game Night Poll",
-    description: "A recurring poll bot that allows the team to vote on which game to play",
+    macroName: "Daily",
+    description: "Daily Check-in Bot records your teams' daily updates in a Google sheet",
     creatorId: "tonyshen@google.com",
     trigger: CommandTriggerModel(
-        command: "make game poll"
+      command: "123"
     ),
-//    action: PollActionModel(
-//      question: "What game should we play tomorrow ? ",
-//      choices: ["Saboteur", "Pubg", "Code name"],
-//      userCanAddOptions: true,
-//      userCanVoteMultiple: false,
-//    ),
+    action: SheetAppendActionModel(
+      sheetUrl: "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE/edit#gid=0",
+      columnValue: [],
+    )
   );
 
   test(
@@ -38,7 +37,7 @@ void main() {
           () async {
         //arrange
         final Map<String, dynamic> jsonMap =
-        json.decode(fixture('macro_command_poll.json'));
+        json.decode(fixture('macro_sheet_append_command.json'));
         //act
         final result = MacroModel.fromJson(jsonMap);
         //assert
@@ -52,7 +51,7 @@ void main() {
       'should return a Json map containing the proper data',
           () async {
         final result = tMacroCommandPollModel.toJson();
-        expect(result, json.decode(fixture('macro_command_poll.json')));
+        expect(result, json.decode(fixture('macro_sheet_append_command.json')));
       },
     );
   });

@@ -1,17 +1,13 @@
 {
   "action": {
     "columnValue": [],
-    "sheetAction": "Append Action",
+    "sheetAction": "Sheet Append Action",
     "sheetUrl": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE/edit#gid=0",
-    "type": "Sheet Action"
+    "type": "Non Existent Type"
   },
   "creatorId": "tonyshen@google.com",
   "description": "Daily Check-in Bot records your teams' daily updates in a Google sheet",
   "macroName": "Daily",
-  "scope": [
-    "",
-    "tonyshen@google.com"
-  ],
   "trigger": {
     "command": "123",
     "type": "Command Trigger"

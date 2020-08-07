@@ -12,7 +12,7 @@ class TeamDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TeamNotifier teamNotifier =
-    Provider.of<TeamNotifier>(context, listen: false);
+        Provider.of<TeamNotifier>(context, listen: false);
 
     final TeamModel teamModel = teamNotifier.currentTeam;
     final json = JsonEncoder.withIndent('  ').convert(teamModel.toJson());
@@ -21,30 +21,34 @@ class TeamDetail extends StatelessWidget {
       appBar: AppBar(
         title: Text(teamModel.name),
       ),
-      body:
-      teamModel.macros.length == 0 ? Center(child: NoMacroIllustration()) :
-      Column(
-        children:
-          teamModel.macros.map((macro) =>
-            MacroTableEntry(
-              macro: macro,
-              onDelete: () {
-                FirestoreService db = FirestoreService();
-                db.removeObject('teams', teamModel.teamId);
-                teamModel.macros.remove(macro);
-                db.uploadObject('teams', teamModel.toJson());
+      body: teamModel.macros.length == 0
+          ? Center(child: NoMacroIllustration())
+          : Column(
+              children: <Widget>[
+                    Text(
+                      "Macros of the Team: ",
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                  ] +
+                  teamModel.macros
+                      .map((macro) => MacroTableEntry(
+                            macro: macro,
+                            onDelete: () {
+                              FirestoreService db = FirestoreService();
+                              db.removeObject('teams', teamModel.teamId);
+                              teamModel.macros.remove(macro);
+                              db.uploadObject('teams', teamModel.toJson());
 
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return TeamDetail();
-                    },
-                  ),
-                );
-              },
-            )
-          ).toList()
-      ),
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                    return TeamDetail();
+                                  },
+                                ),
+                              );
+                            },
+                          ))
+                      .toList()),
     );
   }
 }

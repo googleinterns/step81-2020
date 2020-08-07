@@ -146,6 +146,12 @@ Copyright 2017 Google Inc.
       <scope>test</scope>
     </dependency>
     
+      <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter</artifactId>
+          <version>RELEASE</version>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 
   <build>

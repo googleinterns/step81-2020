@@ -11,9 +11,9 @@ class FormBlocTemplate {
     switch (templateName) {
       case DAILY_CHECK_IN:
         {
-          formBloc.macroName.updateValue("DailyBot");
+          formBloc.macroName.updateValue("StandupBot");
           formBloc.description.updateValue(
-              "DailyBot records your teams' daily updates in a Google sheet");
+              "StandupBot records your teams' daily updates in a Google sheet");
 
           formBloc.actionType.updateValue(Action.SHEET_ACTION);
           formBloc.sheetActionType.updateValue(SheetAction.APPEND_ACTION);

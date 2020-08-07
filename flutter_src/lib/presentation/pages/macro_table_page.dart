@@ -99,6 +99,7 @@ class _MacroTableState extends State<MacroTable> {
     return DragTarget<Macro>(
       builder: (BuildContext context, List<Macro> incoming, List rejected) {
         return Card(
+          color: Theme.of(context).colorScheme.onBackground,
           child: ListTile(
               leading: FlutterLogo(size: 56.0),
               title: Text(team.name),
