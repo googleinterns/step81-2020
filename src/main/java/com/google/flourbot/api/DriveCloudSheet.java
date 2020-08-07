@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.logging.Logger;
 import java.util.Collections;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +67,7 @@ public class DriveCloudSheet implements CloudSheet {
     } catch (IOException e) {
       throw new IllegalArgumentException(e);
     }
+
     return (List<List<String>>)((Object)response.getValues());
   }
 
@@ -74,16 +76,17 @@ public class DriveCloudSheet implements CloudSheet {
 
     if (values != null || !values.isEmpty()) {
       return (List<String>) values.get(0);
-    } else {
-      return Collections.emptyList();
     }
+    return Collections.emptyList();
   }
 
   public List<String> readColumn(String column) {
     List<List<String>> values = readRange(String.format("%s!%s:%s", SHEET_NAME, column, column));
 
     if (values != null || !values.isEmpty()) {
-      return (List<String>) values.get(0);
+      return (List<String>) values.stream()
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
     } else {
       return Collections.emptyList();
     }

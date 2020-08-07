@@ -25,18 +25,33 @@ public class DriveClient implements CloudDocClient {
 
   static final String SPREADSHEET_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 
-  public CloudSheet getCloudSheet(String documentId) throws IOException, GeneralSecurityException {
+  public CloudSheet getCloudSheet(String documentId) {
     return new DriveCloudSheet(documentId, this.createService());
   }
 
-  private Sheets createService() throws IOException, GeneralSecurityException {
+  private Sheets createService() {
     
     // Set up credentials
     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-    NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-    GoogleCredentials credentials = GoogleCredentials.fromStream(
-            DriveClient.class.getResourceAsStream("/service-acct.json")
-    ).createScoped(SPREADSHEET_SCOPE);
+    NetHttpTransport httpTransport = null;
+    GoogleCredentials credentials = null;
+
+    try {
+      httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+    } catch (GeneralSecurityException e) {
+      throw new IllegalStateException(e);
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+
+    try {
+      credentials = GoogleCredentials.fromStream(
+              DriveClient.class.getResourceAsStream("/service-acct.json")
+          ).createScoped(SPREADSHEET_SCOPE);
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+
     HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
 
     // Create sheetService

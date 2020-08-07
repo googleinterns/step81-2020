@@ -1,4 +1,4 @@
-Steps
+Macrobot
 ============================
 
 Generate maven project https://cloud.google.com/appengine/docs/standard/java/using-maven appengine-standard-archetype (select Java, Standard Environment)
@@ -7,7 +7,8 @@ Add example from: https://github.com/gsuitedevs/hangouts-chat-samples/tree/maste
 
 * Remember to add your own GCP service account key --> Make a folder under src/main called "resources" then add your key to the folder as a file called "service-acct.json"
 
-## Maven
+
+## Maven Setup
 ### Running locally
 
     mvn clean package appengine:run
@@ -17,6 +18,9 @@ Add example from: https://github.com/gsuitedevs/hangouts-chat-samples/tree/maste
 ### Deploying
 
     mvn clean package appengine:deploy -Dapp.deploy.projectId=YOUR_PROJECT_ID
+
+## Flutter App Setup
+See `flutter_src/README.md`
 
 ## Contributing
 1. Use `git pull` to make sure your local repo is up to date with the remote repo.
