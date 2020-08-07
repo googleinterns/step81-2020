@@ -25,7 +25,7 @@ Run all the unit tests
 ```
 flutter test test/
 ```
-## Depolyment
+## Deployment
 [1] Set up Firebase CLI [Firebase Hosting guide](https://firebase.google.com/docs/hosting)
 *Make sure you have Firebase project set up already*
 ```
@@ -44,18 +44,15 @@ firebase deploy --only hosting
 [5] You're done!
 
 ## Project Structure 
-#### Lib/
-* #### Presentation/
-  * ##### Widgets/ - ```Contains reuseable widgets used by pages```
-  * ##### Pages/ - ```Contains UI code for each page```
-
-* #### Logic/
-  * ##### Blocs/ - ```Contains the state of the current app```
-  * ##### Usecases/ - ```Contains the logic ```
-
-* #### Model/
-  * ##### Entities/ - ```Contains the pure defintion of model classes```
-  * ##### Adapter/ - ```Code that converts external data to entity classes```
-  
-#### Test/
-* ##### Same folder structure as "Lib/"; Each file tests the production code. 
+App
+├── Lib/
+│   ├── Presentation/
+│   │   ├── Widgets: Contains reuseable widgets used by pages
+│   │   └── Pages: Contains UI code for each page
+│   ├── Logic/
+│   │   ├── Blocs: Contains the state of the current app
+│   │   └── Usecases: Contains the logic
+│   └── Model/
+│       ├── Entities: Contains the pure defintion of model classes
+│       └── Adapter: Code that converts external data to entity classes
+└── Test: Each file tests the production code. 
