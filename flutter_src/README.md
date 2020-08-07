@@ -36,12 +36,18 @@ firebase login
 ```
 flutter web build
 ```
-[3] Deploy using Firebase
+[3] Initalize Firebase Deployment
+```
+firebase --init
+# Select Hosting: Configure and deploy Firebase Hosting sites feature
+# Set build/web as Public directory
+```
+[4] Deploy using Firebase
 ```
 firebase deploy --only hosting
 ```
-[4] Whitelist Hosting URL in Web Client GCP OAuth 2.0 Client IDs\
-[5] You're done!
+[5] Whitelist Hosting URL in Web Client GCP OAuth 2.0 Client IDs\
+[6] You're done!
 
 ## Project Structure 
 App\
