@@ -1,4 +1,4 @@
-# macro-base
+# MacroBot Flutter Application
 Platform for non-technical users to customize automation bots with G-Suite APIs
 
 ## Getting Started
