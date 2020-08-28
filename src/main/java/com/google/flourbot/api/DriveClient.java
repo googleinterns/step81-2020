@@ -1,7 +1,3 @@
-/*
- * Creates service with Google Sheets API. Service is used to read/write documents.
- */
-
 package com.google.flourbot.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,14 +17,28 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/*
+ * Creates service with Google Sheets API. Service is used to read/write documents.
+ */
 public class DriveClient implements CloudDocClient {
 
   static final String SPREADSHEET_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 
+  /**
+  * Constructs the CloudSheet object using the service
+  * @param documentId the id of the Google Sheets document to read/write
+  * @return a CloudSheet object with read/write methods
+  */
   public CloudSheet getCloudSheet(String documentId) {
     return new DriveCloudSheet(documentId, this.createService());
   }
-
+  
+  /**
+  * Establishes a HTTP connection to the Google Sheets v4 RESTful API
+  * and authenticates using Google Cloud Platform service account key from resources folder
+  * @param none
+  * @return Sheets object that can be used for API calls to documents
+  */
   private Sheets createService() {
     
     // Set up credentials

@@ -30,7 +30,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-// The Logic class of the server
+/**
+* The logic class of the server that interfaces with the database and the sheet to execute
+* the macro functionality and prepares contents of a message to be sent back the user
+*/
 public class MacroExecutionModuleImplementation implements MacroExecutionModule {
 
   private final EntityModule entityModule;
@@ -38,6 +41,10 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
   private static HashMap<String, String> threadMacroMap = new HashMap<String, String>();
   private static Map<String, Map<String, String>> roomToMacro = new HashMap<String, Map<String, String>>();
 
+  /**
+  * Returns a constructed MacroExecutionModuleImplementation as a singleton after
+  * setting up Firebase server connection and connection to Google Sheets v4 api
+  */
   public static MacroExecutionModuleImplementation initializeServer() {
     DataStorage dataStorage = new FirebaseDataStorage();
     EntityModule entityModule = new EntityModuleImplementation(dataStorage);
@@ -45,7 +52,24 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     return new MacroExecutionModuleImplementation(entityModule, cloudDocClient);
   }
 
+  /**
+  * Private constructor for MacroExecutionModuleImplementation to be called in initializeServer()
+  */
+  private MacroExecutionModuleImplementation(EntityModule entityModule, CloudDocClient cloudDocClient) {
+    this.entityModule = entityModule;
+    this.cloudDocClient = cloudDocClient;
+  }
+
+  /**
+  * Splices a message to look for a keyword indicating what macro the user is trying to call
+  * and saves it into a hashmap that stores the message thread that it originated in.
+  * If the macroName is already stored for that thread, retrieve it.
+  * @param message this is the text message the user typed in Hangouts Chat
+  * @param threadId the identifier of the message thread in Hangouts Chat where the message came from
+  * @return the macroName if found, an empty string if not found
+  */
   public static String getMacroName(String message, String threadId) {
+    
     // Retrieve macroname based on threadId
     if (threadMacroMap.containsKey(threadId)) {
       return threadMacroMap.get(threadId);
@@ -63,6 +87,20 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     return macroName;
   }
 
+  /**
+  * Executes the user's desired action and returns a confirmation or failure message to be
+  * relayed back to the user through Hangouts Chat
+
+  * @param message the text portion of the message the user typed and sent to the bot
+  * @param threadId the thread where the message originated
+  * @param roomId the room where the message originated
+  * @param messageSenderEmail the email of the user that originally sent the text message
+  * @param helpMessage a string to return if the user's messaged asked for help
+
+  * @return a ChatResponse object that will be interpreted in Bot.java and CardResponse.java
+  * to produce a text or card message to the user upon executing or failing to execute their
+  * instructed action.
+  */ 
   public ChatResponse getReplyText(String message, String threadId, String roomId, String messageSenderEmail, String helpMessage) throws IOException, GeneralSecurityException{
         String macroName;
         String[] words = message.split(" ");
@@ -118,18 +156,28 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         }
   }
 
+  /**
+  * Removes macro from being shared with room
+  * @param roomId the room to stop sharing the macro in (roomId is retrieved from user message)
+  */
   public void removeMacro(String roomId) {
       roomToMacro.remove(roomId);
   }
 
-  private MacroExecutionModuleImplementation(EntityModule entityModule, CloudDocClient cloudDocClient) {
-    this.entityModule = entityModule;
-    this.cloudDocClient = cloudDocClient;
-  }
-
+  /**
+  * Handles the interpretation of the action retrieved from Firebase when the creators email
+  * and macroname were queried and provides information for the response to be sent to user
+  * @param userEmail the email of the user who messaged the macro
+  * @param macroCreatorEmail the email of the user who created and owns the macro
+  * @param threadId the id of the thread the user message originated in
+  * @param macroName the name of the macro owned by creator
+  *
+  * @return a ChatResponse object that will be interpreted in Bot.java and CardResponse.java
+  * to produce a text or card message to the user upon executing or failing to execute their
+  * instructed action.
+  */
   private ChatResponse execute(String userEmail, String macroCreatorEmail, String message, String threadId, String macroName) throws IOException, GeneralSecurityException {
 
-    
     Optional<Macro> optionalMacro = entityModule.getMacro(macroCreatorEmail, macroName);
     if (!optionalMacro.isPresent()) {
       return new ChatResponse(String.format("No macro of name: %s found for %s", macroName, macroCreatorEmail));
@@ -199,25 +247,27 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
         chatResponse = ChatResponse.createChatResponseWithList(values, actionType, documentUrl);
         break;
 
+      // Read row of sheet and return ChatResponse containing a list of strings with cell contents
       case SHEET_READ_ROW:
         int row = ((SheetReadRowAction) action).getRow();
         List<String> rowData = cloudSheet.readRow(row);
         chatResponse = ChatResponse.createChatResponseWithList(rowData, actionType, documentUrl);
         break;
 
+      // Read column of sheet and return ChatResponse containing a list of strings with cell contents
       case SHEET_READ_COLUMN:
         String column = ((SheetReadColumnAction) action).getColumn();
         List<String> columnData = cloudSheet.readColumn(column);
         chatResponse = ChatResponse.createChatResponseWithList(columnData, actionType, documentUrl);
         break;
 
+      // Read sheet and return ChatResponse containing a list of strings with cell contents (inner list is each row)
       case SHEET_READ_SHEET:
         String sheetName = ((SheetReadSheetAction) action).getSheetName();
         List<List<String>> sheetData = cloudSheet.readSheet(sheetName);
         chatResponse = ChatResponse.createChatResponseWithListList(sheetData, actionType, documentUrl);
         break;
       
-      // TODO: Add random option that uses function selectRandomFromData(data);
       default:
         throw new IllegalStateException(
             "Action type named: " + actionType.toString() + "is not implemented yet!");
@@ -226,19 +276,31 @@ public class MacroExecutionModuleImplementation implements MacroExecutionModule 
     return chatResponse;
   }
 
+  /**
+  * Create timestamp based on pattern provided
+  * @param pattern with HH:mm:ss from Java date library
+  * @return the timestamp as a string
+  */
   private String getDate(String pattern) {
-    // Create timestamp based on pattern provided
     LocalDateTime myDateObj = LocalDateTime.now();
     DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern(pattern);
     return myDateObj.format(myFormatObj);
   }
 
+  /**
+  * Splices out the word "share" from the message
+  */
   private String removeShareFromMessage (String[] words) {
       List<String> wordsWithoutShare = new LinkedList(Arrays.asList(words));
       wordsWithoutShare.remove("/share");
       return String.join(" ", wordsWithoutShare);
   }
 
+  /**
+  * Selects a random String from a list of Strings
+  * @param data a list of strings to select a random string from
+  * @return a string from that list
+  */
   private String selectRandomFromData(List<String> data) {
     Random rand = new Random();
     return data.get(rand.nextInt(data.size()));
